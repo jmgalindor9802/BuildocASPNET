@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Buildoc.Models
+@inject SignInManager<Usuario> SignInManager
+@inject UserManager<Usuario> UserManager
+
+<ul class="navbar-nav">
+@if (SignInManager.IsSignedIn(User))
+{
+        @if (SignInManager.IsSignedIn(User))
+        {
+            @if (User.IsInRole("Administrador"))
+            {
+               // <li class="nav-item">
+               //     <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
+               // </li>
+               
+                <li class="nav-item">
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">ADMINISTRADOR</a>
+                </li>
+            }
+            else if (User.IsInRole("Coordinador"))
+            {
+               
+                <li class="nav-item">
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Acudiente: @UserManager.GetUserName(User)!</a>
+                </li>
+            }
+            else if (User.IsInRole("Trabajador"))
+            {
+              
+                <li class="nav-item">
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Madre Comunitaria: @UserManager.GetUserName(User)!</a>
+                </li>
+            }
+
+            <li class="nav-item ml-auto">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="btn btn-success">Cerrar sesión</button>
+                </form>
+            </li>
+        }
+}
+else
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    </li>
+}
+</ul>
