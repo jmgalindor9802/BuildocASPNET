@@ -1,3 +1,4 @@
 ﻿@{
-    Layout = "_Layout";
+    var isLoggedIn = Context.User.Identity.IsAuthenticated;
+    Layout = isLoggedIn ? "_LayoutAdmin" : "_Layout";
 }
