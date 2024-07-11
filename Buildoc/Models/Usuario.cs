@@ -8,7 +8,8 @@ namespace Buildoc.Models
         public string? Apellidos { get; set; }
         public string? Municipio { get; set; }
         public string? Direccion { get; set; }
-
+        public string? Eps { get; set; }
+        public string? Arl { get; set; }
         public long? Cedula { get; set; }
         public long? Telefono { get; set; }
         public bool Estado { get; set; }
