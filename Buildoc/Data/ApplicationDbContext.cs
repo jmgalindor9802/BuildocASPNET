@@ -20,5 +20,7 @@ namespace Buildoc.Data
 
             });
         }
+
+        public DbSet<Proyecto> Proyectos { get; set; }
     }
 }
