@@ -15,7 +15,16 @@ namespace Buildoc.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            if (User.Identity.IsAuthenticated)
+            {
+                // Redirigir a la vista para usuarios autenticados
+                return View("IndexAdmin");
+            }
+            else
+            {
+                // Redirigir a la vista para usuarios no autenticados
+                return View("Index");
+            }
         }
 
         
