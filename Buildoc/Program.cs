@@ -18,11 +18,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<Usuario>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.AddControllersWithViews();
 
 builder.Services.AddRazorPages();
 
-// Añadir SignInManager y UserManager
+// Aï¿½adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
 
