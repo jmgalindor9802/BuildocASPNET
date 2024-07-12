@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240711165918_ProyectoModel")]
+    [Migration("20240711183450_ProyectoModel")]
     partial class ProyectoModel
     {
         /// <inheritdoc />
@@ -20,15 +20,16 @@ namespace Buildoc.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.5")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Cliente")
                         .IsRequired()

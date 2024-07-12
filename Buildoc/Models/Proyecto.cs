@@ -5,7 +5,7 @@ namespace Buildoc.Models
     public class Proyecto
     {
         [Key]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
         [Required]
         public string Nombre { get; set; }
 

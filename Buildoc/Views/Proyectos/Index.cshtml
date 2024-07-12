@@ -1,0 +1,112 @@
+﻿@model IEnumerable<Buildoc.Models.Proyecto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a href="#" id="createNewModal" data-url="@Url.Action("Create", "Proyectos")" data-toggle="modal" data-target="#modal-create">Create New</a>
+</p>
+
+<!-- Modal Create -->
+<div class="modal fade" id="modal-create">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Crear nuevo proyecto</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-content-create">
+                <!-- Contenido del modal se cargará dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Municipio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Descripcion)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Municipio)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Cliente)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+@section Scripts {
+    <script>
+        $(function () {
+            // Cargar modal para crear nuevo proyecto
+            $('#createNewModal').click(function () {
+                var url = $(this).data('url');
+                $.get(url).done(function (data) {
+                    $('#modal-content-create').html(data);
+                });
+            });
+
+            // Manejar el envío del formulario de creación
+            $(document).on('submit', 'form', function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var url = form.attr('action');
+                var data = form.serialize();
+
+                $.post(url, data).done(function (response) {
+                    if (response.success) {
+                        // Cerrar el modal y actualizar la lista de proyectos
+                        $('#modal-create').modal('hide');
+                        window.location.reload();
+                    } else {
+                        // Verificar si ya existe un mensaje de error
+                        var alertElement = $('#modal-content-create .alert-danger');
+                        if (alertElement.length > 0) {
+                            if (alertElement.text() !== response.message) {
+                                alertElement.text(response.message);
+                            }
+                        } else {
+                            // Mostrar el nuevo mensaje de error
+                            $('#modal-content-create').prepend('<div class="alert alert-danger" role="alert">' + response.message + '</div>');
+                        }
+                    }
+                }).fail(function () {
+                    alert('Ocurrió un error al crear el proyecto.');
+                });
+            });
+        });
+    </script>
+}

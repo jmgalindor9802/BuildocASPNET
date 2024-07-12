@@ -205,11 +205,11 @@
                             </a>                           
                         </li>
                         <li class="nav-item">
-                            <a href="../widgets.html" class="nav-link">
+                            <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
                                 <i class="nav-icon fas fa-building"></i>
                                 <p>
                                    Proyectos
-                               
+
                                 </p>
                             </a>
                         </li>
@@ -226,6 +226,23 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             @RenderBody()
+            <!-- Modal para crear proyecto -->
+            <div class="modal fade" id="createProjectModal" tabindex="-1" role="dialog" aria-labelledby="createProjectModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createProjectModalLabel">Crear Proyecto</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            @await Html.PartialAsync("/Views/Proyectos/Create.cshtml", new Buildoc.Models.Proyecto())
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
         </div>
         <!-- /.content-wrapper -->
 
@@ -251,6 +268,6 @@
     <script src="/AdminLTE/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="/AdminLTE/js/demo.js"></script>
- 
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
