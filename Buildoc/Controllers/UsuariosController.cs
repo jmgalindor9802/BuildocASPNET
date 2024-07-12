@@ -11,6 +11,7 @@ namespace Buildoc.Controllers
 {
     public class UsuariosController : Controller
     {
+
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -24,10 +25,26 @@ namespace Buildoc.Controllers
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _context.Users.ToListAsync();
-            return View(usuarios);
-        }
+            var usuarios = await _userManager.Users.ToListAsync();
+            var usuariosConRoles = new List<IndexUsuarioViewModel>();
 
+            foreach (var usuario in usuarios)
+            {
+                var roles = await _userManager.GetRolesAsync(usuario);
+                usuariosConRoles.Add(new IndexUsuarioViewModel
+                {
+                    Id = usuario.Id,
+                    Email = usuario.Email,
+                    Nombres = usuario.Nombres,
+                    Direccion = usuario.Direccion,
+                    Estado = usuario.Estado,
+                    Cedula = usuario.Cedula,
+                    Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+                });
+            }
+
+            return View(usuariosConRoles);
+        }
         // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(string id)
         {
@@ -49,7 +66,8 @@ namespace Buildoc.Controllers
         // GET: Usuarios/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new UsuarioViewModel();
+            return View(model);
         }
 
         // POST: Usuarios/Create
@@ -65,7 +83,8 @@ namespace Buildoc.Controllers
                     Email = model.Email,
                     Nombres = model.Nombres,
                     Direccion = model.Direccion,
-                    // Asigna otros campos según tu modelo de datos
+                    Cedula = model.Cedula,
+                    Estado = true,
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -88,29 +107,43 @@ namespace Buildoc.Controllers
             return View(model);
         }
 
-
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(string id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var usuario = await _context.Users.FindAsync(id);
             if (usuario == null)
             {
                 return NotFound();
             }
-            return View(usuario);
+
+            // Obtener los roles actuales del usuario
+            var roles = await _userManager.GetRolesAsync(usuario);
+
+            // Obtener todos los roles disponibles
+            var allRoles = await _roleManager.Roles.Select(r => r.Name).ToListAsync();
+            var viewModel = new EditUsuarioViewModel
+            {
+                Id = usuario.Id,
+                Nombres = usuario.Nombres,
+                Direccion = usuario.Direccion,
+                Cedula = usuario.Cedula,
+                Telefono = usuario.Telefono,
+                Email = usuario.Email,
+                Estado = usuario.Estado,
+                Role = roles.FirstOrDefault(), // Suponiendo que el usuario tiene un solo rol
+
+            };
+
+            return View(viewModel);
         }
+
 
         // POST: Usuarios/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,Nombres,Direccion,Cedula,Telefono,Email,UserName")] Usuario usuario)
+        public async Task<IActionResult> Edit(string id, EditUsuarioViewModel viewModel)
         {
-            if (id != usuario.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -119,12 +152,40 @@ namespace Buildoc.Controllers
             {
                 try
                 {
-                    _context.Update(usuario);
-                    await _context.SaveChangesAsync();
+                    var usuarioToUpdate = await _userManager.FindByIdAsync(id);
+                    if (usuarioToUpdate == null)
+                    {
+                        return NotFound();
+                    }
+
+                    usuarioToUpdate.Nombres = viewModel.Nombres;
+                    usuarioToUpdate.Direccion = viewModel.Direccion;
+                    usuarioToUpdate.Email = viewModel.Email;
+                    usuarioToUpdate.Estado = viewModel.Estado;
+                    usuarioToUpdate.Cedula = viewModel.Cedula;
+
+                    var result = await _userManager.UpdateAsync(usuarioToUpdate);
+
+                    if (result.Succeeded)
+                    {
+                        // Actualizar el rol del usuario
+                        var currentRoles = await _userManager.GetRolesAsync(usuarioToUpdate);
+                        await _userManager.RemoveFromRolesAsync(usuarioToUpdate, currentRoles);
+                        await _userManager.AddToRoleAsync(usuarioToUpdate, viewModel.Role);
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError(string.Empty, error.Description);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UsuarioExists(usuario.Id))
+                    if (!UsuarioExists(viewModel.Id))
                     {
                         return NotFound();
                     }
@@ -133,10 +194,27 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    // Registrar la excepción
+                    ModelState.AddModelError(string.Empty, $"Unexpected error: {ex.Message}");
+                }
             }
-            return View(usuario);
+            else
+            {
+                // Registrar los errores del ModelState
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.ErrorMessage);
+                }
+            }
+
+            // Si llegamos aquí, significa que ModelState no es válido, devolvemos la vista con errores
+            return View(viewModel);
         }
+
+
 
         // GET: Usuarios/Delete/5
         public async Task<IActionResult> Delete(string id)
@@ -161,13 +239,28 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var usuario = await _context.Users.FindAsync(id);
+            var usuario = await _userManager.FindByIdAsync(id);
+
             if (usuario != null)
             {
-                _context.Users.Remove(usuario);
-                await _context.SaveChangesAsync();
+                usuario.Estado = false; // Cambiar el estado a "Deshabilitado"
+                var result = await _userManager.UpdateAsync(usuario);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(usuario); // Devolver la vista con el usuario si hay errores
+                }
             }
-            return RedirectToAction(nameof(Index));
+
+            return NotFound(); // Usuario no encontrado
         }
 
         private bool UsuarioExists(string id)
