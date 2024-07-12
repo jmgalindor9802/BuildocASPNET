@@ -14,6 +14,7 @@ namespace Buildoc.Models
         public string Municipio { get; set; }
 
         public string Cliente { get; set; }
+        public string Direccion { get; set; }
 
 
     }
