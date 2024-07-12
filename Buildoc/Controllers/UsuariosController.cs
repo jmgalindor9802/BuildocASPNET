@@ -82,9 +82,17 @@ namespace Buildoc.Controllers
                     UserName = model.Email,
                     Email = model.Email,
                     Nombres = model.Nombres,
+                    Apellidos = model.Apellidos,
                     Direccion = model.Direccion,
                     Cedula = model.Cedula,
                     Estado = true,
+                    Arl = model.Arl,
+                    Eps = model.Eps,
+                    FechaNacimiento = model.FechaNacimiento,
+                    Municipio = model.Municipio,
+                    Profesion = model.Profesion,
+                    Telefono = model.Telefono,
+                    
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
