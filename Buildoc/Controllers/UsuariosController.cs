@@ -25,7 +25,10 @@ namespace Buildoc.Controllers
         // GET: Usuarios
         public async Task<IActionResult> Index()
         {
-            var usuarios = await _userManager.Users.ToListAsync();
+            var usuarios = await _userManager.Users
+                                            .Where(u => u.Estado) // Filtra usuarios con Estado true
+                                            .ToListAsync();
+
             var usuariosConRoles = new List<IndexUsuarioViewModel>();
 
             foreach (var usuario in usuarios)
@@ -53,15 +56,32 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var usuario = await _userManager.FindByIdAsync(id);
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            return View(usuario);
+            var roles = await _userManager.GetRolesAsync(usuario);
+            var viewModel = new UsuarioDetailsViewModel
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Nombres = usuario.Nombres,
+                Apellidos = usuario.Apellidos,
+                Cedula = usuario.Cedula,
+                FechaNacimiento = usuario.FechaNacimiento,
+                Direccion = usuario.Direccion,
+                Municipio = usuario.Municipio,
+                Eps = usuario.Eps,
+                Arl = usuario.Arl,
+                Profesion = usuario.Profesion,
+                Role = roles.FirstOrDefault() // Suponiendo que el usuario tiene un solo rol
+            };
+
+            return View(viewModel);
         }
+
 
         // GET: Usuarios/Create
         public IActionResult Create()
@@ -69,7 +89,19 @@ namespace Buildoc.Controllers
             var model = new UsuarioViewModel();
             return View(model);
         }
-
+        //POST modal
+        [HttpPost]
+        public JsonResult Insert(UsuarioViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                return null;
+            }
+            else
+            {
+                return Json("Fallo registro del modal");
+            }
+        }
         // POST: Usuarios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -61,58 +61,86 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="createUserForm" asp-action="Create" method="post">
+            <form id="createUserForm" asp-action="Create">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Email" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Email" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Password" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Password" class="form-control" type="password" />
-                        <span asp-validation-for="@usuarioViewModel.Password" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.ConfirmPassword" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.ConfirmPassword" class="form-control" type="password" />
-                        <span asp-validation-for="@usuarioViewModel.ConfirmPassword" class="text-danger"></span>
-                    </div>
+                    <div class="row">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.Nombres" class="control-label"></label>
                         <input asp-for="@usuarioViewModel.Nombres" class="form-control" />
                         <span asp-validation-for="@usuarioViewModel.Nombres" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Municipio" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Municipio" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Municipio" class="text-danger"></span>
+                       <label asp-for="@usuarioViewModel.Apellidos" class="control-label"></label>
+                       <input asp-for="@usuarioViewModel.Apellidos" class="form-control" />
+                       <span asp-validation-for="@usuarioViewModel.Apellidos" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.Direccion" class="control-label"></label>
                         <input asp-for="@usuarioViewModel.Direccion" class="form-control" />
                         <span asp-validation-for="@usuarioViewModel.Direccion" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Eps" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Eps" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Eps" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Arl" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Arl" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Arl" class="text-danger"></span>
-                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.Cedula" class="control-label"></label>
                         <input asp-for="@usuarioViewModel.Cedula" class="form-control" />
                         <span asp-validation-for="@usuarioViewModel.Cedula" class="text-danger"></span>
                     </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.Telefono" class="control-label"></label>
                         <input asp-for="@usuarioViewModel.Telefono" class="form-control" />
                         <span asp-validation-for="@usuarioViewModel.Telefono" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Eps" class="control-label"></label>
+                        <input asp-for="@usuarioViewModel.Eps" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Eps" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Arl" class="control-label"></label>
+                        <input asp-for="@usuarioViewModel.Arl" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Arl" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Email" class="control-label"></label>
+                        <input asp-for="@usuarioViewModel.Email" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Email" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Password" class="control-label"></label>
+                        <input type="password" asp-for="@usuarioViewModel.Password" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Password" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.ConfirmPassword" class="control-label"></label>
+                        <input type="password" asp-for="@usuarioViewModel.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.Role" class="control-label">Role</label>
                         <select asp-for="@usuarioViewModel.Role" class="form-control" id="rol">
@@ -120,21 +148,29 @@
                             <option value="Coordinador">Coordinador</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Estado" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Estado" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Estado" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="@usuarioViewModel.Profesion" class="control-label"></label>
-                        <input asp-for="@usuarioViewModel.Profesion" class="form-control" />
-                        <span asp-validation-for="@usuarioViewModel.Profesion" class="text-danger"></span>
-                    </div>
+                </div>
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="@usuarioViewModel.FechaNacimiento" class="control-label"></label>
                         <input asp-for="@usuarioViewModel.FechaNacimiento" class="form-control" />
                         <span asp-validation-for="@usuarioViewModel.FechaNacimiento" class="text-danger"></span>
                     </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Profesion" class="control-label"></label>
+                        <input asp-for="@usuarioViewModel.Profesion" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Profesion" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="@usuarioViewModel.Municipio" class="control-label"></label>
+                        <input asp-for="@usuarioViewModel.Municipio" class="form-control" />
+                        <span asp-validation-for="@usuarioViewModel.Municipio" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>

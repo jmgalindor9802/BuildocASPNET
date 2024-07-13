@@ -20,6 +20,6 @@ namespace Buildoc.Data
 
             });
         }
-        public DbSet<Buildoc.Models.IndexUsuarioViewModel> IndexUsuarioViewModel { get; set; } = default!;
+   
     }
 }

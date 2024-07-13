@@ -1,0 +1,86 @@
+﻿@model Buildoc.Models.UsuarioDetailsViewModel
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalles del usuario</h1>
+<hr />
+
+<div class="container">
+
+    <dl class="row">
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Nombres)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Nombres)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Apellidos)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Apellidos)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Cedula)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Cedula)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.FechaNacimiento)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.FechaNacimiento)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Direccion)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Direccion)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Municipio)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Municipio)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Eps)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Eps)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Arl)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Arl)
+        </dd>
+        <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Profesion)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Profesion)
+        </dd>
+        <dt class="col-sm-3">
+            Rol
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Role)
+        </dd>
+        <!-- Agrega más campos según sea necesario -->
+    </dl>
+    <div class="text-center mt-4">
+        <div class="btn-group" role="group" aria-label="Acciones">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
+            <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
+        </div>
+    </div>
+</div>
