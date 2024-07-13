@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using System.Linq;
+using System.Security.Policy;
 using System.Threading.Tasks;
 namespace Buildoc.Controllers
 {
@@ -164,12 +166,17 @@ namespace Buildoc.Controllers
             var viewModel = new EditUsuarioViewModel
             {
                 Id = usuario.Id,
+                Email = usuario.Email,
                 Nombres = usuario.Nombres,
-                Direccion = usuario.Direccion,
+                Apellidos = usuario.Apellidos,
                 Cedula = usuario.Cedula,
                 Telefono = usuario.Telefono,
-                Email = usuario.Email,
-                Estado = usuario.Estado,
+                FechaNacimiento = usuario.FechaNacimiento,
+                Direccion = usuario.Direccion,
+                Municipio = usuario.Municipio,
+                Eps = usuario.Eps,
+                Arl = usuario.Arl,
+                Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault(), // Suponiendo que el usuario tiene un solo rol
 
             };
@@ -197,12 +204,17 @@ namespace Buildoc.Controllers
                     {
                         return NotFound();
                     }
-
-                    usuarioToUpdate.Nombres = viewModel.Nombres;
-                    usuarioToUpdate.Direccion = viewModel.Direccion;
                     usuarioToUpdate.Email = viewModel.Email;
-                    usuarioToUpdate.Estado = viewModel.Estado;
+                    usuarioToUpdate.Nombres = viewModel.Nombres;
+                    usuarioToUpdate.Apellidos = viewModel.Apellidos;
                     usuarioToUpdate.Cedula = viewModel.Cedula;
+                    usuarioToUpdate.Telefono = viewModel.Telefono;
+                    usuarioToUpdate.FechaNacimiento = viewModel.FechaNacimiento;
+                    usuarioToUpdate.Direccion = viewModel.Direccion;
+                    usuarioToUpdate.Municipio = viewModel.Municipio;
+                    usuarioToUpdate.Eps = viewModel.Eps;
+                    usuarioToUpdate.Arl = viewModel.Arl;
+                    usuarioToUpdate.Profesion = viewModel.Profesion;
 
                     var result = await _userManager.UpdateAsync(usuarioToUpdate);
 
