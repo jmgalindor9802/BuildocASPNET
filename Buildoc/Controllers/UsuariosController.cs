@@ -276,14 +276,30 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Users
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var usuario = await _userManager.FindByIdAsync(id);
             if (usuario == null)
             {
                 return NotFound();
             }
 
-            return View(usuario);
+            var roles = await _userManager.GetRolesAsync(usuario);
+            var viewModel = new UsuarioDetailsViewModel
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Nombres = usuario.Nombres,
+                Apellidos = usuario.Apellidos,
+                Cedula = usuario.Cedula,
+                FechaNacimiento = usuario.FechaNacimiento,
+                Direccion = usuario.Direccion,
+                Municipio = usuario.Municipio,
+                Eps = usuario.Eps,
+                Arl = usuario.Arl,
+                Profesion = usuario.Profesion,
+                Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+            };
+
+            return View(viewModel);
         }
 
         // POST: Usuarios/Delete/5
@@ -301,6 +317,94 @@ namespace Buildoc.Controllers
                 if (result.Succeeded)
                 {
                     return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                    return View(usuario); // Devolver la vista con el usuario si hay errores
+                }
+            }
+
+            return NotFound(); // Usuario no encontrado
+        }
+
+        public async Task<IActionResult> UsuarioDesactivado()
+        {
+            var usuarios = await _userManager.Users
+                                            .Where(u => !u.Estado) // Filtra usuarios con Estado true
+                                            .ToListAsync();
+
+            var usuariosConRoles = new List<IndexUsuarioViewModel>();
+
+            foreach (var usuario in usuarios)
+            {
+                var roles = await _userManager.GetRolesAsync(usuario);
+                usuariosConRoles.Add(new IndexUsuarioViewModel
+                {
+                    Id = usuario.Id,
+                    Email = usuario.Email,
+                    Nombres = usuario.Nombres,
+                    Direccion = usuario.Direccion,
+                    Estado = usuario.Estado,
+                    Cedula = usuario.Cedula,
+                    Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+                });
+            }
+
+            return View(usuariosConRoles);
+        }
+
+        public async Task<IActionResult> ReactivarUsuario(string id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var usuario = await _userManager.FindByIdAsync(id);
+            if (usuario == null)
+            {
+                return NotFound();
+            }
+
+            var roles = await _userManager.GetRolesAsync(usuario);
+            var viewModel = new UsuarioDetailsViewModel
+            {
+                Id = usuario.Id,
+                Email = usuario.Email,
+                Nombres = usuario.Nombres,
+                Apellidos = usuario.Apellidos,
+                Cedula = usuario.Cedula,
+                FechaNacimiento = usuario.FechaNacimiento,
+                Direccion = usuario.Direccion,
+                Municipio = usuario.Municipio,
+                Eps = usuario.Eps,
+                Arl = usuario.Arl,
+                Profesion = usuario.Profesion,
+                Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Usuarios/Delete/5
+        [HttpPost, ActionName("ReactivarUsuario")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ReactivarUsuarioConfirmed(string id)
+        {
+            var usuario = await _userManager.FindByIdAsync(id);
+
+            if (usuario != null)
+            {
+                usuario.Estado = true; // Cambiar el estado a "Deshabilitado"
+                var result = await _userManager.UpdateAsync(usuario);
+
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(UsuarioDesactivado));
                 }
                 else
                 {

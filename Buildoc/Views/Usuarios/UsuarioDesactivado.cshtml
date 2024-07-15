@@ -1,0 +1,47 @@
+﻿@model IEnumerable<Buildoc.Models.IndexUsuarioViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Usuarios</h1>
+
+
+<p>
+    <a asp-action="Index">Volver a la vista principal</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Nombres)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Direccion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var usuario in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => usuario.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => usuario.Nombres)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => usuario.Direccion)
+                </td>
+                <td>
+                    <a asp-action="ReactivarUsuario" asp-route-id="@usuario.Id">Restaurar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
