@@ -9,19 +9,24 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using System.Linq;
 using System.Security.Policy;
 using System.Threading.Tasks;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
 namespace Buildoc.Controllers
 {
     public class UsuariosController : Controller
     {
 
+
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly IWebHostEnvironment _host;
+        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IWebHostEnvironment host)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
+            _host = host;
         }
 
         // GET: Usuarios
@@ -419,6 +424,155 @@ namespace Buildoc.Controllers
             return NotFound(); // Usuario no encontrado
         }
 
+        public async Task<IActionResult> DescargarPDF()
+        {
+            var usuarios = await _userManager.Users
+                                            .Where(u => u.Estado) // Filtra usuarios con Estado true
+                                            .ToListAsync();
+
+            var usuariosConRoles = new List<IndexUsuarioViewModel>();
+
+            foreach (var usuario in usuarios)
+            {
+                var roles = await _userManager.GetRolesAsync(usuario);
+                usuariosConRoles.Add(new IndexUsuarioViewModel
+                {
+                    Id = usuario.Id,
+                    Email = usuario.Email,
+                    Nombres = usuario.Nombres,
+                    Direccion = usuario.Direccion,
+                    Estado = usuario.Estado,
+                    Cedula = usuario.Cedula,
+                    Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+                });
+            }
+
+            var data = Document.Create(document =>
+            {
+                document.Page(page =>
+                {
+                    page.Margin(30);
+                    page.Header().ShowOnce().Row(row =>
+                    {
+                        var rutaImagen = Path.Combine(_host.WebRootPath, "logo_buildoc_color.png");
+                        byte[] imageData = System.IO.File.ReadAllBytes(rutaImagen);
+                        row.ConstantItem(150).Image(imageData);
+
+                        row.RelativeItem().Column(col =>
+                        {
+                            col.Item().AlignCenter().Text("Codigo Estudiante SAC").Bold().FontSize(14);
+                            col.Item().AlignCenter().Text("Jr. Las mercedes N378 - Lima").FontSize(9);
+                            col.Item().AlignCenter().Text("987 987 123 / 02 213232").FontSize(9);
+                            col.Item().AlignCenter().Text("codigo@example.com").FontSize(9);
+                        });
+
+                        row.RelativeItem().Column(col =>
+                        {
+                            col.Item().Border(1).BorderColor("#257272")
+                            .AlignCenter().Text("RUC 21312312312");
+
+                            col.Item().Background("#257272").Border(1)
+                            .BorderColor("#257272").AlignCenter()
+                            .Text("Boleta de venta").FontColor("#fff");
+
+                            col.Item().Border(1).BorderColor("#257272").
+                            AlignCenter().Text("B0001 - 234");
+                        });
+                    });
+
+                    page.Content().PaddingVertical(10).Column(col1 =>
+                    {
+                        col1.Item().Column(col2 =>
+                        {
+                            col2.Item().Text("Datos del cliente").Underline().Bold();
+                            col2.Item().Text(txt =>
+                            {
+                                txt.Span("Nombre: ").SemiBold().FontSize(10);
+                                txt.Span("Mario mendoza").FontSize(10);
+                            });
+                            col2.Item().Text(txt =>
+                            {
+                                txt.Span("DNI: ").SemiBold().FontSize(10);
+                                txt.Span("978978979").FontSize(10);
+                            });
+                            col2.Item().Text(txt =>
+                            {
+                                txt.Span("Direccion: ").SemiBold().FontSize(10);
+                                txt.Span("av. miraflores 123").FontSize(10);
+                            });
+                        });
+
+                        col1.Item().LineHorizontal(0.5f);
+
+                        col1.Item().Table(tabla =>
+                        {
+                            tabla.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(3);
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                                columns.RelativeColumn();
+                            });
+
+                            tabla.Header(header =>
+                            {
+                                header.Cell().Background("#257272")
+                                .Padding(2).Text("Nombre").FontColor("#fff");
+
+                                header.Cell().Background("#257272")
+                               .Padding(2).Text("Email").FontColor("#fff");
+
+                                header.Cell().Background("#257272")
+                               .Padding(2).Text("Cedula").FontColor("#fff");
+
+                                header.Cell().Background("#257272")
+                               .Padding(2).Text("Rol").FontColor("#fff");
+                            });
+
+                            foreach (var usuario in usuariosConRoles)
+                            {
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9")
+                                .Padding(2).Text(usuario.Nombres).FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9")
+                                .Padding(2).Text(usuario.Email).FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9")
+                                .Padding(2).Text(usuario.Cedula.ToString()).FontSize(10);
+
+                                tabla.Cell().BorderBottom(0.5f).BorderColor("#D9D9D9")
+                                .Padding(2).Text(usuario.Role).FontSize(10);
+                            }
+                        });
+
+                        col1.Item().AlignRight().Text("Total: " + usuariosConRoles.Count).FontSize(12);
+                        if (usuariosConRoles.Count == 0)
+                        {
+                            col1.Item().Background(Colors.Grey.Lighten3).Padding(10)
+                            .Column(column =>
+                            {
+                                column.Item().Text("No hay usuarios activos").FontSize(14);
+                                column.Spacing(5);
+                            });
+                        }
+                        col1.Spacing(10);
+                    });
+
+                    page.Footer()
+                    .AlignRight()
+                    .Text(txt =>
+                    {
+                        txt.Span("Pagina ").FontSize(10);
+                        txt.CurrentPageNumber().FontSize(10);
+                        txt.Span(" de ").FontSize(10);
+                        txt.TotalPages().FontSize(10);
+                    });
+                });
+            }).GeneratePdf();
+
+            Stream stream = new MemoryStream(data);
+            return File(stream, "application/pdf", "usuarios.pdf");
+        }
         private bool UsuarioExists(string id)
         {
             return _context.Users.Any(e => e.Id == id);
