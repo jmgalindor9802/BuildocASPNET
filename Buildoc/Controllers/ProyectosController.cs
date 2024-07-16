@@ -54,7 +54,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Municipio,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Municipio,Direccion,Cliente")] Proyecto proyecto)
         {
             // Verificar si ya existe un proyecto con el mismo nombre
             var existingProyecto = await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre);

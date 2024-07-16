@@ -226,24 +226,32 @@
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             @RenderBody()
-            <!-- Modal para crear proyecto -->
-            <div class="modal fade" id="createProjectModal" tabindex="-1" role="dialog" aria-labelledby="createProjectModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
+
+            <!-- /.modal -->
+
+            <div class="modal fade" id="modal-lg">
+                <div class="modal-dialog modal-lg">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="createProjectModalLabel">Crear Proyecto</h5>
+                            <h4 class="modal-title">Large Modal</h4>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
                         <div class="modal-body">
-                            @await Html.PartialAsync("/Views/Proyectos/Create.cshtml", new Buildoc.Models.Proyecto())
+                            <p>One fine body&hellip;</p>
+                        </div>
+                        <div class="modal-footer justify-content-between">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary">Guardar</button>
                         </div>
                     </div>
+                    <!-- /.modal-content -->
                 </div>
+                <!-- /.modal-dialog -->
             </div>
             <!-- /.modal -->
-        </div>
+
         <!-- /.content-wrapper -->
 
         <footer class="main-footer">
@@ -267,7 +275,75 @@
     <!-- AdminLTE App -->
     <script src="/AdminLTE/js/adminlte.min.js"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="/AdminLTE/js/demo.js"></script>
+        <script src="/AdminLTE/js/demo.js"></script>
+        <script>
+            $(document).ready(function () {
+                $(document).on('click', '.create-new', function (e) {
+                    e.preventDefault();
+                    var url = $(this).data('url');
+                    var title = $(this).data('title');
+
+                    $('#modal-lg .modal-title').text(title);
+                    $.get(url).done(function (data) {
+                        $('#modal-lg .modal-body').html(data);
+                        $('#modal-lg').modal('show');
+                    }).fail(function () {
+                        console.log('Error al cargar el contenido del modal.');
+                    });
+                });
+
+                $('#modal-lg').on('click', '.btn-primary', function (e) {
+                    e.preventDefault(); // Evitar el comportamiento predeterminado del botón
+
+                    // Borrar los mensajes de alerta anteriores
+                    $('#modal-lg .alert.alert-danger').remove();
+
+                    var form = $('#modal-lg').find('form'); // Buscar el formulario dentro del modal
+
+                    if (form.length === 0) {
+                        console.log('No se encontró el formulario dentro del modal.');
+                        $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">No se encontró el formulario dentro del modal.</div>');
+                        return;
+                    }
+
+                    var formData = form.serialize(); // Serializar los datos del formulario
+
+                    console.log('Form data:', formData);
+
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: formData,
+                        success: function (response) {
+                            console.log('Response:', response);
+                            if (response.success) {
+                                $('#modal-lg').modal('hide');
+                                location.reload(); // Recargar la página
+                            } else {
+                                // Verificar si ya existe un mensaje de error con el mismo contenido
+                                if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                    $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
+                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>'); // Añadir alerta sin eliminar el formulario
+                                }
+                            }
+                        },
+                        error: function () {
+                            // Verificar si ya existe un mensaje de error con el mismo contenido
+                            if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
+                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>'); // Añadir alerta sin eliminar el formulario
+                            }
+                        }
+                    });
+                });
+            });
+        </script>
+
+
+
+
+
+
     @RenderSection("Scripts", required: false)
 </body>
 </html>
