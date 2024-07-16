@@ -4,57 +4,148 @@
     ViewData["Title"] = "Index";
     var usuarioViewModel = new Buildoc.Models.UsuarioViewModel();
 }
+<style>
+    /* Estilos para desactivar el color azul y el subrayado en <a> */
+    a {
+        text-decoration: none; /* Elimina el subrayado */
+        cursor: pointer; /* Cambia el cursor al estilo de un botón */
+    }
+</style>
 
-<h1>Usuarios</h1>
+<section class="content">
+    <div class="container-fluid">
+        <h1>Usuarios</h1>
+        <div class="row">
+            <!-- small box Usuarios totales -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.UsuariosTotales</h3>
+                        <p>Usuarios registrados</p>
+                    </div>
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <!-- small box Activos-->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>@ViewBag.UsuariosActivos</h3>
+                        <p>Usuarios activos</p>
+                    </div>
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                        </svg>
+                    </div>
+                    <a asp-action="Index" class="small-box-footer">Ver usuarios activos <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+            <!-- small box Usuarios desactivados -->
+            <div class="col-lg-3 col-6">
+                <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>@ViewBag.UsuariosDesactivos</h3>
+                        <p>Usuarios desactivados</p>
+                    </div>
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
+                            <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708" />
+                        </svg>
+                    </div>
+                    <a asp-action="UsuarioDesactivado" class="small-box-footer">Ver usuarios desctivados <i class="fas fa-arrow-circle-right"></i></a>
+                </div>
+            </div>
+        </div>
+        <!-- ./row -->
 
-<button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-lg">
-    Crear usuario
-</button>
-<p>
-    <a asp-action="Create">Crear Nuevo</a>
-    <a asp-action="UsuarioDesactivado">Usuarios eliminados</a>
-
-</p>
-<form asp-action="DescargarPDF" asp-controller="Usuarios">
-    <button class="btn btn-success" type="submit">Descargar PDF</button>
-</form>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Nombres)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.First().Direccion)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var usuario in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => usuario.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => usuario.Nombres)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => usuario.Direccion)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@usuario.Id">Editar</a> |
-                    <a asp-action="Details" asp-route-id="@usuario.Id">Detalles</a> |
-                    <a asp-action="Delete" asp-route-id="@usuario.Id">Eliminar</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#modal-lg">
+            Crear usuario
+        </button>
+        <div class="row">
+            <div class="col-3">
+                <a asp-action="Create">Crear Nuevo</a>
+            </div>
+            <div class="col-3">
+                <form asp-action="DescargarPDF" asp-controller="Usuarios">
+                    <button class="btn btn-success" type="submit">Descargar PDF</button>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <form method="get" asp-action="Index">
+                    <div class="form-group">
+                        <label for="roleFilter">Filtrar por rol:</label>
+                        <select name="roleFilter" id="roleFilter" class="form-control">
+                            <option value="">Todos</option>
+                            <option value="Trabajador">Trabajador</option>
+                            <option value="Coordinador">Coordinador</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">Filtrar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <table id="example1" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>@Html.DisplayNameFor(model => model.First().Email)</th>
+                                <th>@Html.DisplayNameFor(model => model.First().Nombres)</th>
+                                <th>@Html.DisplayNameFor(model => model.First().Direccion)</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var usuario in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => usuario.Email)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => usuario.Nombres)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => usuario.Direccion)
+                                    </td>
+                                    <td>
+                                        <a asp-action="Edit" style="color: blue;" asp-route-id="@usuario.Id">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                            </svg>
+                                        </a> |
+                                        <a asp-action="Details" asp-route-id="@usuario.Id">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                            </svg>
+                                        </a> |
+                                        <a asp-action="Delete" style="color: red;" asp-route-id="@usuario.Id">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                            </svg>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>  
+    </div>
+</section>
 
 @* Modal Formulario *@
 <div class="modal fade" id="modal-lg" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
@@ -186,29 +277,32 @@
     </div>
 </div>
 
-<script>
-    function submitForm() {
-        var form = document.getElementById('createUserForm');
-        var formData = new FormData(form);
+@section Scripts {
+    
+	<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+	<script src="~/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json"></script>
+    <script src="~/adminlte/plugins/datatables/jquery.datatables.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-bs4/js/datatables.bootstrap4.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-responsive/js/datatables.responsive.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-responsive/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-buttons/js/datatables.buttons.min.js"></script>
+    <script src="~/adminlte/plugins/jszip/jszip.min.js"></script>
+    <script src="~/adminlte/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/adminlte/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/adminlte/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-buttons/js/buttons.print.min.js"></script>
+    <script src="~/adminlte/plugins/datatables-buttons/js/buttons.colvis.min.js"></script>
 
-        // Realiza la solicitud AJAX para enviar el formulario
-        fetch(form.action, {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => {
-            if (response.ok) {
-                // Si la respuesta es exitosa, cierra el modal
-                $('#modal-lg').modal('hide');
-                // Opcional: Puedes realizar alguna acción adicional después del éxito
-            } else {
-                // Si hay errores, puedes manejarlos aquí
-                alert('Hubo un problema al guardar los cambios.');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Hubo un problema al procesar la solicitud.');
+    <script>
+        $(function () {
+            $("#example1").DataTable({
+                "responsive": true,
+                "lengthChange": false,
+                "autoWidth": true,
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
+            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
         });
-    }
-</script>
+    </script>
+}

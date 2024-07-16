@@ -30,8 +30,23 @@ namespace Buildoc.Controllers
         }
 
         // GET: Usuarios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string roleFilter)
         {
+            var todosUsuarios = await _userManager.Users.ToListAsync(); // Obtén todos los usuarios
+
+            var usuariosTotales = todosUsuarios.Count;
+            var usuariosActivos = todosUsuarios.Count(u => u.Estado);
+            var usuariosDesactivos = todosUsuarios.Count(u => !u.Estado);
+
+            ViewBag.UsuariosTotales = usuariosTotales;
+            ViewBag.UsuariosActivos = usuariosActivos;
+            ViewBag.UsuariosDesactivos = usuariosDesactivos;
+
+            if (!string.IsNullOrEmpty(roleFilter))
+            {
+                return await FiltrarRol(roleFilter);
+            }
+
             var usuarios = await _userManager.Users
                                             .Where(u => u.Estado) // Filtra usuarios con Estado true
                                             .ToListAsync();
@@ -55,6 +70,37 @@ namespace Buildoc.Controllers
 
             return View(usuariosConRoles);
         }
+
+        // Método para filtrar por roles los usuarios
+        public async Task<IActionResult> FiltrarRol(string roleFilter)
+        {
+            // Obtener el rol especificado
+            var role = await _roleManager.FindByNameAsync(roleFilter);
+            if (role == null)
+            {
+                // Manejar el caso en que el rol no exista
+                return NotFound();
+            }
+
+            // Obtener los usuarios asociados a este rol
+            var roleUsers = await _userManager.GetUsersInRoleAsync(role.Name);
+
+            // Crear la lista de usuarios con el rol filtrado
+            var usuariosConRol = (from u in roleUsers
+                                  select new IndexUsuarioViewModel
+                                  {
+                                      Id = u.Id,
+                                      Email = u.Email,
+                                      Nombres = u.Nombres,
+                                      Direccion = u.Direccion,
+                                      Estado = u.Estado,
+                                      Cedula = u.Cedula,
+                                      Role = roleFilter // Asignar el rol filtrado
+                                  }).ToList();
+
+            return View("Index", usuariosConRol); // Devolver la vista con los usuarios filtrados
+        }
+
         // GET: Usuarios/Details/5
         public async Task<IActionResult> Details(string id)
         {
