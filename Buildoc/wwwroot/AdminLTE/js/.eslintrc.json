@@ -5,7 +5,9 @@
     "sourceType": "script"
   },
   "env": {
-    "jquery": true
+    "
+      
+      ": true
   },
   "extends": [
     "plugin:unicorn/recommended",

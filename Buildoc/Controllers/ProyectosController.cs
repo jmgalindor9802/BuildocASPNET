@@ -68,6 +68,7 @@ namespace Buildoc.Controllers
                 proyecto.Id = Guid.NewGuid();
                 _context.Add(proyecto);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "¡El proyecto se ha creado exitosamente!";
                 return Json(new { success = true });
             }
             return PartialView("Create", proyecto);
@@ -107,6 +108,7 @@ namespace Buildoc.Controllers
                 {
                     _context.Update(proyecto);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
                     return Json(new { success = true });
                 }
                 catch (DbUpdateConcurrencyException)
@@ -155,6 +157,7 @@ namespace Buildoc.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "¡El proyecto se ha eliminado exitosamente!";
             return Json(new { success = true });
         }
 

@@ -16,9 +16,12 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="/AdminLTE/css/adminlte.min.css">
 
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
 </head>
 <body class="hold-transition sidebar-mini">
+
     <!-- Site wrapper -->
     <div class="wrapper">
         <!-- Navbar -->
@@ -255,15 +258,26 @@
                 <!-- /.modal-dialog -->
             </div>
             <!-- /.modal -->
+            <!-- Mensajes de notificacion tipo alerts -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+            <script>
+                $(document).ready(function () {
+                    // Configuración global de Toastr
+                    toastr.options.positionClass = 'toast-top-right'; // Posición del mensaje
 
+                    // Mostrar Toastr si TempData contiene un mensaje de éxito
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <text>
+                            toastr.success('@TempData["SuccessMessage"]');
+                    </text>
+                }
+                                });
+            </script>
+            <!-- /. Mensajes de notificacion tipo alerts -->
         <!-- /.content-wrapper -->
 
-        <footer class="main-footer">
-            <div class="float-right d-none d-sm-block">
-                <b>Version</b> 1.0.0
-            </div>
-            <strong>Buildoc</strong> Todos los derechos reservados.
-        </footer>
+       
 
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-dark">
@@ -333,6 +347,7 @@
                             if (response.success) {
                                 $('#modal-lg').modal('hide');
                                 location.reload();
+                                
                             } else {
                                 if ($('#modal-lg .alert.alert-danger').length === 0 ||
                                     $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
@@ -404,10 +419,34 @@
 
 
         </script>
+     
         <script src="/js/departamentos.js"></script>
 
 
 
     @RenderSection("Scripts", required: false)
+        <!-- Toastr script -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                // Configuración global de Toastr
+                toastr.options.positionClass = 'toast-top-right'; // Posición del mensaje
+
+                // Mostrar Toastr si TempData contiene un mensaje de éxito
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <text>
+                        toastr.success('@TempData["SuccessMessage"]');
+                </text>
+            }
+                                        });
+        </script>
+
+        <footer class="main-footer">
+            <div class="float-right d-none d-sm-block">
+                <b>Version</b> 1.0.0
+            </div>
+            <strong>Buildoc</strong> Todos los derechos reservados.
+        </footer>
 </body>
 </html>
