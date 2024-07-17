@@ -40,7 +40,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            return View(proyecto);
+            return PartialView("Details",proyecto);
         }
 
         // GET: Proyectos/Create
@@ -54,7 +54,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Municipio,Direccion,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente")] Proyecto proyecto)
         {
             // Verificar si ya existe un proyecto con el mismo nombre
             var existingProyecto = await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre);
@@ -94,7 +94,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Municipio,Direccion,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente")] Proyecto proyecto)
         {
             if (id != proyecto.Id)
             {
@@ -140,7 +140,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            return View(proyecto);
+            return PartialView("Delete",proyecto);
         }
 
         // POST: Proyectos/Delete/5
