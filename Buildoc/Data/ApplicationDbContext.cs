@@ -19,7 +19,11 @@ namespace Buildoc.Data
                 entityTypeBuilder.ToTable("Usuarios");
 
             });
+
+
         }
-   
+
+        public DbSet<Proyecto> Proyectos { get; set; }
+        
     }
 }

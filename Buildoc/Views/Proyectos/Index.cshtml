@@ -1,0 +1,56 @@
+﻿@model IEnumerable<Buildoc.Models.Proyecto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+
+<p>
+    <a href="#" id="createNewModal" class="create-new"
+       data-url="@Url.Action("Create", "Proyectos")"
+       data-title="Crear nuevo proyecto">
+        Crear nuevo proyecto
+    </a>
+</p>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Municipio)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                <td>@Html.DisplayFor(modelItem => item.Municipio)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cliente)</td>
+                <td>
+                    <a href="#" class="create-new" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto">Editar</a> |
+                    <a href="#" class="create-new" data-url="@Url.Action("Details", "Proyectos", new { id = item.Id })" data-title="Detalles del proyecto">Detalles</a> |
+                    <a href="#" class="create-new" data-url="@Url.Action("Delete", "Proyectos", new { id = item.Id })" data-title="Eliminar proyecto">Eliminar</a>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
+}
