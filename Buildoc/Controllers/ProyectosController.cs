@@ -86,7 +86,7 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
-            return View(proyecto);
+            return PartialView("Edit",proyecto);
         }
 
         // POST: Proyectos/Edit/5
@@ -94,7 +94,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Municipio,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Municipio,Direccion,Cliente")] Proyecto proyecto)
         {
             if (id != proyecto.Id)
             {
@@ -107,6 +107,7 @@ namespace Buildoc.Controllers
                 {
                     _context.Update(proyecto);
                     await _context.SaveChangesAsync();
+                    return Json(new { success = true });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -121,7 +122,7 @@ namespace Buildoc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(proyecto);
+            return PartialView("Edit",proyecto);
         }
 
         // GET: Proyectos/Delete/5

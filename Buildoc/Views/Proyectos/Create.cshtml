@@ -19,9 +19,23 @@
                 <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Municipio" class="control-label"></label>
-                <input asp-for="Municipio" class="form-control" required />
-                <span asp-validation-for="Municipio" class="text-danger"></span>
+                <div id="departamentos-municipios-container">
+                    <!-- Contenedor para los selects de departamentos y municipios -->
+                    <div class="form-group">
+                        <label for="departamentos">Departamento</label>
+                        <select id="departamentos" class="form-control">
+                            <option value="">Seleccione un departamento</option>
+                            @* Los departamentos serán cargados dinámicamente *@
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="municipios">Municipio</label>
+                        <select id="municipios" class="form-control" name="Municipio"  disabled>
+                            <option value="">Seleccione un municipio</option>
+                            @* Los municipios serán cargados dinámicamente según el departamento seleccionado *@
+                        </select>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="Direccion" class="control-label"></label>
@@ -42,4 +56,9 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <!-- Script para manejar departamentos y municipios -->
+    <script src="/js/departamentos.js"></script>
+  
 }
+   
+

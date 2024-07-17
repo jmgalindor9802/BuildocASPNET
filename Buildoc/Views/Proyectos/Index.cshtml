@@ -15,6 +15,7 @@
     </a>
 </p>
 
+
 <table class="table">
     <thead>
         <tr>
@@ -42,9 +43,9 @@
                 <td>@Html.DisplayFor(modelItem => item.Municipio)</td>
                 <td>@Html.DisplayFor(modelItem => item.Cliente)</td>
                 <td>
-                    <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto">Editar</a> |
-                    <a href="#" class="details-item" data-url="@Url.Action("Details", "Proyectos", new { id = item.Id })" data-title="Detalles del proyecto">Detalles</a> |
-                    <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Proyectos", new { id = item.Id })" data-title="Eliminar proyecto">Eliminar</a>
+                    <a href="#" class="create-new" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto">Editar</a> |
+                    <a href="#" class="create-new" data-url="@Url.Action("Details", "Proyectos", new { id = item.Id })" data-title="Detalles del proyecto">Detalles</a> |
+                    <a href="#" class="create-new" data-url="@Url.Action("Delete", "Proyectos", new { id = item.Id })" data-title="Eliminar proyecto">Eliminar</a>
                 </td>
             </tr>
         }
