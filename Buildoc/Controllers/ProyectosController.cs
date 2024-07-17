@@ -155,7 +155,7 @@ namespace Buildoc.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = true });
         }
 
         private bool ProyectoExists(Guid id)

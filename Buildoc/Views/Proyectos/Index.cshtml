@@ -10,8 +10,8 @@
 <p>
     <a href="#" id="createNewModal" class="create-new"
        data-url="@Url.Action("Create", "Proyectos")"
-       data-title="Crear nuevo proyecto">
-        Crear nuevo proyecto
+       data-title="Crear nuevo proyecto" data-action="create">
+        Crear nuevo proyecto  
     </a>
 </p>
 
@@ -43,9 +43,10 @@
                 <td>@Html.DisplayFor(modelItem => item.Municipio)</td>
                 <td>@Html.DisplayFor(modelItem => item.Cliente)</td>
                 <td>
-                    <a href="#" class="create-new" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto">Editar</a> |
-                    <a href="#" class="create-new" data-url="@Url.Action("Details", "Proyectos", new { id = item.Id })" data-title="Detalles del proyecto">Detalles</a> |
-                    <a href="#" class="create-new" data-url="@Url.Action("Delete", "Proyectos", new { id = item.Id })" data-title="Eliminar proyecto">Eliminar</a>
+                  
+                    <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto" data-action="edit">Editar</a> |
+                    <a href="#" class="details-view" data-url="@Url.Action("Details", "Proyectos", new { id = item.Id })" data-title="Detalles del proyecto" data-action="details">Detalles</a> |
+                    <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Proyectos", new { id = item.Id })" data-title="Eliminar proyecto" data-action="delete">Eliminar</a>
                 </td>
             </tr>
         }

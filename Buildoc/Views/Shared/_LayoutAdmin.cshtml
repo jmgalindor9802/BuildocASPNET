@@ -245,7 +245,9 @@
                         </div>
                         <div class="modal-footer justify-content-between">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-primary">Guardar</button>
+                            <button type="button" class="btn btn-primary btn-save" style="display: none;">Guardar</button>
+                            <button type="button" class="btn btn-danger btn-delete" style="display: none;">Eliminar</button>
+                            <button type="button" class="btn btn-secondary btn-edit" style="display: none;">Editar</button>
                         </div>
                     </div>
                     <!-- /.modal-content -->
@@ -280,65 +282,127 @@
         <script src="/AdminLTE/js/demo.js"></script>
         <script>
             $(document).ready(function () {
-                $(document).on('click', '.create-new', function (e) {
+                // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar)
+                $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item', function (e) {
                     e.preventDefault();
                     var url = $(this).data('url');
                     var title = $(this).data('title');
+                    var action = $(this).data('action'); // 'create', 'edit', 'details', 'delete'
 
                     $('#modal-lg .modal-title').text(title);
                     $.get(url).done(function (data) {
                         $('#modal-lg .modal-body').html(data);
                         $('#modal-lg').modal('show');
+
+                        // Configurar los botones del modal según la acción
+                        if (action === 'create' || action === 'edit') {
+                            $('.btn-save').show();
+                            $('.btn-delete').hide();
+                            $('.btn-edit').hide();
+                        } else if (action === 'delete') {
+                            $('.btn-save').hide();
+                            $('.btn-delete').show();
+                            $('.btn-edit').hide();
+                        } else if (action === 'details') {
+                            $('.btn-save').hide();
+                            $('.btn-delete').hide();
+                            $('.btn-edit').show().data('url', url.replace('Details', 'Edit')); // Configurar el botón de editar
+                        }
                     }).fail(function () {
                         console.log('Error al cargar el contenido del modal.');
                     });
                 });
 
-                $('#modal-lg').on('click', '.btn-primary', function (e) {
-                    e.preventDefault(); // Evitar el comportamiento predeterminado del botón
+                // Manejar la acción de guardar
+                $('#modal-lg').on('click', '.btn-save', function (e) {
+                    e.preventDefault();
 
-                    // Borrar los mensajes de alerta anteriores
-                    $('#modal-lg .alert.alert-danger').remove();
-
-                    var form = $('#modal-lg').find('form'); // Buscar el formulario dentro del modal
-
+                    var form = $('#modal-lg').find('form');
                     if (form.length === 0) {
                         console.log('No se encontró el formulario dentro del modal.');
                         $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">No se encontró el formulario dentro del modal.</div>');
                         return;
                     }
 
-                    var formData = form.serialize(); // Serializar los datos del formulario
-
-                    console.log('Form data:', formData);
-
+                    var formData = form.serialize();
                     $.ajax({
                         url: form.attr('action'),
                         type: form.attr('method'),
                         data: formData,
                         success: function (response) {
-                            console.log('Response:', response);
                             if (response.success) {
                                 $('#modal-lg').modal('hide');
-                                location.reload(); // Recargar la página
+                                location.reload();
                             } else {
-                                // Verificar si ya existe un mensaje de error con el mismo contenido
                                 if ($('#modal-lg .alert.alert-danger').length === 0 ||
                                     $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
-                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>'); // Añadir alerta sin eliminar el formulario
+                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
                                 }
                             }
                         },
                         error: function () {
-                            // Verificar si ya existe un mensaje de error con el mismo contenido
                             if ($('#modal-lg .alert.alert-danger').length === 0 ||
                                 $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
-                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>'); // Añadir alerta sin eliminar el formulario
+                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
                             }
                         }
                     });
                 });
+
+                // Manejar la acción de eliminar
+                $('#modal-lg').on('click', '.btn-delete', function (e) {
+                    e.preventDefault();
+
+                    var form = $('#modal-lg').find('form');
+                    if (form.length === 0) {
+                        console.log('No se encontró el formulario dentro del modal.');
+                        $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">No se encontró el formulario dentro del modal.</div>');
+                        return;
+                    }
+
+                    var formData = form.serialize();
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'), // Asegúrate de que el método sea correcto para eliminar
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $('#modal-lg').modal('hide');
+                                location.reload();
+                            } else {
+                                if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                    $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
+                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
+                                }
+                            }
+                        },
+                        error: function () {
+                            if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
+                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
+                            }
+                        }
+                    });
+                });
+
+                // Manejar la acción de editar desde los detalles
+                $('#modal-lg').on('click', '.btn-edit', function (e) {
+                    e.preventDefault();
+                    var editUrl = $(this).data('url');
+         
+                    $.get(editUrl).done(function (data) {
+                        $('#modal-lg .modal-body').html(data);
+                        $('#modal-lg').modal('show');
+                        $('#modal-lg .btn-save').show();
+                        $('#modal-lg .btn-edit').hide();  
+                    }).fail(function () {
+                        console.log('Error al cargar el contenido del modal de edición.');
+                    });
+                });
             });
+
+
+
         </script>
         <script src="/js/departamentos.js"></script>
 
