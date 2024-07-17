@@ -11,6 +11,8 @@ namespace Buildoc.Models
 
         public string Descripcion { get; set; }
         [Required]
+
+        public string Departamento { get; set; }
         public string Municipio { get; set; }
 
         public string Cliente { get; set; }
