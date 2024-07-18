@@ -140,20 +140,7 @@ namespace Buildoc.Controllers
         public IActionResult Create()
         {
             var model = new UsuarioViewModel();
-            return View(model);
-        }
-        //POST modal
-        [HttpPost]
-        public JsonResult Insert(UsuarioViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                return null;
-            }
-            else
-            {
-                return Json("Fallo registro del modal");
-            }
+            return PartialView(model);
         }
         // POST: Usuarios/Create
         [HttpPost]
@@ -187,6 +174,7 @@ namespace Buildoc.Controllers
                     //Asinar el rol
                     await _userManager.AddToRoleAsync(user, model.Role);
                     // Aquí puedes redirigir a la acción deseada después de crear el usuario
+                    TempData["SuccessMessage"] = "¡El usuario se ha creado exitosamente!";
                     return RedirectToAction(nameof(Index));
                 }
 
@@ -197,7 +185,8 @@ namespace Buildoc.Controllers
             }
 
             // Si llegamos aquí, significa que hubo un error en el modelo, devolvemos la vista con errores
-            return View(model);
+            
+            return PartialView("Create", model);
         }
 
         // GET: Usuarios/Edit/5
