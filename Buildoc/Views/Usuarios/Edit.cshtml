@@ -4,10 +4,8 @@
 @{
     ViewData["Title"] = "Editar Usuario";
 }
-
-<h1>Editar Usuario</h1>
 <div class=row justify-content-center">
-    <div class="col-md-6">
+    <div class="col-md-12">
         <form asp-controller="Usuarios" asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
@@ -30,39 +28,52 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="Direccion" class="control-label"></label>
-                        <input asp-for="Direccion" class="form-control" />
-                        <span asp-validation-for="Direccion" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
                         <label asp-for="Cedula" class="control-label"></label>
                         <input asp-for="Cedula" class="form-control" />
                         <span asp-validation-for="Cedula" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <label asp-for="Telefono" class="control-label"></label>
                         <input asp-for="Telefono" class="form-control" />
                         <span asp-validation-for="Telefono" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+            </div>
+            <div class="row">
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="Eps" class="control-label"></label>
-                        <input asp-for="Eps" class="form-control" />
-                        <span asp-validation-for="Eps" class="text-danger"></span>
+                        <label asp-for="FechaNacimiento" class="control-label"></label>
+                        <input asp-for="FechaNacimiento" class="form-control" />
+                        <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="Arl" class="control-label"></label>
-                        <input asp-for="Arl" class="form-control" />
-                        <span asp-validation-for="Arl" class="text-danger"></span>
+                        <label asp-for="Direccion" class="control-label"></label>
+                        <input asp-for="Direccion" class="form-control" />
+                        <span asp-validation-for="Direccion" class="text-danger"></span>
+                    </div>
+                </div>
+                <div id="departamentos-municipios-container">
+                    <!-- Contenedor para los selects de departamentos y municipios -->
+                    <div class="form-group">
+
+                        <label for="departamentos">Departamento</label>
+                        <select id="departamentos" class="form-control" name="Departamento">
+                            <option value="">Seleccione un departamento</option>
+                            @* Los departamentos serán cargados dinámicamente *@
+                        </select>
+
+                    </div>
+                    <div class="form-group">
+
+                        <label for="municipios">Municipio</label>
+                        <select id="municipios" class="form-control" name="Municipio" disabled>
+                            <option value="">Seleccione un municipio</option>
+                            @* Los municipios serán cargados dinámicamente según el departamento seleccionado *@
+                        </select>
                     </div>
                 </div>
             </div>
@@ -88,13 +99,6 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="FechaNacimiento" class="control-label"></label>
-                        <input asp-for="FechaNacimiento" class="form-control" />
-                        <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="form-group">
                         <label asp-for="Profesion" class="control-label"></label>
                         <input asp-for="Profesion" class="form-control" />
                         <span asp-validation-for="Profesion" class="text-danger"></span>
@@ -102,18 +106,17 @@
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label asp-for="Municipio" class="control-label"></label>
-                        <input asp-for="Municipio" class="form-control" />
-                        <span asp-validation-for="Municipio" class="text-danger"></span>
+                        <label asp-for="Eps" class="control-label"></label>
+                        <input asp-for="Eps" class="form-control" />
+                        <span asp-validation-for="Eps" class="text-danger"></span>
                     </div>
                 </div>
-            </div>
-            
-
-            <div class="row justify-content-center mt-3">
-                <div class="col-md-6 text-center">
-                    <input type="submit" value="Actualizar" class="btn btn-primary mr-5" />
-                    <a asp-action="Index" class="btn btn-danger">Cancelar</a>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label asp-for="Arl" class="control-label"></label>
+                        <input asp-for="Arl" class="form-control" />
+                        <span asp-validation-for="Arl" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
         </form>

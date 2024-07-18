@@ -68,33 +68,55 @@
 
         <div class="row">
             <div class="col-3">
-                <a href="#" id="createNewModal" class="create-new"
+                <a href="#" id="createNewModal" class="create-new btn btn-primary"
                    data-url="@Url.Action("Create", "Usuarios")"
                    data-title="Crear nuevo usuario" data-action="create">
                     Crear usuario
                 </a>
             </div>
+
             <div class="col-3">
                 <form asp-action="DescargarPDF" asp-controller="Usuarios">
                     <button class="btn btn-success" type="submit">Descargar PDF</button>
                 </form>
             </div>
-        </div>
-        <div class="row">
             <div class="col-3">
-                <form method="get" asp-action="Index">
-                    <div class="form-group">
-                        <label for="roleFilter">Filtrar por rol:</label>
-                        <select name="roleFilter" id="roleFilter" class="form-control">
-                            <option value="">Todos</option>
-                            <option value="Trabajador">Trabajador</option>
-                            <option value="Coordinador">Coordinador</option>
-                        </select>
-                        <button type="submit" class="btn btn-primary">Filtrar</button>
-                    </div>
-                </form>
+                <button class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
+                    Filtrar por rol
+                </button>
             </div>
         </div>
+        @* modal *@
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="filterModalLabel">Filtrar por rol</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="get" asp-action="Index">
+                            <div class="form-group">
+                                <label for="roleFilter">Filtrar por rol:</label>
+                                <select name="roleFilter" id="roleFilter" class="form-control">
+                                    <option value="">Todos</option>
+                                    <option value="Trabajador">Trabajador</option>
+                                    <option value="Coordinador">Coordinador</option>
+                                    <option value="Administrador">Administrador</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-primary">Aplicar filtro</button>
+                                <a href="@Url.Action("Index", "Usuarios")" class="btn btn-danger">Limpiar filtro</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -121,18 +143,18 @@
                                         @Html.DisplayFor(modelItem => usuario.Direccion)
                                     </td>
                                     <td>
-                                        <a asp-action="Edit" style="color: blue;" asp-route-id="@usuario.Id">
+                                        <a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })" data-title="Editar usuario" data-action="edit">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                 <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                                                 <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                                             </svg>
                                         </a> |
-                                        <a asp-action="Details" asp-route-id="@usuario.Id">
+                                        <a href="#" class="details-view" data-url="@Url.Action("Details", "Usuarios", new { id = usuario.Id })" data-title="Detalles del usuario" data-action="details">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                                             </svg>
                                         </a> |
-                                        <a asp-action="Delete" style="color: red;" asp-route-id="@usuario.Id">
+                                        <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })" data-title="Desactivar usuario" data-action="delete">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
                                                 <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
                                             </svg>
@@ -147,3 +169,13 @@
         </div>  
     </div>
 </section>
+@section Scripts {
+    
+    <script>
+        $(document).ready(function () {
+            $('#filterModal').on('shown.bs.modal', function () {
+                $('#roleFilter').trigger('focus')
+            })
+        });
+    </script>
+}

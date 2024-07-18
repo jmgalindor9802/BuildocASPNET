@@ -17,6 +17,8 @@ namespace Buildoc.Models
         [Required(ErrorMessage = "Campo requerido")]
         public string Municipio { get; set; }
         [Required(ErrorMessage = "Campo requerido")]
+        public string Departamento { get; set; }
+        [Required(ErrorMessage = "Campo requerido")]
         public string Direccion { get; set; }
         [Required(ErrorMessage = "Campo requerido")]
         public string Eps { get; set; }

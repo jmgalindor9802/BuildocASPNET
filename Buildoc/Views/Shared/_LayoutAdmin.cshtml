@@ -309,6 +309,9 @@
                         $('#modal-lg .modal-body').html(data);
                         $('#modal-lg').modal('show');
 
+                        //Intento de metodo para mostrar validaciones
+                        // $.validator.unobtrusive.parse($('#modal-lg'));
+
                         // Configurar los botones del modal según la acción
                         if (action === 'create' || action === 'edit') {
                             $('.btn-save').show();

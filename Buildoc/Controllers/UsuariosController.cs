@@ -131,8 +131,7 @@ namespace Buildoc.Controllers
                 Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault() // Suponiendo que el usuario tiene un solo rol
             };
-
-            return View(viewModel);
+            return PartialView("Details", viewModel);
         }
 
 
@@ -162,6 +161,7 @@ namespace Buildoc.Controllers
                     Eps = model.Eps,
                     FechaNacimiento = model.FechaNacimiento,
                     Municipio = model.Municipio,
+                    Departamento = model.Departamento,
                     Profesion = model.Profesion,
                     Telefono = model.Telefono,
                     
@@ -175,7 +175,7 @@ namespace Buildoc.Controllers
                     await _userManager.AddToRoleAsync(user, model.Role);
                     // Aquí puedes redirigir a la acción deseada después de crear el usuario
                     TempData["SuccessMessage"] = "¡El usuario se ha creado exitosamente!";
-                    return RedirectToAction(nameof(Index));
+                    return Json(new { success = true });
                 }
 
                 foreach (var error in result.Errors)
@@ -214,14 +214,14 @@ namespace Buildoc.Controllers
                 FechaNacimiento = usuario.FechaNacimiento,
                 Direccion = usuario.Direccion,
                 Municipio = usuario.Municipio,
+                Departamento = usuario.Departamento,
                 Eps = usuario.Eps,
                 Arl = usuario.Arl,
                 Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault(), // Suponiendo que el usuario tiene un solo rol
 
             };
-
-            return View(viewModel);
+            return PartialView("Edit", viewModel);
         }
 
 
@@ -252,6 +252,7 @@ namespace Buildoc.Controllers
                     usuarioToUpdate.FechaNacimiento = viewModel.FechaNacimiento;
                     usuarioToUpdate.Direccion = viewModel.Direccion;
                     usuarioToUpdate.Municipio = viewModel.Municipio;
+                    usuarioToUpdate.Departamento = viewModel.Departamento;
                     usuarioToUpdate.Eps = viewModel.Eps;
                     usuarioToUpdate.Arl = viewModel.Arl;
                     usuarioToUpdate.Profesion = viewModel.Profesion;
@@ -265,7 +266,8 @@ namespace Buildoc.Controllers
                         await _userManager.RemoveFromRolesAsync(usuarioToUpdate, currentRoles);
                         await _userManager.AddToRoleAsync(usuarioToUpdate, viewModel.Role);
 
-                        return RedirectToAction(nameof(Index));
+                        TempData["SuccessMessage"] = "¡El usuario se ha editado exitosamente!";
+                        return Json(new { success = true });
                     }
                     else
                     {
@@ -303,7 +305,7 @@ namespace Buildoc.Controllers
             }
 
             // Si llegamos aquí, significa que ModelState no es válido, devolvemos la vista con errores
-            return View(viewModel);
+            return PartialView("Edit", viewModel);
         }
 
 
@@ -333,13 +335,13 @@ namespace Buildoc.Controllers
                 FechaNacimiento = usuario.FechaNacimiento,
                 Direccion = usuario.Direccion,
                 Municipio = usuario.Municipio,
+                Departamento = usuario.Departamento,
                 Eps = usuario.Eps,
                 Arl = usuario.Arl,
                 Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
             };
-
-            return View(viewModel);
+            return PartialView("Delete", viewModel);
         }
 
         // POST: Usuarios/Delete/5
@@ -356,7 +358,8 @@ namespace Buildoc.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction(nameof(Index));
+                    TempData["SuccessMessage"] = "¡El usuario se ha desactivado exitosamente!";
+                    return Json(new { success = true });
                 }
                 else
                 {
@@ -364,7 +367,7 @@ namespace Buildoc.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    return View(usuario); // Devolver la vista con el usuario si hay errores
+                    return PartialView(usuario); // Devolver la vista con el usuario si hay errores
                 }
             }
 
@@ -396,7 +399,7 @@ namespace Buildoc.Controllers
 
             return View(usuariosConRoles);
         }
-
+        //Cargar los  datos para la vista, Reactivar los usuarios desactivados
         public async Task<IActionResult> ReactivarUsuario(string id)
         {
             if (id == null)
@@ -421,13 +424,13 @@ namespace Buildoc.Controllers
                 FechaNacimiento = usuario.FechaNacimiento,
                 Direccion = usuario.Direccion,
                 Municipio = usuario.Municipio,
+                Departamento = usuario.Departamento,
                 Eps = usuario.Eps,
                 Arl = usuario.Arl,
                 Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
             };
-
-            return View(viewModel);
+            return PartialView("ReactivarUsuario", viewModel);
         }
 
         // POST: Usuarios/Delete/5
@@ -452,7 +455,7 @@ namespace Buildoc.Controllers
                     {
                         ModelState.AddModelError(string.Empty, error.Description);
                     }
-                    return View(usuario); // Devolver la vista con el usuario si hay errores
+                    return PartialView(usuario); // Devolver la vista con el usuario si hay errores
                 }
             }
 

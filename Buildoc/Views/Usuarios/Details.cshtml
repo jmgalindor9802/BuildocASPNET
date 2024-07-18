@@ -3,9 +3,6 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Detalles del usuario</h1>
-<hr />
-
 <div class="container">
 
     <dl class="row">
@@ -46,6 +43,12 @@
             @Html.DisplayFor(model => model.Direccion)
         </dd>
         <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Departamento)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Departamento)
+        </dd>
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Municipio)
         </dt>
         <dd class="col-sm-9">
@@ -77,10 +80,4 @@
         </dd>
         <!-- Agrega más campos según sea necesario -->
     </dl>
-    <div class="text-center mt-4">
-        <div class="btn-group" role="group" aria-label="Acciones">
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Editar</a>
-            <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
-        </div>
-    </div>
 </div>

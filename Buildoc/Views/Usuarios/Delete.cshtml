@@ -4,8 +4,6 @@
     ViewData["Title"] = "Eliminar Usuario";
 }
 
-<h1>Eliminar Usuario</h1>
-
 <h3>¿Está seguro que desea deshabilitar este usuario?</h3>
 <div class="container">
     <h4>Detalles del Usuario</h4>
@@ -48,6 +46,12 @@
             @Html.DisplayFor(model => model.Direccion)
         </dd>
         <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Departamento)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Departamento)
+        </dd>
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.Municipio)
         </dt>
         <dd class="col-sm-9">
@@ -79,11 +83,4 @@
         </dd>
         <!-- Agrega más campos según sea necesario -->
     </dl>
-    <div class="text-center mt-4">
-        <form asp-action="Delete">
-            <input type="hidden" asp-for="Id" />
-            <button type="submit" class="btn btn-danger">Eliminar</button> |
-            <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
 </div>

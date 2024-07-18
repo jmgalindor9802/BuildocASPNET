@@ -10,6 +10,7 @@ namespace Buildoc.Models
         public string? Nombres { get; set; }
         public string? Apellidos { get; set; }
         public string? Municipio { get; set; }
+        public string? Departamento { get; set; }
         public string? Direccion { get; set; }
         public string? Eps { get; set; }
         public string? Arl { get; set; }
