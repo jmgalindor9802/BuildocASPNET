@@ -11,6 +11,14 @@ using System.Security.Policy;
 using System.Threading.Tasks;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using System.Text.Encodings.Web;
+using System.Net.Mail;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 namespace Buildoc.Controllers
 {
     public class UsuariosController : Controller
@@ -21,14 +29,19 @@ namespace Buildoc.Controllers
         private readonly UserManager<Usuario> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IWebHostEnvironment _host;
-        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IWebHostEnvironment host)
+        private readonly IEmailSender _emailSender;
+        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IWebHostEnvironment host, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _host = host;
+            _emailSender = emailSender;
         }
-
+        public string ReturnUrl { get; set; }
+        private string myEmail = "buildoc2@gmail.com";
+        private string myPassword = "enux ynxq flpn xoza";
+        private string myAlias = "BuilDoc";
         // GET: Usuarios
         public async Task<IActionResult> Index(string roleFilter)
         {
@@ -144,8 +157,9 @@ namespace Buildoc.Controllers
         // POST: Usuarios/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(UsuarioViewModel model)
+        public async Task<IActionResult> Create(UsuarioViewModel model, string returnUrl = null)
         {
+            returnUrl ??= Url.Content("~/");
             if (ModelState.IsValid)
             {
                 var user = new Usuario
@@ -174,6 +188,17 @@ namespace Buildoc.Controllers
                     //Asinar el rol
                     await _userManager.AddToRoleAsync(user, model.Role);
                     // Aquí puedes redirigir a la acción deseada después de crear el usuario
+                    // Generar el token de confirmación de correo electrónico
+                    var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                    var callbackUrl = Url.Page(
+                        "/Account/ConfirmEmail",
+                        pageHandler: null,
+                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
+                        protocol: Request.Scheme);
+                    // Enviar el correo electrónico de confirmación
+                    await SendEmailAsync(model.Email, "Confirm your email",
+                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
                     TempData["SuccessMessage"] = "¡El usuario se ha creado exitosamente!";
                     return Json(new { success = true });
                 }
@@ -188,6 +213,39 @@ namespace Buildoc.Controllers
             
             return PartialView("Create", model);
         }
+
+        private async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
+        {
+            try
+            {
+                MailMessage message = new MailMessage();
+                SmtpClient smtpClient = new SmtpClient();
+                message.From = new MailAddress(myEmail, myAlias, System.Text.Encoding.UTF8);
+                message.To.Add(email);
+                message.Subject = subject;
+                message.IsBodyHtml = true;
+                message.Body = confirmLink;
+
+                smtpClient.Port = 587; // Cambiar el puerto a 587
+                smtpClient.Host = "smtp.gmail.com"; // Cambiar el host a smtp.gmail.com
+                smtpClient.UseDefaultCredentials = false;
+                smtpClient.Credentials = new NetworkCredential(myEmail, myPassword);
+                smtpClient.EnableSsl = true; // Asegurarse de que SSL esté habilitado
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+
+                // Eliminar la validación del certificado del servidor, ya que puede causar problemas de seguridad
+                // ServicePointManager.ServerCertificateValidationCallback = delegate (object s, X509Certificate certificate, X509Chain chain, SslPolicyErrors errors) { return true; };
+
+                await smtpClient.SendMailAsync(message);
+                return true; // Aseguramos que se devuelve true cuando el correo se envía correctamente
+            }
+            catch (Exception ex)
+            {
+                // Aquí puedes registrar el error para un análisis posterior
+                return false;
+            }
+        }
+
 
         // GET: Usuarios/Edit/5
         public async Task<IActionResult> Edit(string id)
