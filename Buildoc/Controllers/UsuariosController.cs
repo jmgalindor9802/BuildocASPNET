@@ -191,15 +191,18 @@ namespace Buildoc.Controllers
                     // Generar el token de confirmación de correo electrónico
                     var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                    var callbackUrl = Url.Page(
-                        "/Account/ConfirmEmail",
-                        pageHandler: null,
-                        values: new { area = "Identity", userId = user.Id, code = code, returnUrl = returnUrl },
-                        protocol: Request.Scheme);
+                    var callbackUrl = Url.Action(
+                        "ConfirmEmail",
+                        "Usuarios",
+                        new { userId = user.Id, code = code, returnUrl = returnUrl },
+                            protocol: Request.Scheme);
                     // Enviar el correo electrónico de confirmación
-                    await SendEmailAsync(model.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-                    TempData["SuccessMessage"] = "¡El usuario se ha creado exitosamente!";
+                    await SendEmailAsync(model.Email, "Confirmación de correo electrónico",
+                $"<p>Hola {user.Nombres},</p>" +
+                "<p>Gracias por unirte a BuilDoc para el manejo de usuarios, proyectos, inspecciones e incidentes.</p>" +
+                "<p>Por favor, confirma tu cuenta haciendo clic en el botón a continuación:</p>" +
+                $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style='display:inline-block;padding:10px 20px;color:#fff;background-color:#007bff;text-decoration:none;border-radius:5px;'>Confirmar cuenta</a>" +
+                "<p>Después de verificar tu cuenta, se te pedirá que hagas un restablecimiento de contraseña. Por favor, sigue las instrucciones y disfruta.</p>");
                     return Json(new { success = true });
                 }
 
@@ -244,6 +247,71 @@ namespace Buildoc.Controllers
                 // Aquí puedes registrar el error para un análisis posterior
                 return false;
             }
+        }
+
+        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        {
+            if (userId == null || code == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return NotFound($"No se pudo cargar el usuario con ID '{userId}'.");
+            }
+
+            code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
+            var result = await _userManager.ConfirmEmailAsync(user, code);
+
+            var model = new ConfirmEmailViewModel
+            {
+                StatusMessage = result.Succeeded ? "Gracias por confirmar tu correo electrónico." : "Error al confirmar tu correo electrónico.",
+                UserEmail = user.Email
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult ForgotPassword(string email)
+        {
+            var model = new ForgotPasswordViewModel { Email = email };
+            return View(model);
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+                {
+                    // No revelar que el usuario no existe o no está confirmado
+                    return RedirectToPage("/Account/ForgotPasswordConfirmation", new { area = "Identity" });
+                }
+
+                var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var callbackUrl = Url.Page(
+                    "/Account/ResetPassword",
+                    pageHandler: null,
+                    values: new { area = "Identity", code },
+                    protocol: Request.Scheme);
+
+                await SendEmailAsync(
+                    model.Email,
+                    "Restablecer Contraseña",
+                    $"Por favor, restablece tu contraseña haciendo <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clic aquí</a>.");
+
+                return RedirectToPage("/Account/ForgotPasswordConfirmation", new { area = "Identity" });
+            }
+
+            return View(model);
         }
 
 

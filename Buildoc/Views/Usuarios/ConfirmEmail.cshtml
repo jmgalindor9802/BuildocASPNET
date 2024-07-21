@@ -1,0 +1,15 @@
+﻿@model ConfirmEmailViewModel
+@{
+    ViewData["Title"] = "Confirmar correo electrónico";
+}
+
+<h1>@ViewData["Title"]</h1>
+<p>@Model.StatusMessage</p>
+
+@if (Model.StatusMessage == "Gracias por confirmar tu correo electrónico.")
+{
+    <form method="post" asp-controller="Usuarios" asp-action="ForgotPassword">
+        <input type="hidden" name="Email" value="@Model.UserEmail" />
+        <button type="submit" class="btn btn-primary">Cambiar contraseña</button>
+    </form>
+}
