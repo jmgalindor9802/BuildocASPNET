@@ -22,14 +22,14 @@
             {
                
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Acudiente: @UserManager.GetUserName(User)!</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coordinador: @UserManager.GetUserName(User)!</a>
                 </li>
             }
             else if (User.IsInRole("Trabajador"))
             {
               
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Madre Comunitaria: @UserManager.GetUserName(User)!</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Residente de obra: @UserManager.GetUserName(User)!</a>
                 </li>
             }
 
