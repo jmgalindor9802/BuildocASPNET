@@ -205,23 +205,79 @@
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
-                        <li class="nav-item">
-                            <a asp-action="Index" asp-controller="Usuarios" class="nav-link">
-                                <i class="nav-icon fas fa-users"></i>               
-                                <p>
-                                   Usuarios
-                                </p>
-                            </a>                           
-                        </li>
-                        <li class="nav-item">
-                            <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
-                                <i class="nav-icon fas fa-building"></i>
-                                <p>
-                                   Proyectos
+                        @if (SignInManager.IsSignedIn(User))
+                        {
 
-                                </p>
-                            </a>
-                        </li>
+                            @if (User.IsInRole("Administrador"))
+                            {
+
+                                <li class="nav-item">
+                                    <a asp-action="Index" asp-controller="Usuarios" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Usuarios
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Coordinador"))
+                            {
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                            Proyectos
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                            Inpecciones
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                            Incidentes
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Trabajador"))
+                            {
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                         Inpecciones
+
+                                        </p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                        <i class="nav-icon fas fa-building"></i>
+                                        <p>
+                                            Incidentes
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                     
+                       
 
 
                         <!--   <li class="nav-header">MISCELLANEOUS</li> -->
@@ -470,7 +526,7 @@
                     "ordering": true,
                     "info": true,
               
-                    "buttons": ["csv", "excel", "pdf"]
+                    "buttons": ["csv", "excel", "pdf","colvis"]
                 }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
 
             
