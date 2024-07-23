@@ -26,19 +26,30 @@ namespace Buildoc.Controllers
         // GET: Proyectos
         public async Task<IActionResult> Index()
         {
-            // Obtener todos los proyectos
-            var proyectos = await _context.Proyectos.ToListAsync();
+            // Obtener el usuario logueado
+            var usuarioLogueado = await _userManager.GetUserAsync(User);
+            if (usuarioLogueado == null)
+            {
+                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
+            }
+
+            // Filtrar proyectos donde el coordinador es el usuario logueado
+            var proyectos = await _context.Proyectos
+                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                .ToListAsync();
 
             // Contar los proyectos con estado "Activo"
-            var countActivos = await _context.Proyectos.CountAsync(p => p.Estado == "Activo");
+            var countActivos = await _context.Proyectos.CountAsync(p => p.Estado == "Activo" && p.CoordinadorId == usuarioLogueado.Id);
 
             // Contar los proyectos con estado "Finalizado"
-            var countFinalizados = await _context.Proyectos.CountAsync(p => p.Estado == "Finalizado");
+            var countFinalizados = await _context.Proyectos.CountAsync(p => p.Estado == "Finalizado" && p.CoordinadorId == usuarioLogueado.Id);
 
             // Pasar los datos a la vista
             ViewBag.CountActivos = countActivos;
             ViewBag.CountFinalizados = countFinalizados;
-            return View(await _context.Proyectos.ToListAsync());
+           return View(proyectos); // Retornar solo los proyectos donde el coordinador es el usuario logueado
+        
+           // return View(await _context.Proyectos.ToListAsync());
         }
 
         // GET: Proyectos/Details/5
