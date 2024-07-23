@@ -40,6 +40,7 @@ namespace Buildoc.Controllers
             _emailSender = emailSender;
             _authorizationService = authorizationService;
         }
+
         public string ReturnUrl { get; set; }
         private string myEmail = "buildoc2@gmail.com";
         private string myPassword = "enux ynxq flpn xoza";
@@ -124,6 +125,7 @@ namespace Buildoc.Controllers
         }
 
         // GET: Usuarios/Details/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Details(string id)
         {
             if (id == null)
@@ -191,12 +193,14 @@ namespace Buildoc.Controllers
         }
 
         // GET: Usuarios/Create
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
             var model = new UsuarioViewModel();
             return PartialView(model);
         }
         // POST: Usuarios/Create
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(UsuarioViewModel model, string returnUrl = null)
@@ -259,11 +263,13 @@ namespace Buildoc.Controllers
                             protocol: Request.Scheme);
                     // Enviar el correo electrónico de confirmación
                     await SendEmailAsync(model.Email, "Confirmación de correo electrónico",
-                $"<p>Hola {user.Nombres},</p>" +
-                "<p>Gracias por unirte a BuilDoc para el manejo de usuarios, proyectos, inspecciones e incidentes.</p>" +
-                "<p>Por favor, confirma tu cuenta haciendo clic en el botón a continuación:</p>" +
-                $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style='display:inline-block;padding:10px 20px;color:#fff;background-color:#007bff;text-decoration:none;border-radius:5px;'>Confirmar cuenta</a>" +
-                "<p>Después de verificar tu cuenta, se te pedirá que hagas un restablecimiento de contraseña. Por favor, sigue las instrucciones y disfruta.</p>");
+                        $"<p>Hola {user.Nombres},</p>" +
+                        "<p>Gracias por unirte a BuilDoc para el manejo de usuarios, proyectos, inspecciones e incidentes.</p>" +
+                        "<p>Tu contraseña temporal es: <strong>" + randomPassword + "</strong></p>" +
+                        "<p>Por favor, confirma tu cuenta haciendo clic en el botón a continuación:</p>" +
+                        $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style='display:inline-block;padding:10px 20px;color:#fff;background-color:#007bff;text-decoration:none;border-radius:5px;'>Confirmar cuenta</a>" +
+                        "<p>Después de verificar tu cuenta, se te pedirá que hagas un restablecimiento de contraseña. Por favor, sigue las instrucciones y disfruta.</p>");
+                    TempData["SuccessMessage"] = "¡El usuario se ha editado exitosamente!";
                     return Json(new { success = true });
                 }
 
@@ -278,7 +284,7 @@ namespace Buildoc.Controllers
             return PartialView("Create", model);
         }
 
-        private async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
+        public async Task<bool> SendEmailAsync(string email, string subject, string confirmLink)
         {
             try
             {
@@ -377,6 +383,7 @@ namespace Buildoc.Controllers
 
 
         // GET: Usuarios/Edit/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(string id)
         {
             var usuario = await _context.Users.FindAsync(id);
@@ -406,13 +413,13 @@ namespace Buildoc.Controllers
                 Arl = usuario.Arl,
                 Profesion = usuario.Profesion,
                 Role = roles.FirstOrDefault(), // Suponiendo que el usuario tiene un solo rol
-
             };
             return PartialView("Edit", viewModel);
         }
 
 
         // POST: Usuarios/Edit/5
+        [Authorize(Roles = "Administrador")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string id, EditUsuarioViewModel viewModel)
@@ -498,6 +505,7 @@ namespace Buildoc.Controllers
 
 
         // GET: Usuarios/Delete/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(string id)
         {
             if (id == null)
@@ -533,6 +541,7 @@ namespace Buildoc.Controllers
         }
 
         // POST: Usuarios/Delete/5
+        [Authorize(Roles = "Administrador")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
@@ -562,6 +571,7 @@ namespace Buildoc.Controllers
             return NotFound(); // Usuario no encontrado
         }
 
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> UsuarioDesactivado()
         {
             var todosUsuarios = await _userManager.Users.ToListAsync(); // Obtén todos los usuarios
@@ -597,7 +607,9 @@ namespace Buildoc.Controllers
 
             return View(usuariosConRoles);
         }
+
         //Cargar los  datos para la vista, Reactivar los usuarios desactivados
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> ReactivarUsuario(string id)
         {
             if (id == null)
@@ -632,6 +644,7 @@ namespace Buildoc.Controllers
         }
 
         // POST: Usuarios/Delete/5
+        [Authorize(Roles = "Administrador")]
         [HttpPost, ActionName("ReactivarUsuario")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ReactivarUsuarioConfirmed(string id)
