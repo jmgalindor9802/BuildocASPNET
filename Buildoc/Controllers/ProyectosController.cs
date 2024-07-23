@@ -115,7 +115,9 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var proyecto = await _context.Proyectos.FindAsync(id);
+            var proyecto = await _context.Proyectos
+                                         .Include(p => p.Coordinador) // Incluir el Coordinador
+                                         .FirstOrDefaultAsync(m => m.Id == id);
             if (proyecto == null)
             {
                 return NotFound();
@@ -128,7 +130,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado,CoordinadorId")] Proyecto proyecto)
         {
             if (id != proyecto.Id)
             {
@@ -139,6 +141,14 @@ namespace Buildoc.Controllers
             {
                 try
                 {
+                    // Mantener el CoordinadorId original
+                    var existingProyecto = await _context.Proyectos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == proyecto.Id);
+                    if (existingProyecto != null)
+                    {
+                        proyecto.CoordinadorId = existingProyecto.CoordinadorId;
+                    }
+
+
                     _context.Update(proyecto);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
