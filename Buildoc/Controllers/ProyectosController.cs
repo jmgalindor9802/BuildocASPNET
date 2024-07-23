@@ -7,21 +7,37 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace Buildoc.Controllers
 {
     public class ProyectosController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Usuario> _userManager;
 
-        public ProyectosController(ApplicationDbContext context)
+        public ProyectosController(ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Proyectos
         public async Task<IActionResult> Index()
         {
+            // Obtener todos los proyectos
+            var proyectos = await _context.Proyectos.ToListAsync();
+
+            // Contar los proyectos con estado "Activo"
+            var countActivos = await _context.Proyectos.CountAsync(p => p.Estado == "Activo");
+
+            // Contar los proyectos con estado "Finalizado"
+            var countFinalizados = await _context.Proyectos.CountAsync(p => p.Estado == "Finalizado");
+
+            // Pasar los datos a la vista
+            ViewBag.CountActivos = countActivos;
+            ViewBag.CountFinalizados = countFinalizados;
             return View(await _context.Proyectos.ToListAsync());
         }
 
@@ -54,7 +70,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto)
         {
             // Verificar si ya existe un proyecto con el mismo nombre
             var existingProyecto = await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre);
@@ -66,6 +82,12 @@ namespace Buildoc.Controllers
             if (ModelState.IsValid)
             {
                 proyecto.Id = Guid.NewGuid();
+                proyecto.Estado = "Activo";
+
+                // Obtener el ID del usuario actual
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                proyecto.CoordinadorId = userId;
+
                 _context.Add(proyecto);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡El proyecto se ha creado exitosamente!";
@@ -95,7 +117,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto)
         {
             if (id != proyecto.Id)
             {

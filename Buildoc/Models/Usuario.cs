@@ -17,5 +17,10 @@ namespace Buildoc.Models
         public string? Profesion { get; set; }
         public DateOnly? FechaNacimiento { get; set; }
 
+        public ICollection<Proyecto> Proyectos { get; set; }
+        public Usuario()
+        {
+            Proyectos = new List<Proyecto>();
+        }
     }
 }

@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240722231737_ProyectoEstado")]
+    partial class ProyectoEstado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,9 +34,6 @@ namespace Buildoc.Data.Migrations
                     b.Property<string>("Cliente")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CoordinadorId")
-                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Departamento")
                         .IsRequired()
@@ -60,8 +60,6 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CoordinadorId");
 
                     b.ToTable("Proyectos");
                 });
@@ -304,31 +302,6 @@ namespace Buildoc.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("ProyectoUsuario", b =>
-                {
-                    b.Property<Guid>("ProyectosId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ResidentesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("ProyectosId", "ResidentesId");
-
-                    b.HasIndex("ResidentesId");
-
-                    b.ToTable("ProyectoResidentes", (string)null);
-                });
-
-            modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
-                {
-                    b.HasOne("Buildoc.Models.Usuario", "Coordinador")
-                        .WithMany()
-                        .HasForeignKey("CoordinadorId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("Coordinador");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -376,21 +349,6 @@ namespace Buildoc.Data.Migrations
                     b.HasOne("Buildoc.Models.Usuario", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ProyectoUsuario", b =>
-                {
-                    b.HasOne("Buildoc.Models.Proyecto", null)
-                        .WithMany()
-                        .HasForeignKey("ProyectosId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Buildoc.Models.Usuario", null)
-                        .WithMany()
-                        .HasForeignKey("ResidentesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

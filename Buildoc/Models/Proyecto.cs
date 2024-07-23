@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Buildoc.Models
 {
@@ -17,6 +18,17 @@ namespace Buildoc.Models
 
         public string Cliente { get; set; }
         public string Direccion { get; set; }
+
+        public string Estado { get; set; }
+        
+
+        public string? CoordinadorId { get; set; }
+
+        public virtual Usuario? Coordinador { get; set; }
+
+
+        public virtual ICollection<Usuario> Residentes { get; set; } = new List<Usuario>();
+
 
 
     }
