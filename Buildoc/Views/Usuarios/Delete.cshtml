@@ -34,6 +34,12 @@
             @Html.DisplayFor(model => model.Cedula)
         </dd>
         <dt class="col-sm-3">
+            @Html.DisplayNameFor(model => model.Telefono)
+        </dt>
+        <dd class="col-sm-9">
+            @Html.DisplayFor(model => model.Telefono)
+        </dd>
+        <dt class="col-sm-3">
             @Html.DisplayNameFor(model => model.FechaNacimiento)
         </dt>
         <dd class="col-sm-9">
@@ -83,4 +89,7 @@
         </dd>
         <!-- Agrega más campos según sea necesario -->
     </dl>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+    </form>
 </div>

@@ -30,19 +30,24 @@ namespace Buildoc.Controllers
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IWebHostEnvironment _host;
         private readonly IEmailSender _emailSender;
-        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IWebHostEnvironment host, IEmailSender emailSender)
+        private readonly IAuthorizationService _authorizationService;
+        public UsuariosController(ApplicationDbContext context, UserManager<Usuario> userManager, RoleManager<IdentityRole> roleManager, IWebHostEnvironment host, IEmailSender emailSender, IAuthorizationService authorizationService)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _host = host;
             _emailSender = emailSender;
+            _authorizationService = authorizationService;
         }
         public string ReturnUrl { get; set; }
         private string myEmail = "buildoc2@gmail.com";
         private string myPassword = "enux ynxq flpn xoza";
         private string myAlias = "BuilDoc";
+
+
         // GET: Usuarios
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Index(string roleFilter)
         {
             var todosUsuarios = await _userManager.Users.ToListAsync(); // Obtén todos los usuarios
@@ -69,16 +74,20 @@ namespace Buildoc.Controllers
             foreach (var usuario in usuarios)
             {
                 var roles = await _userManager.GetRolesAsync(usuario);
-                usuariosConRoles.Add(new IndexUsuarioViewModel
+
+                if (!roles.Contains("Administrador"))
                 {
-                    Id = usuario.Id,
-                    Email = usuario.Email,
-                    Nombres = usuario.Nombres,
-                    Direccion = usuario.Direccion,
-                    Estado = usuario.Estado,
-                    Cedula = usuario.Cedula,
-                    Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
-                });
+                    usuariosConRoles.Add(new IndexUsuarioViewModel
+                    {
+                        Id = usuario.Id,
+                        Email = usuario.Email,
+                        Nombres = usuario.Nombres,
+                        Direccion = usuario.Direccion,
+                        Estado = usuario.Estado,
+                        Cedula = usuario.Cedula,
+                        Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+                    });
+                }
             }
 
             return View(usuariosConRoles);
@@ -136,6 +145,8 @@ namespace Buildoc.Controllers
                 Nombres = usuario.Nombres,
                 Apellidos = usuario.Apellidos,
                 Cedula = usuario.Cedula,
+                Departamento = usuario.Departamento,
+                Telefono = usuario.Telefono,
                 FechaNacimiento = usuario.FechaNacimiento,
                 Direccion = usuario.Direccion,
                 Municipio = usuario.Municipio,
@@ -147,6 +158,37 @@ namespace Buildoc.Controllers
             return PartialView("Details", viewModel);
         }
 
+        public class PasswordGenerator
+        {
+            public static string GenerateRandomPassword(int length = 10)
+            {
+                if (length < 6) length = 6; // Ensure minimum length for complexity requirements
+
+                const string uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                const string lowercase = "abcdefghijklmnopqrstuvwxyz";
+                const string digits = "0123456789";
+                const string specialChars = "!@#$%^&*()_+";
+                const string allChars = uppercase + lowercase + digits + specialChars;
+
+                var random = new Random();
+
+                // Ensure the password contains at least one of each required character type
+                var password = new char[length];
+                password[0] = uppercase[random.Next(uppercase.Length)];
+                password[1] = lowercase[random.Next(lowercase.Length)];
+                password[2] = digits[random.Next(digits.Length)];
+                password[3] = specialChars[random.Next(specialChars.Length)];
+
+                // Fill the rest of the password with random characters
+                for (int i = 4; i < length; i++)
+                {
+                    password[i] = allChars[random.Next(allChars.Length)];
+                }
+
+                // Shuffle the array to avoid a predictable pattern
+                return new string(password.OrderBy(x => random.Next()).ToArray());
+            }
+        }
 
         // GET: Usuarios/Create
         public IActionResult Create()
@@ -160,8 +202,27 @@ namespace Buildoc.Controllers
         public async Task<IActionResult> Create(UsuarioViewModel model, string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
+            // Verificar si ya existe un usuario con el mismo Email
+            var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+            if (existingUserByEmail != null)
+            {
+                return Json(new { success = false, message = "Ya existe un usuario con este correo electrónico." });
+            }
+
+            // Verificar si ya existe un usuario con el mismo Cedula
+            var existingUserByCedula = await _context.Users.FirstOrDefaultAsync(u => u.Cedula == model.Cedula);
+            if (existingUserByCedula != null)
+            {
+                return Json(new { success = false, message = "Ya existe un usuario con este número de cédula." });
+            }
             if (ModelState.IsValid)
             {
+                // Generar contraseña aleatoria
+                var randomPassword = PasswordGenerator.GenerateRandomPassword();
+                model.Password = randomPassword;
+                model.ConfirmPassword = randomPassword;
+
+
                 var user = new Usuario
                 {
                     UserName = model.Email,
@@ -458,6 +519,7 @@ namespace Buildoc.Controllers
                 Nombres = usuario.Nombres,
                 Apellidos = usuario.Apellidos,
                 Cedula = usuario.Cedula,
+                Telefono = usuario.Telefono,
                 FechaNacimiento = usuario.FechaNacimiento,
                 Direccion = usuario.Direccion,
                 Municipio = usuario.Municipio,
@@ -502,6 +564,16 @@ namespace Buildoc.Controllers
 
         public async Task<IActionResult> UsuarioDesactivado()
         {
+            var todosUsuarios = await _userManager.Users.ToListAsync(); // Obtén todos los usuarios
+
+            var usuariosTotales = todosUsuarios.Count;
+            var usuariosActivos = todosUsuarios.Count(u => u.Estado);
+            var usuariosDesactivos = todosUsuarios.Count(u => !u.Estado);
+
+            ViewBag.UsuariosTotales = usuariosTotales;
+            ViewBag.UsuariosActivos = usuariosActivos;
+            ViewBag.UsuariosDesactivos = usuariosDesactivos;
+
             var usuarios = await _userManager.Users
                                             .Where(u => !u.Estado) // Filtra usuarios con Estado true
                                             .ToListAsync();
@@ -573,7 +645,8 @@ namespace Buildoc.Controllers
 
                 if (result.Succeeded)
                 {
-                    return RedirectToAction(nameof(UsuarioDesactivado));
+                    TempData["SuccessMessage"] = "¡El usuario se ha desactivado exitosamente!";
+                    return Json(new { success = true });
                 }
                 else
                 {
