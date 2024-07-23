@@ -61,6 +61,7 @@ namespace Buildoc.Controllers
             }
 
             var proyecto = await _context.Proyectos
+                   .Include(p => p.Residentes) // Incluir residentes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (proyecto == null)
             {
@@ -71,8 +72,15 @@ namespace Buildoc.Controllers
         }
 
         // GET: Proyectos/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var usuarios = await _userManager.Users.ToListAsync();
+            ViewBag.Usuarios = usuarios.Select(u => new SelectListItem
+            {
+                Value = u.Id,
+                Text = $"{u.Nombres} {u.Apellidos} ({u.UserName})"
+            });
+
             return PartialView();
         }
 
@@ -81,7 +89,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto, List<string> ResidentesIds)
         {
             // Verificar si ya existe un proyecto con el mismo nombre
             var existingProyecto = await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre);
@@ -98,6 +106,11 @@ namespace Buildoc.Controllers
                 // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 proyecto.CoordinadorId = userId;
+
+                // Obtener y asignar los residentes seleccionados
+                proyecto.Residentes = await _userManager.Users
+                    .Where(u => ResidentesIds.Contains(u.Id))
+                    .ToListAsync();
 
                 _context.Add(proyecto);
                 await _context.SaveChangesAsync();
@@ -117,20 +130,26 @@ namespace Buildoc.Controllers
 
             var proyecto = await _context.Proyectos
                                          .Include(p => p.Coordinador) // Incluir el Coordinador
+                                         .Include(p => p.Residentes)
                                          .FirstOrDefaultAsync(m => m.Id == id);
             if (proyecto == null)
             {
                 return NotFound();
             }
+
+            // Obtener la lista de usuarios para la vista
+            var usuarios = await _userManager.Users.ToListAsync();
+            ViewBag.Usuarios = usuarios.Select(u => new SelectListItem
+            {
+                Value = u.Id,
+                Text = $"{u.Nombres} {u.Apellidos} ({u.UserName})"
+            });
             return PartialView("Edit",proyecto);
         }
 
-        // POST: Proyectos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado,CoordinadorId")] Proyecto proyecto)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente,Estado,CoordinadorId")] Proyecto proyecto, List<string> ResidentesIds)
         {
             if (id != proyecto.Id)
             {
@@ -141,15 +160,37 @@ namespace Buildoc.Controllers
             {
                 try
                 {
-                    // Mantener el CoordinadorId original
-                    var existingProyecto = await _context.Proyectos.AsNoTracking().FirstOrDefaultAsync(p => p.Id == proyecto.Id);
-                    if (existingProyecto != null)
+                    // Obtener el proyecto existente para mantener el CoordinadorId original
+                    var existingProyecto = await _context.Proyectos
+                        .Include(p => p.Residentes) // Incluir los residentes actuales
+                        .FirstOrDefaultAsync(p => p.Id == proyecto.Id);
+
+                    if (existingProyecto == null)
                     {
-                        proyecto.CoordinadorId = existingProyecto.CoordinadorId;
+                        return NotFound();
                     }
 
+                    // Mantener el CoordinadorId original
+                    proyecto.CoordinadorId = existingProyecto.CoordinadorId;
 
-                    _context.Update(proyecto);
+                    // Obtener la lista de nuevos residentes
+                    var nuevosResidentes = await _userManager.Users
+                        .Where(u => ResidentesIds.Contains(u.Id))
+                        .ToListAsync();
+
+                    // Actualizar la lista de residentes del proyecto
+                    existingProyecto.Residentes.Clear(); // Limpiar los residentes existentes
+                    foreach (var residente in nuevosResidentes)
+                    {
+                        existingProyecto.Residentes.Add(residente);
+                    }
+
+                    // Actualizar los valores del proyecto
+                    _context.Entry(existingProyecto).CurrentValues.SetValues(proyecto);
+
+                    // Marcar la entidad para su actualización
+                    _context.Update(existingProyecto);
+
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
                     return Json(new { success = true });
@@ -165,10 +206,10 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return PartialView("Edit",proyecto);
+            return PartialView("Edit", proyecto);
         }
+
 
         // GET: Proyectos/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
