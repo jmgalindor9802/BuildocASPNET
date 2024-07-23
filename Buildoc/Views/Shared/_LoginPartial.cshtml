@@ -25,7 +25,7 @@
                     <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coordinador: @UserManager.GetUserName(User)!</a>
                 </li>
             }
-            else if (User.IsInRole("Trabajador"))
+            else if (User.IsInRole("Residente"))
             {
               
                 <li class="nav-item">

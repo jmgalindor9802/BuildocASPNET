@@ -71,10 +71,10 @@ namespace Buildoc.Controllers
             return PartialView("Details",proyecto);
         }
 
-        // GET: Proyectos/Create
         public async Task<IActionResult> Create()
         {
-            var usuarios = await _userManager.Users.ToListAsync();
+            // Obtener todos los usuarios con el rol "Residente"
+            var usuarios = await _userManager.GetUsersInRoleAsync("Residente");
             ViewBag.Usuarios = usuarios.Select(u => new SelectListItem
             {
                 Value = u.Id,
@@ -83,6 +83,7 @@ namespace Buildoc.Controllers
 
             return PartialView();
         }
+
 
         // POST: Proyectos/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -138,7 +139,8 @@ namespace Buildoc.Controllers
             }
 
             // Obtener la lista de usuarios para la vista
-            var usuarios = await _userManager.Users.ToListAsync();
+            var usuarios = await _userManager.GetUsersInRoleAsync("Residente");
+           
             ViewBag.Usuarios = usuarios.Select(u => new SelectListItem
             {
                 Value = u.Id,

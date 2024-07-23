@@ -29,12 +29,12 @@ namespace Buildoc.Services
                 await roleManager.CreateAsync(new IdentityRole("Coordinador"));
             }
 
-            //Revisar si existe el rol Trabajador
-            exists = await roleManager.RoleExistsAsync("Trabajador");
+            //Revisar si existe el rol Residente
+            exists = await roleManager.RoleExistsAsync("Residente");
             if (!exists)
             {
-                Console.WriteLine("El rol trabajador ha sido creado");
-                await roleManager.CreateAsync(new IdentityRole("Trabajador"));
+                Console.WriteLine("El rol Residente ha sido creado");
+                await roleManager.CreateAsync(new IdentityRole("Residente"));
             }
 
             var adminUsers = await userManager.GetUsersInRoleAsync("Administrador");
