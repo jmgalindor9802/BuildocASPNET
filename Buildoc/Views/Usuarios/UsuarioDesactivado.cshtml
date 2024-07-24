@@ -57,7 +57,7 @@
 </div>
 <!-- ./row -->
 
-<table class="table">
+<table id="example1" class="table table-bordered table-striped">
     <thead>
         <tr>
             <th>
@@ -86,7 +86,7 @@
                     @Html.DisplayFor(modelItem => usuario.Direccion)
                 </td>
                 <td>
-                    <a asp-action="ReactivarUsuario" asp-route-id="@usuario.Id">Restaurar</a>
+                    <a href="#" class="restore-item" data-url="@Url.Action("ReactivarUsuario", "Usuarios", new { id = usuario.Id })" data-title="Reactivar usuario" data-action="restore">Restaurar</a>
                 </td>
             </tr>
         }
