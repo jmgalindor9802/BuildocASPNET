@@ -1,0 +1,62 @@
+﻿@model IEnumerable<Buildoc.Models.Proyecto>
+
+@{
+    ViewData["Title"] = "Index";
+}
+<div  style="margin: 20px; padding: 20px;">
+   
+<h1>Proyectos archivados</h1>
+
+    <p>
+        <a href="@Url.Action("Index", "Proyectos")" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Volver 
+        </a>
+    </p>
+
+
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Descripcion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Municipio)
+            </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Cliente)
+            </th>
+                
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
+                <td>@Html.DisplayFor(modelItem => item.Municipio)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Direccion)</td>
+                <td>@Html.DisplayFor(modelItem => item.Cliente)</td>
+
+                    <td>
+                        <a href="@Url.Action("Desarchivar", "Proyectos", new { id = item.Id })" style="color: green;" title="Desarchivar proyecto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 .708.708L7.5 2.707V14.5A.5.5 0 0 0 8 15z" />
+                            </svg>
+                            Desarchivar
+                        </a>
+                    </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+    </div>

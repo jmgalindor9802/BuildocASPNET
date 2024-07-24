@@ -26,6 +26,12 @@ builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
 
 
+
+// Add EmailSender service
+builder.Services.AddScoped<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>(); 
+
+
 var app = builder.Build();
 
 // Inicializaci?n de datos

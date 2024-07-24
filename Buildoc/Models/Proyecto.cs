@@ -9,7 +9,7 @@ namespace Buildoc.Models
         public Guid Id { get; set; }
         [Required]
         public string Nombre { get; set; }
-
+        [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
         [Required]
 
@@ -17,10 +17,12 @@ namespace Buildoc.Models
         public string Municipio { get; set; }
 
         public string Cliente { get; set; }
+        [Display(Name = "Dirección")]
         public string Direccion { get; set; }
 
         public string Estado { get; set; }
-        
+
+      
 
         public string? CoordinadorId { get; set; }
 

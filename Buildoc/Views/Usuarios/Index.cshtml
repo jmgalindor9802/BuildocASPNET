@@ -67,25 +67,25 @@
         <!-- ./row -->
 
         <div class="row">
-            <div class="col-3">
+
                 <a href="#" id="createNewModal" class="create-new btn btn-primary"
                    data-url="@Url.Action("Create", "Usuarios")"
                    data-title="Crear nuevo usuario" data-action="create">
                     Crear usuario
                 </a>
-            </div>
+            <
 
-            <div class="col-3">
+            
                 <form asp-action="Descargar
 " asp-controller="Usuarios">
                     <button class="btn btn-success" type="submit">Descargar PDF</button>
                 </form>
-            </div>
-            <div class="col-3">
+          
+         
                 <button class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
                     Filtrar por rol
                 </button>
-            </div>
+           
         </div>
         @* modal *@
         <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
@@ -118,9 +118,7 @@
             </div>
         </div>
         
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
+
                     <table id="example1" class="table table-bordered table-striped">
                         <thead>
                             <tr>
@@ -166,9 +164,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-        </div>  
-    </div>
+     
 </section>
 @section Scripts {
     
