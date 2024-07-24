@@ -124,6 +124,7 @@ namespace Buildoc.Controllers
             {
                 return Json(new { success = false, message = "Ya existe un proyecto con este nombre." });
             }
+
             if (ModelState.IsValid)
             {
                 proyecto.Id = Guid.NewGuid();
@@ -134,32 +135,49 @@ namespace Buildoc.Controllers
                 proyecto.CoordinadorId = userId;
 
                 // Obtener y asignar los residentes seleccionados
-                proyecto.Residentes = await _userManager.Users
+                var residentes = await _userManager.Users
                     .Where(u => ResidentesIds.Contains(u.Id))
                     .ToListAsync();
+
+                proyecto.Residentes = residentes;
 
                 _context.Add(proyecto);
                 await _context.SaveChangesAsync();
 
-                // Preparar el mensaje de correo electrónico en formato HTML
+                // Preparar el mensaje de correo electrónico en formato HTML para el coordinador
                 var coordinador = await _userManager.FindByIdAsync(userId);
-                var subject = "Nuevo Proyecto Creado";
-                var htmlMessage = $@"
-                        <p>Hola {coordinador.Nombres},</p>
-                        <p>El proyecto '<strong>{proyecto.Nombre}</strong>' ha sido creado exitosamente.</p>
-                        <p>Descripción: {proyecto.Descripcion}</p>
-                        <p>Cliente: {proyecto.Cliente}</p>
-                        <p>Saludos,</p>
-                        <p>El equipo de <strong>Buildoc</strong></p>";
+                var subjectCoordinador = "Nuevo Proyecto Creado";
+                var htmlMessageCoordinador = $@"
+            <p>Hola {coordinador.Nombres},</p>
+            <p>El proyecto '<strong>{proyecto.Nombre}</strong>' ha sido creado exitosamente.</p>
+            <p>Descripción: {proyecto.Descripcion}</p>
+            <p>Cliente: {proyecto.Cliente}</p>
+            <p>Saludos,</p>
+            <p>El equipo de <strong>Buildoc</strong></p>";
 
-                // Enviar el correo electrónico
-                await _emailSender.SendEmailAsync(coordinador.Email, subject, htmlMessage);
+                // Enviar el correo electrónico al coordinador
+                await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
 
-               
+                // Preparar y enviar el mensaje de correo electrónico en formato HTML para cada residente
+                var subjectResidente = "Nuevo Proyecto Asignado";
+                foreach (var residente in residentes)
+                {
+                    var htmlMessageResidente = $@"
+                <p>Hola {residente.Nombres},</p>
+                <p>Has sido asignado al proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+                <p>Descripción: {proyecto.Descripcion}</p>
+                <p>Cliente: {proyecto.Cliente}</p>
+                <p>Saludos,</p>
+                <p>El equipo de <strong>Buildoc</strong></p>";
+
+                    // Enviar el correo electrónico a cada residente
+                    await _emailSender.SendEmailAsync(residente.Email, subjectResidente, htmlMessageResidente);
+                }
 
                 TempData["SuccessMessage"] = "¡El proyecto se ha creado exitosamente!";
                 return Json(new { success = true });
             }
+
             // Asegurarse de volver a llenar ViewBag.Usuarios en caso de que el modelo no sea válido
             var residentesRole = await _userManager.GetUsersInRoleAsync("Residente");
             ViewBag.Usuarios = residentesRole.Select(u => new SelectListItem
@@ -170,6 +188,7 @@ namespace Buildoc.Controllers
 
             return PartialView("Create", proyecto);
         }
+
 
         // GET: Proyectos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -230,6 +249,14 @@ namespace Buildoc.Controllers
                         .Where(u => ResidentesIds.Contains(u.Id))
                         .ToListAsync();
 
+                    // Obtener los residentes que estaban antes
+                    var residentesAntes = existingProyecto.Residentes;
+
+                    // Identificar nuevos residentes que no estaban antes
+                    var nuevosResidentesIds = nuevosResidentes.Select(r => r.Id).ToHashSet();
+                    var residentesAntesIds = residentesAntes.Select(r => r.Id).ToHashSet();
+                    var residentesAñadidosIds = nuevosResidentesIds.Except(residentesAntesIds).ToList();
+
                     // Actualizar la lista de residentes del proyecto
                     existingProyecto.Residentes.Clear(); // Limpiar los residentes existentes
                     foreach (var residente in nuevosResidentes)
@@ -244,6 +271,23 @@ namespace Buildoc.Controllers
                     _context.Update(existingProyecto);
 
                     await _context.SaveChangesAsync();
+
+
+                    // Enviar correos electrónicos a los nuevos residentes
+                    var subject = "Nuevo Proyecto Asignado";
+                    foreach (var residente in nuevosResidentes.Where(r => residentesAñadidosIds.Contains(r.Id)))
+                    {
+                        var htmlMessage = $@"
+                    <p>Hola {residente.Nombres},</p>
+                    <p>Has sido asignado al proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+                    <p>Descripción: {proyecto.Descripcion}</p>
+                    <p>Cliente: {proyecto.Cliente}</p>
+                    <p>Saludos,</p>
+                    <p>El equipo de <strong>Buildoc</strong></p>";
+
+                        // Enviar el correo electrónico a cada nuevo residente
+                        await _emailSender.SendEmailAsync(residente.Email, subject, htmlMessage);
+                    }
                     TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
                     return Json(new { success = true });
                 }
