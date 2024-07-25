@@ -13,21 +13,23 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Mail;
 using System.Net;
+using Buildoc.Controllers;
+using Buildoc.Interfaces;
 
 namespace Buildoc.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
     public class ResendEmailConfirmationModel : PageModel
     {
-
         private readonly UserManager<Usuario> _userManager;
-        private readonly IEmailSender _emailSender;
+		private readonly IEmailSenderService _emailSenderService;
 
-        public ResendEmailConfirmationModel(UserManager<Usuario> userManager, IEmailSender emailSender)
+		public ResendEmailConfirmationModel(UserManager<Usuario> userManager, IEmailSenderService emailSenderService)
         {
             _userManager = userManager;
-            _emailSender = emailSender;
-        }
+			_emailSenderService = emailSenderService;
+
+		}
 
         [BindProperty]
         public InputModel Input { get; set; }

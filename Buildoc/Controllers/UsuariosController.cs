@@ -83,9 +83,9 @@ namespace Buildoc.Controllers
                         Id = usuario.Id,
                         Email = usuario.Email,
                         Nombres = usuario.Nombres,
-                        Direccion = usuario.Direccion,
                         Estado = usuario.Estado,
                         Cedula = usuario.Cedula,
+                        Apellidos = usuario.Apellidos,
                         Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
                     });
                 }
@@ -219,7 +219,16 @@ namespace Buildoc.Controllers
             {
                 return Json(new { success = false, message = "Ya existe un usuario con este número de cédula." });
             }
-            if (ModelState.IsValid)
+			// Validar la edad del usuario
+			var birthDate = model.FechaNacimiento.ToDateTime(TimeOnly.MinValue);
+			var age = DateTime.Today.Year - birthDate.Year;
+			if (birthDate > DateTime.Today.AddYears(-age)) age--;
+
+			if (age < 18)
+			{
+				return Json(new { success = false, message = "El usuario debe ser mayor de 18 años." });
+			}
+			if (ModelState.IsValid)
             {
                 // Generar contraseña aleatoria
                 var randomPassword = PasswordGenerator.GenerateRandomPassword();
@@ -269,7 +278,7 @@ namespace Buildoc.Controllers
                         "<p>Por favor, confirma tu cuenta haciendo clic en el botón a continuación:</p>" +
                         $"<a href='{HtmlEncoder.Default.Encode(callbackUrl)}' style='display:inline-block;padding:10px 20px;color:#fff;background-color:#007bff;text-decoration:none;border-radius:5px;'>Confirmar cuenta</a>" +
                         "<p>Después de verificar tu cuenta, se te pedirá que hagas un restablecimiento de contraseña. Por favor, sigue las instrucciones y disfruta.</p>");
-                    TempData["SuccessMessage"] = "¡El usuario se ha editado exitosamente!";
+                    TempData["SuccessMessage"] = "¡El usuario se ha creado exitosamente!";
                     return Json(new { success = true });
                 }
 
