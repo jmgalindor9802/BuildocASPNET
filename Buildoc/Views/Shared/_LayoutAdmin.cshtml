@@ -328,38 +328,45 @@
 					// Configuración global de Toastr
 					toastr.options.positionClass = 'toast-top-right'; // Posición del mensaje
 
-					// Mostrar Toastr si TempData contiene un mensaje de éxito
-				@if (TempData["SuccessMessage"] != null)
-				{
-					<text>
-							toastr.success('@TempData["SuccessMessage"]');
-					</text>
-				}
-												});
-			</script>
-			<!-- /. Mensajes de notificacion tipo alerts -->
-			<!-- /.content-wrapper -->
-			<!-- Control Sidebar -->
-			<aside class="control-sidebar control-sidebar-dark">
-				<!-- Control sidebar content goes here -->
-			</aside>
-			<!-- /.control-sidebar -->
-		</div>
-		<!-- ./wrapper -->
-		<!-- jQuery -->
-		<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
-		<!-- Bootstrap 4 -->
-		<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-		<!-- AdminLTE App -->
-		<script src="/AdminLTE/js/adminlte.min.js"></script>
-		<!-- AdminLTE for demo purposes -->
-		<script src="/AdminLTE/js/demo.js"></script>
-		<script>
-    // Función para añadir una alerta si no existe una con el mismo mensaje, o actualizarla si ya existe
-    function addAlert(message, type) {
-        $('#modal-lg .modal-body .alert').remove();
-        $('#modal-lg .modal-body').prepend('<div class="alert alert-' + type + '">' + message + '</div>');
-    }
+                    // Mostrar Toastr si TempData contiene un mensaje de éxito
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <text>
+                            toastr.success('@TempData["SuccessMessage"]');
+                    </text>
+                }
+                                });
+            </script>
+            <!-- /. Mensajes de notificacion tipo alerts -->
+        <!-- /.content-wrapper -->
+
+       
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+    <!-- jQuery -->
+    <script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/AdminLTE/js/adminlte.min.js"></script>
+    <!-- AdminLTE for demo purposes -->
+        <script src="/AdminLTE/js/demo.js"></script>
+
+        <!-- jQuery Validation -->   
+        <script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
+        <script>
+            // Función para añadir una alerta si no existe una con el mismo mensaje, o actualizarla si ya existe
+            function addAlert(message, type) {
+                $('#modal-lg .modal-body .alert').remove();
+                $('#modal-lg .modal-body').prepend('<div class="alert alert-' + type + '">' + message + '</div>');
+            }
 
     $(document).ready(function () {
         // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
@@ -571,14 +578,17 @@
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 		<script src="/espanol.json"></script>
 
+            
 
-		<script>
-			$(document).ready(function () {
-				$('#example1').DataTable({
-					"dom":
-						"<'row'<'col-sm-6'B><'col-sm-3'><'col-sm-3'f>>" +
-						"<'row'<'col-sm-12'tr>>" +
-						"<'row'<'col-sm-5'i><'col-sm-7 text-left'p>>",
+   
+       
+        <script>
+            $(document).ready(function () {
+                $('#example1').DataTable({
+                    "dom":
+                        "<'row'<'col-sm-6'B><'col-sm-3'><'col-sm-3'f>>" +
+                        "<'row'<'col-sm-12'tr>>" +
+                        "<'row'<'col-sm-5'i><'col-sm-7 text-left'p>>",
 
 					"language": {
 						"url": "/espanol.json"
