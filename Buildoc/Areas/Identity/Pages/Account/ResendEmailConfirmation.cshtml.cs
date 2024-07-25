@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Net.Mail;
 using System.Net;
 using Buildoc.Controllers;
-using Buildoc.Interfaces;
 
 namespace Buildoc.Areas.Identity.Pages.Account
 {
@@ -22,12 +21,10 @@ namespace Buildoc.Areas.Identity.Pages.Account
     public class ResendEmailConfirmationModel : PageModel
     {
         private readonly UserManager<Usuario> _userManager;
-		private readonly IEmailSenderService _emailSenderService;
 
-		public ResendEmailConfirmationModel(UserManager<Usuario> userManager, IEmailSenderService emailSenderService)
+		public ResendEmailConfirmationModel(UserManager<Usuario> userManager)
         {
             _userManager = userManager;
-			_emailSenderService = emailSenderService;
 
 		}
 
