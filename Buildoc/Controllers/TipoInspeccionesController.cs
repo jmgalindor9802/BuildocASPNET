@@ -106,7 +106,14 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
+            // Verificar si ya existe un tipo de inspección con el mismo nombre, excepto el actual
+            var existingTipoInspeccion = await _context.TipoInspeccion
+                .FirstOrDefaultAsync(t => t.Nombre == tipoInspeccion.Nombre && t.Id != id);
 
+            if (existingTipoInspeccion != null)
+            {
+                return Json(new { success = false, message = "Ya existe un tipo de inspección con este nombre." });
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -159,9 +166,9 @@ namespace Buildoc.Controllers
             {
                 _context.TipoInspeccion.Remove(tipoInspeccion);
             }
-
+            TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Json(new { success = true });
         }
 
         private bool TipoInspeccionExists(int id)
