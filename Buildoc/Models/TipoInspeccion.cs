@@ -10,7 +10,7 @@ namespace Buildoc.Models
         public string Nombre { get; set; }
         [Display(Name = "Categoría")]
         [Required]
-        public string Categoria { get; set; }
+        public CategoriaInspeccion Categoria { get; set; }
         [Display(Name = "Descripción")]
         [Required]
         public string Descripcion { get; set; }

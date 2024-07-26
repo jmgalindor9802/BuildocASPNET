@@ -22,6 +22,8 @@ namespace Buildoc.Controllers
         // GET: TipoInspecciones
         public async Task<IActionResult> Index()
         {
+
+
             return View(await _context.TipoInspeccion.ToListAsync());
         }
 
@@ -56,8 +58,19 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nombre,Categoria,Descripcion")] TipoInspeccion tipoInspeccion)
         {
+
+            // Verificar si ya existe un tipo de inspección con el mismo nombre
+            var existingTipoInspeccion = await _context.TipoInspeccion
+                .FirstOrDefaultAsync(t => t.Nombre == tipoInspeccion.Nombre);
+
+            if (existingTipoInspeccion != null)
+            {
+                return Json(new { success = false, message = "Ya existe un tipo de inspección con este nombre." });
+            }
+
             if (ModelState.IsValid)
             {
+
                 _context.Add(tipoInspeccion);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡El tipo de inspección se ha creado exitosamente!";
@@ -79,7 +92,7 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
-            return View(tipoInspeccion);
+            return PartialView("Edit",tipoInspeccion);
         }
 
         // POST: TipoInspecciones/Edit/5
@@ -112,9 +125,10 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
+                return Json(new { success = true });
             }
-            return View(tipoInspeccion);
+            return PartialView("Edit",tipoInspeccion);
         }
 
         // GET: TipoInspecciones/Delete/5
