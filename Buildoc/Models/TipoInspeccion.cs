@@ -15,8 +15,6 @@ namespace Buildoc.Models
         [Required]
         public string Descripcion { get; set; }
 
-        // Lista de categorías existentes
-        public List<string> CategoriasExistentes { get; set; } = new List<string>();
 
     }
 }

@@ -72,8 +72,6 @@ namespace Buildoc.Data.Migrations
                     b.Property<string>("Categoria")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("CategoriasExistentes")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Descripcion")
                         .HasColumnType("nvarchar(max)");
