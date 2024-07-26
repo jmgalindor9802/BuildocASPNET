@@ -234,7 +234,7 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="@Url.Action("Index", "Proyectos")" class="nav-link">
+                                    <a href="@Url.Action("Index", "TipoInspecciones")" class="nav-link">
                                         <i class="nav-icon fas fa-building"></i>
                                         <p>
                                             Inpecciones
@@ -522,6 +522,25 @@
                         }
                     });
                 });
+                // Función para manejar la visibilidad del campo de nueva categoría
+                function handleCategoriaChange() {
+                    const categoriaSelect = $('#categoriaSelect');
+                    const nuevaCategoriaInput = $('#nuevaCategoria');
+
+                    function updateCategoryVisibility() {
+                        if (categoriaSelect.val() === 'Otra') {
+                            nuevaCategoriaInput.show();
+                        } else {
+                            nuevaCategoriaInput.hide();
+                        }
+                    }
+
+                    // Inicializar la visibilidad en función del valor actual
+                    updateCategoryVisibility();
+
+                    // Agregar evento para manejar cambios en el select
+                    categoriaSelect.on('change', updateCategoryVisibility);
+                }
             });
         </script>
      
