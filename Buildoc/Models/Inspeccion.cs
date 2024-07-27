@@ -30,7 +30,7 @@ namespace Buildoc.Models
 
         public virtual Usuario Inspector { get; set; }
 
-        public string Resultado {  get; set; }
+        
 
         public string Estado { get; set; }
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
+using System.Security.Claims;
 
 namespace Buildoc.Controllers
 {
@@ -19,12 +20,45 @@ namespace Buildoc.Controllers
             _context = context;
         }
 
+
+        private async Task<IEnumerable<Proyecto>> GetProyectosForCoordinadorAsync()
+        {
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return await _context.Proyectos
+                                 .Where(p => p.CoordinadorId == coordinadorId)
+                                 .ToListAsync();
+        }
+
+
         // GET: Inspecciones
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Inspeccion.Include(i => i.Inspector).Include(i => i.Proyecto).Include(i => i.TipoInspeccion);
-            return View(await applicationDbContext.ToListAsync());
+            // Obtén el ID del coordinador logueado
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtén los proyectos asociados al coordinador logueado
+            var proyectos = await _context.Proyectos
+                                          .Where(p => p.CoordinadorId == coordinadorId)
+                                          .Select(p => p.Id)
+                                          .ToListAsync();
+
+            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+            var inspecciones = await _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            // Calcula el número de inspecciones con estado "Programada"
+            var countProgramadas = inspecciones.Count(i => i.Estado == "Programada");
+
+            // Pasa los datos a la vista
+            ViewBag.CountProgramadas = countProgramadas;
+
+            return View(inspecciones);
         }
+
 
         // GET: Inspecciones/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -48,10 +82,10 @@ namespace Buildoc.Controllers
         }
 
         // GET: Inspecciones/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Nombres");
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre");
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto");
+            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
             return View();
         }
@@ -72,9 +106,9 @@ namespace Buildoc.Controllers
                 TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
                 return Json(new { success = true });
             }
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Id", inspeccion.InspectorId);
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Departamento", inspeccion.ProyectoId);
-            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Descripcion", inspeccion.TipoInspeccionId);
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
+            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
+            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
             return PartialView("Create",inspeccion);
         }
 
@@ -92,7 +126,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Id", inspeccion.InspectorId);
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Departamento", inspeccion.ProyectoId);
+            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Descripcion", inspeccion.TipoInspeccionId);
             return View(inspeccion);
         }
@@ -130,7 +164,7 @@ namespace Buildoc.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Id", inspeccion.InspectorId);
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Departamento", inspeccion.ProyectoId);
+            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Descripcion", inspeccion.TipoInspeccionId);
             return View(inspeccion);
         }

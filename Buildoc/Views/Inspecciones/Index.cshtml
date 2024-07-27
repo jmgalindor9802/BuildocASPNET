@@ -15,16 +15,59 @@
         </a>
     </p>
 
+    <!-- /.card -->
+    <div class="row">
+        <!-- Caja de información para proyectos
+
+        s -->
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-info"><i class="far fa-clock"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Programadas</span>
+                    <span class="info-box-number">@ViewBag.CountProgramadas</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+
+        <!-- Caja de información para proyectos finalizados -->
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-warning"><i class="far fa-flag"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Finalizados</span>
+                    <span class="info-box-number">@ViewBag.CountFinalizados</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        <div class="col-md-3 col-sm-6 col-12">
+            <a href="@Url.Action("Archivados", "Proyectos")">
+                <div class="info-box shadow">
+                    <span class="info-box-icon bg-danger"><i class="far fa-copy"></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-text">Archivados</span>
+                        <span class="info-box-number">@ViewBag.CountArchivados</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </a>
+        </div>
+
+    </div>
+    <!-- /.info-box -->
+
     <table id="example1" class="table table-bordered table-striped">
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
-       
-        
                 <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
                 <th>@Html.DisplayNameFor(model => model.Inspector)</th>
-                <th>@Html.DisplayNameFor(model => model.Resultado)</th>
                 <th>@Html.DisplayNameFor(model => model.Estado)</th>
                 <th></th>
             </tr>
@@ -34,13 +77,14 @@
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.FechaInspeccion)</td>
-                   
- 
-                    <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Descripcion)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td> <!-- Ajusta según el campo necesario -->
-                    <td>@Html.DisplayFor(modelItem => item.Inspector.UserName)</td> <!-- Ajusta según el campo necesario -->
-                    <td>@Html.DisplayFor(modelItem => item.Resultado)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Nombre)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Inspector.NombreCompleto)</td>
+                    <td>
+                        <span class="@(item.Estado == "Programada" ? "estado-programada-text" : "")">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </span>
+                    </td>
                     <td>
                         <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Inspecciones", new { id = item.Id })" data-title="Editar inspección" data-action="edit">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -64,3 +108,10 @@
         </tbody>
     </table>
 </div>
+
+<style>
+    .estado-programada-text {
+        color: blue;
+    }
+</style>
+
