@@ -4,76 +4,16 @@
     ViewData["Title"] = "Inspecciones";
 }
 
-    <h1>Inspecciones</h1>
+    <h1>Inspecciones sin responder</h1>
 
-    <p>
-        <a href="#" id="createNewModal" class="create-new btn btn-primary"
-           data-url="@Url.Action("Create", "Inspecciones")"
-           data-title="Crear nueva inspección" data-action="create">
-            <i class="fas fa-plus"></i> Crear nueva inspección
-        </a>
-    </p>
-
+<p>
+    <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-primary">
+        <i class="fas fa-arrow-left"></i> Volver
+    </a>
+</p>
 
     <!-- /.card -->
-    <div class="row">
-        <!-- Caja de información para inspecciones programadas -->
-        <div class="col-md-3 col-sm-6 col-12">
-        <a href="@Url.Action("Programadas", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-info"><i class="far fa-clock"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-text">Programadas</span>
-                    <span class="info-box-number">@ViewBag.CountProgramadas</span>
-                </div>
-                <!-- /.info-box-content -->
-            </div>
-        </div>
-
-        <!-- Caja de información para inspecciones pendientes de revision -->
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("PendientesRevision", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-warning"><i class="far fa-flag"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-text">Pendientes de revisión</span>
-                    <span class="info-box-number">@ViewBag.CountPendienteRevision</span>
-                </div>
-
-                <!-- /.info-box-content -->
-            </div>
-        </div>
-        <!-- Caja de información para inspecciones vencidas-->
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("SinResponder", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-danger"><i class="far fa-flag"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-text">Sin responder</span>
-                    <span class="info-box-number">@ViewBag.CountSinResponder</span>
-                </div>
-                <!-- /.info-box-content -->
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("Aprobadas", "Inspecciones")">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-success"><i class="far fa-copy"></i></span>
-
-                    <div class="info-box-content">
-                        <span class="info-box-text">Aprobadas</span>
-                        <span class="info-box-number">@ViewBag.CountAprobadas</span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
-            </a>
-        </div>
-
-    </div>
-    <!-- /.info-box -->
+    
 
     <table id="example1" class="table table-bordered table-striped">
         <thead>

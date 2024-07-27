@@ -20,7 +20,7 @@ namespace Buildoc.Models
         [Display(Name = "Tipo de Inspección")]
         [Required]
         public int TipoInspeccionId { get; set; }
-
+        [Display(Name = "Tipo")]
         public TipoInspeccion TipoInspeccion { get; set; }
         [Display(Name = "Proyecto")]
         public Guid ProyectoId { get; set; }
@@ -31,9 +31,10 @@ namespace Buildoc.Models
 
         public virtual Usuario Inspector { get; set; }
 
-        
 
-        public string Estado { get; set; }
+
+        [Required]
+        public EstadoInspeccion Estado { get; set; }
 
     }
 }

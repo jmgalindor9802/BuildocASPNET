@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
 using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 
 namespace Buildoc.Controllers
 {
@@ -42,6 +43,8 @@ namespace Buildoc.Controllers
                                           .Select(p => p.Id)
                                           .ToListAsync();
 
+          
+
             // Filtra las inspecciones basadas en los proyectos asociados al coordinador
             var inspecciones = await _context.Inspeccion
                 .Include(i => i.Inspector)
@@ -51,12 +54,142 @@ namespace Buildoc.Controllers
                 .ToListAsync();
 
             // Calcula el número de inspecciones con estado "Programada"
-            var countProgramadas = inspecciones.Count(i => i.Estado == "Programada");
+            var countProgramadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Programada);
+
+            // Calcula el número de inspecciones con estado "En revision"
+            var countPendienteRevision = inspecciones.Count(i => i.Estado == EstadoInspeccion.PendientesDeRevision);
+
+            // Calcula el número de inspecciones con estado "Vencidas o sin responder"
+            var countSinResponder = inspecciones.Count(i => i.Estado == EstadoInspeccion.SinResponder);
+            // Calcula el número de inspecciones con estado "Aprobadas"
+            var countAprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Aprobada);
+
 
             // Pasa los datos a la vista
             ViewBag.CountProgramadas = countProgramadas;
-
+            ViewBag.CountPendienteRevision = countPendienteRevision;
+            ViewBag.CountSinResponder = countSinResponder;
+            ViewBag.CountAprobadas = countAprobadas;
             return View(inspecciones);
+        }
+
+        // GET: Inpsecciones Aprobadas
+        public async Task<IActionResult> Aprobadas()
+        {
+
+            // Obtén el ID del coordinador logueado
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtén los proyectos asociados al coordinador logueado
+            var proyectos = await _context.Proyectos
+                                          .Where(p => p.CoordinadorId == coordinadorId)
+                                          .Select(p => p.Id)
+                                          .ToListAsync();
+
+
+
+            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+            var inspecciones = await _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            var inspeccionesAprobadas = await _context.Inspeccion
+                .Where(p => p.Estado == EstadoInspeccion.Aprobada)
+                .ToListAsync();
+
+            return View(inspeccionesAprobadas);
+        }
+
+        // GET: Inpsecciones Pendientes de Revision
+        public async Task<IActionResult> PendientesRevision()
+        {
+
+            // Obtén el ID del coordinador logueado
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtén los proyectos asociados al coordinador logueado
+            var proyectos = await _context.Proyectos
+                                          .Where(p => p.CoordinadorId == coordinadorId)
+                                          .Select(p => p.Id)
+                                          .ToListAsync();
+
+
+
+            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+            var inspecciones = await _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            var inspeccionesPendientesRevision = await _context.Inspeccion
+                .Where(p => p.Estado == EstadoInspeccion.PendientesDeRevision)
+                .ToListAsync();
+
+            return View(inspeccionesPendientesRevision);
+        }
+
+        // GET: Inpsecciones Pendientes de Revision
+        public async Task<IActionResult> SinResponder()
+        {
+
+            // Obtén el ID del coordinador logueado
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtén los proyectos asociados al coordinador logueado
+            var proyectos = await _context.Proyectos
+                                          .Where(p => p.CoordinadorId == coordinadorId)
+                                          .Select(p => p.Id)
+                                          .ToListAsync();
+
+
+
+            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+            var inspecciones = await _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            var inspeccionesSinResponder = await _context.Inspeccion
+                .Where(p => p.Estado == EstadoInspeccion.SinResponder)
+                .ToListAsync();
+
+            return View(inspeccionesSinResponder);
+        }
+
+
+        // GET: Inpsecciones Programadas
+        public async Task<IActionResult> Programadas()
+        {
+
+            // Obtén el ID del coordinador logueado
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Obtén los proyectos asociados al coordinador logueado
+            var proyectos = await _context.Proyectos
+                                          .Where(p => p.CoordinadorId == coordinadorId)
+                                          .Select(p => p.Id)
+                                          .ToListAsync();
+
+            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+            var inspecciones = await _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            var inspeccionesProgramadas = await _context.Inspeccion
+                .Where(p => p.Estado == EstadoInspeccion.Programada)
+                .ToListAsync();
+
+            return View(inspeccionesProgramadas);
         }
 
 
@@ -100,7 +233,7 @@ namespace Buildoc.Controllers
             if (ModelState.IsValid)
             {
                 inspeccion.Id = Guid.NewGuid();
-                inspeccion.Estado = "Programada";
+                inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
                 _context.Add(inspeccion);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
@@ -115,6 +248,18 @@ namespace Buildoc.Controllers
         // GET: Inspecciones/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
+
+            ViewBag.EstadoList = Enum.GetValues(typeof(EstadoInspeccion))
+      .Cast<EstadoInspeccion>()
+      .Select(e => new SelectListItem
+      {
+          Value = e.ToString(),
+          Text = e.GetType()
+                    .GetField(e.ToString())
+                    .GetCustomAttributes(typeof(DisplayAttribute), false)
+                    .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
+      }).ToList();
+
             if (id == null)
             {
                 return NotFound();
