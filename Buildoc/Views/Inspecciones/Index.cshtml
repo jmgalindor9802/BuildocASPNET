@@ -38,7 +38,19 @@
                 <span class="info-box-icon bg-warning"><i class="far fa-flag"></i></span>
 
                 <div class="info-box-content">
-                    <span class="info-box-text">Finalizados</span>
+                    <span class="info-box-text">Pendientes de revisión</span>
+                    <span class="info-box-number">@ViewBag.CountFinalizados</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        <!-- Caja de información para proyectos sin responder -->
+        <div class="col-md-3 col-sm-6 col-12">
+            <div class="info-box">
+                <span class="info-box-icon bg-danger"><i class="far fa-flag"></i></span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">Pendientes de revisión</span>
                     <span class="info-box-number">@ViewBag.CountFinalizados</span>
                 </div>
                 <!-- /.info-box-content -->
@@ -47,10 +59,10 @@
         <div class="col-md-3 col-sm-6 col-12">
             <a href="@Url.Action("Archivados", "Proyectos")">
                 <div class="info-box shadow">
-                    <span class="info-box-icon bg-danger"><i class="far fa-copy"></i></span>
+                    <span class="info-box-icon bg-success"><i class="far fa-copy"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Archivados</span>
+                        <span class="info-box-text">Finalizadas</span>
                         <span class="info-box-number">@ViewBag.CountArchivados</span>
                     </div>
                     <!-- /.info-box-content -->

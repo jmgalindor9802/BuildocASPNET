@@ -7,7 +7,7 @@ namespace Buildoc.Models
     {
         public Guid Id { get; set; }
 
-        [Display(Name = "Fecha de Inspección")]
+        [Display(Name = "Fecha y hora")]
         [Required]
         public DateTime FechaInspeccion { get; set; }
 
@@ -22,10 +22,11 @@ namespace Buildoc.Models
         public int TipoInspeccionId { get; set; }
 
         public TipoInspeccion TipoInspeccion { get; set; }
-
+        [Display(Name = "Proyecto")]
         public Guid ProyectoId { get; set; }
         public Proyecto Proyecto { get; set; }
 
+        [Display(Name = "Inspector")]
         public string InspectorId { get; set; }
 
         public virtual Usuario Inspector { get; set; }

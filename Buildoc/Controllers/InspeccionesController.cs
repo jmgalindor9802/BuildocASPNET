@@ -125,10 +125,10 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Id", inspeccion.InspectorId);
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
-            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Descripcion", inspeccion.TipoInspeccionId);
-            return View(inspeccion);
+            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
+            return PartialView("Edit",inspeccion);
         }
 
         // POST: Inspecciones/Edit/5
@@ -161,12 +161,13 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "¡La inspección se ha editado exitosamente!";
+                return Json(new { success = true });
             }
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "Id", inspeccion.InspectorId);
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
-            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Descripcion", inspeccion.TipoInspeccionId);
-            return View(inspeccion);
+            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
+            return PartialView("Edit",inspeccion);
         }
 
         // GET: Inspecciones/Delete/5
