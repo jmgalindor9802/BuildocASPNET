@@ -1,0 +1,42 @@
+﻿@model Buildoc.Models.TipoIncidente
+
+@{
+    ViewData["Title"] = "Edit";
+    var gravedadOptions = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Alto", Text = "Alto" },
+        new SelectListItem { Value = "Medio", Text = "Medio" },
+        new SelectListItem { Value = "Bajo", Text = "Bajo" }
+    };
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="Categoria" class="control-label"></label>
+                <input asp-for="Categoria" class="form-control" />
+                <span asp-validation-for="Categoria" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Titulo" class="control-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gravedad" class="control-label"></label>
+                <select asp-for="Gravedad" class="form-control" asp-items="@(new SelectList(gravedadOptions, "Value", "Text"))">
+                    <option value="">Selecciona una opción</option>
+                </select>
+                <span asp-validation-for="Gravedad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+        </form>
+    </div>
+</div>

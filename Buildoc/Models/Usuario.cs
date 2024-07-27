@@ -18,6 +18,10 @@ namespace Buildoc.Models
         public DateOnly? FechaNacimiento { get; set; }
 
         public ICollection<Proyecto> Proyectos { get; set; }
+        public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
+        public virtual ICollection<Seguimiento> Seguimientos { get; set; } = new List<Seguimiento>();
+        public virtual ICollection<TipoIncidente> TipoIncidentes { get; set; } = new List<TipoIncidente>();
+
         public Usuario()
         {
             Proyectos = new List<Proyecto>();

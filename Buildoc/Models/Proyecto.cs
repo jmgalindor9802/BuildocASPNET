@@ -30,8 +30,7 @@ namespace Buildoc.Models
 
 
         public virtual ICollection<Usuario> Residentes { get; set; } = new List<Usuario>();
-
-
+        public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
 
     }
 }
