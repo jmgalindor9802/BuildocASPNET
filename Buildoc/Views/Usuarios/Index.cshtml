@@ -1,180 +1,169 @@
 ﻿@model IEnumerable<Buildoc.Models.IndexUsuarioViewModel>
 
 @{
-    ViewData["Title"] = "Index";
-    var usuarioViewModel = new Buildoc.Models.UsuarioViewModel();
+	ViewData["Title"] = "Index";
+	var usuarioViewModel = new Buildoc.Models.UsuarioViewModel();
 }
 <style>
-    /* Estilos para desactivar el color azul y el subrayado en <a> */
-    a {
-        text-decoration: none; /* Elimina el subrayado */
-        cursor: pointer; /* Cambia el cursor al estilo de un botón */
-    }
+	/* Estilos para desactivar el color azul y el subrayado en <a> */
+	a {
+		text-decoration: none; /* Elimina el subrayado */
+		cursor: pointer; /* Cambia el cursor al estilo de un botón */
+	}
 </style>
 
-        <h1>Usuarios</h1>
-        <div class="row">
-            <!-- small box Usuarios totales -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>@ViewBag.UsuariosTotales</h3>
-                        <p>Usuarios registrados</p>
-                    </div>
-                    <div class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <!-- small box Activos-->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>@ViewBag.UsuariosActivos</h3>
-                        <p>Usuarios activos</p>
-                    </div>
-                    <div class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
-                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
-                            <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
-                        </svg>
-                    </div>
-                    <a asp-action="Index" class="small-box-footer">Ver usuarios activos <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
-            <!-- small box Usuarios desactivados -->
-            <div class="col-lg-3 col-6">
-                <div class="small-box bg-danger">
-                    <div class="inner">
-                        <h3>@ViewBag.UsuariosDesactivos</h3>
-                        <p>Usuarios desactivados</p>
-                    </div>
-                    <div class="icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
-                            <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
-                            <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708" />
-                        </svg>
-                    </div>
-                    <a asp-action="UsuarioDesactivado" class="small-box-footer">Ver usuarios desctivados <i class="fas fa-arrow-circle-right"></i></a>
-                </div>
-            </div>
-        </div>
-        <!-- ./row -->
+<h1 class="mb-4">Usuarios</h1>
+<div class="row mb-3">
+	<a href="#" id="createNewModal" class="create-new btn btn-primary mr-3"
+	   data-url="@Url.Action("Create", "Usuarios")"
+	   data-title="Crear nuevo usuario" data-action="create">
+		<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+			<path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+		</svg> Crear usuario
+	</a>
 
-        <div class="row">
+	<form asp-action="Descargar" asp-controller="Usuarios">
+		<button class="btn btn-success mr-3" type="submit">Descargar PDF</button>
+	</form>
 
-                <a href="#" id="createNewModal" class="create-new btn btn-primary"
-                   data-url="@Url.Action("Create", "Usuarios")"
-                   data-title="Crear nuevo usuario" data-action="create">
-                    Crear usuario
-                </a>
-            <
+	<button class="btn btn-primary mr-2" data-toggle="modal" data-target="#filterModal">
+		Filtrar por rol
+	</button>
+</div>
+<div class="row mb-2">
+	<!-- small box Usuarios totales -->
+	<div class="col-lg-3 col-6">
+		<div class="small-box bg-info">
+			<div class="inner">
+				<h3>@ViewBag.UsuariosTotales</h3>
+				<p>Usuarios registrados</p>
+			</div>
+			<div class="icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+					<path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+					<path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+				</svg>
+			</div>
+		</div>
+	</div>
+	<!-- small box Activos-->
+	<div class="col-lg-3 col-6">
+		<div class="small-box bg-success">
+			<div class="inner">
+				<h3>@ViewBag.UsuariosActivos</h3>
+				<p>Usuarios activos</p>
+			</div>
+			<div class="icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-add" viewBox="0 0 16 16">
+					<path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+					<path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+				</svg>
+			</div>
+			<a asp-action="Index" class="small-box-footer">Ver usuarios activos <i class="fas fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+	<!-- small box Usuarios desactivados -->
+	<div class="col-lg-3 col-6">
+		<div class="small-box bg-danger">
+			<div class="inner">
+				<h3>@ViewBag.UsuariosDesactivos</h3>
+				<p>Usuarios desactivados</p>
+			</div>
+			<div class="icon">
+				<svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-person-x" viewBox="0 0 16 16">
+					<path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m.256 7a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+					<path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m-.646-4.854.646.647.646-.647a.5.5 0 0 1 .708.708l-.647.646.647.646a.5.5 0 0 1-.708.708l-.646-.647-.646.647a.5.5 0 0 1-.708-.708l.647-.646-.647-.646a.5.5 0 0 1 .708-.708" />
+				</svg>
+			</div>
+			<a asp-action="UsuarioDesactivado" class="small-box-footer">Ver usuarios desctivados <i class="fas fa-arrow-circle-right"></i></a>
+		</div>
+	</div>
+</div>
+<!-- ./row -->
+@* modal *@
+<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="filterModalLabel">Filtrar por rol</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<form method="get" asp-action="Index">
+					<div class="form-group">
+						<label for="roleFilter">Filtrar por rol:</label>
+						<select name="roleFilter" id="roleFilter" class="form-control">
+							<option value="">Todos</option>
+							<option value="Residente">Residente</option>
+							<option value="Coordinador">Coordinador</option>
+							<option value="Administrador">Administrador</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<button type="submit" class="btn btn-primary">Aplicar filtro</button>
+						<a href="@Url.Action("Index", "Usuarios")" class="btn btn-danger">Limpiar filtro</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
 
-            
-                <form asp-action="Descargar
-" asp-controller="Usuarios">
-                    <button class="btn btn-success" type="submit">Descargar PDF</button>
-                </form>
-          
-         
-                <button class="btn btn-primary" data-toggle="modal" data-target="#filterModal">
-                    Filtrar por rol
-                </button>
-           
-        </div>
-        @* modal *@
-        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="filterModalLabel">Filtrar por rol</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <form method="get" asp-action="Index">
-                            <div class="form-group">
-                                <label for="roleFilter">Filtrar por rol:</label>
-                                <select name="roleFilter" id="roleFilter" class="form-control">
-                                    <option value="">Todos</option>
-                                    <option value="Residente">Residente</option>
-                                    <option value="Coordinador">Coordinador</option>
-                                    <option value="Administrador">Administrador</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Aplicar filtro</button>
-                                <a href="@Url.Action("Index", "Usuarios")" class="btn btn-danger">Limpiar filtro</a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
 
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
-                            <tr>
-                                <th>@Html.DisplayNameFor(model => model.First().Email)</th>
-                                <th>@Html.DisplayNameFor(model => model.First().Nombres)</th>
-                                <th>@Html.DisplayNameFor(model => model.First().Direccion)</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var usuario in Model)
-                            {
-                                <tr>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => usuario.Email)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => usuario.Nombres)
-                                    </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => usuario.Direccion)
-                                    </td>
-                                    <td>
-                                        <a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })" data-title="Editar usuario" data-action="edit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                            </svg>
-                                        </a> |
-                                        <a href="#" class="details-view" data-url="@Url.Action("Details", "Usuarios", new { id = usuario.Id })" data-title="Detalles del usuario" data-action="details">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                                            </svg>
-                                        </a> |
-                                        <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })" data-title="Desactivar usuario" data-action="delete">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                                            </svg>
-                                        </a>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>  
-    </div>
-</section>
-    </div>
-</section>
+<table id="example1" class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Nombre Completo</th>
+			<th>@Html.DisplayNameFor(model => model.First().Email)</th>
+			<th>@Html.DisplayNameFor(model => model.First().Role)</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var usuario in Model)
+		{
+			<tr>
+				<td>
+					@Html.DisplayFor(modelItem => usuario.Nombres) @Html.DisplayFor(modelItem => usuario.Apellidos)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => usuario.Email)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => usuario.Role)
+				</td>
+				<td>
+					<a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })" data-title="Editar usuario" data-action="edit">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+							<path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+							<path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+						</svg>
+					</a> |
+					<a href="#" class="details-view" data-url="@Url.Action("Details", "Usuarios", new { id = usuario.Id })" data-title="Detalles del usuario" data-action="details">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+							<path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+						</svg>
+					</a> |
+					<a href="#" class="delete-item" data-url="@Url.Action("Delete", "Usuarios", new { id = usuario.Id })" data-title="Desactivar usuario" data-action="delete">
+						<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+							<path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+						</svg>
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
 @section Scripts {
-    
-    <script>
-        $(document).ready(function () {
-            $('#filterModal').on('shown.bs.modal', function () {
-                $('#roleFilter').trigger('focus')
-            })
-        });
-    </script>
+
+	<script>
+		$(document).ready(function () {
+			$('#filterModal').on('shown.bs.modal', function () {
+				$('#roleFilter').trigger('focus')
+			})
+		});
+	</script>
 }

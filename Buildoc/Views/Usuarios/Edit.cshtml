@@ -64,16 +64,38 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="departamentos">Departamento</label>
-                        <input asp-for="Departamento" class="form-control" readonly />
+                        <select id="departamentos" class="form-control" name="Departamento" required>
+                            @if (!string.IsNullOrEmpty(Model.Departamento))
+                            {
+                                <option value="@Model.Departamento" selected>@Model.Departamento</option>
+                            }
+                            else
+                            {
+                                <option value="">Seleccione un departamento</option>
+                            }
+                            @* Los departamentos serán cargados dinámicamente *@
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="municipios">Municipio</label>
-                        <input asp-for="Municipio" class="form-control" readonly />
+                        <select id="municipios" class="form-control" name="Municipio" required>
+                            @if (!string.IsNullOrEmpty(Model.Municipio))
+                            {
+                                <option value="@Model.Municipio" selected>@Model.Municipio</option>
+                            }
+                            else
+                            {
+                                <option value="">Seleccione un municipio</option>
+                            }
+
+                            @* Los municipios serán cargados dinámicamente según el departamento seleccionado *@
+                        </select>
                     </div>
                 </div>
             </div>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
@@ -104,7 +126,7 @@
                     <div class="form-group">
                         <label asp-for="Role" class="control-label">Role</label>
                         <select asp-for="Role" class="form-control" id="rol" required>
-                            <option value="Residente">Residente en obra</option>
+                            <option value="Residente">Residente</option>
                             <option value="Coordinador">Coordinador</option>
                         </select>
                     </div>
@@ -122,7 +144,64 @@
 </div>
 
 @section Scripts {
+	
     @{
+        <script>
+            $(document).ready(function () {
+                initDepartamentos();
+
+                // Preseleccionar valores guardados
+                var departamentoGuardado = '@Html.Raw(Json.Serialize(Model.Departamento))';
+                var municipioGuardado = '@Html.Raw(Json.Serialize(Model.Municipio))';
+
+                if (departamentoGuardado) {
+                    $('#departamentos').val(departamentoGuardado).trigger('change');
+
+                    // Esperar a que los municipios se carguen
+                    setTimeout(function () {
+                        $('#municipios').val(municipioGuardado).prop('disabled', false);
+                    }, 500);
+                }
+            });
+
+            function initDepartamentos() {
+                $.getJSON('~/colombia.json', function (data) {
+                    var departamentoSelect = $('#departamentos');
+                    var municipiosData = {};
+
+                    data.forEach(function (departamento) {
+                        // Agregar opciones de departamentos
+                        if (departamento.departamento !== '@Model.Departamento') {
+                            departamentoSelect.append(new Option(departamento.departamento, departamento.departamento));
+                        }
+                        municipiosData[departamento.departamento] = departamento.ciudades;
+                    });
+
+                    $('#departamentos').change(function () {
+                        var departamentoNombre = $(this).val();
+                        var municipioSelect = $('#municipios');
+
+                        if (departamentoNombre) {
+                            var municipios = municipiosData[departamentoNombre];
+                            municipioSelect.empty().append(new Option('Seleccione un municipio', ''));
+                            municipios.forEach(function (municipio) {
+                                municipioSelect.append(new Option(municipio, municipio));
+                            });
+                            municipioSelect.prop('disabled', false);
+                        } else {
+                            municipioSelect.empty().append(new Option('Seleccione un municipio', '')).prop('disabled', true);
+                        }
+                    });
+
+                    // Preseleccionar el departamento y disparar el evento change para cargar municipios
+                    var departamentoGuardado = '@Html.Raw(Json.Serialize(Model.Departamento))';
+                    if (departamentoGuardado) {
+                        departamentoSelect.val(departamentoGuardado).trigger('change');
+                    }
+                });
+            }
+
+        </script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

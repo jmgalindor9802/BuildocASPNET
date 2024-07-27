@@ -50,7 +50,8 @@ namespace Buildoc.Services
             {
                 UserName = "admin@buildoc.com",
                 Email = "admin@buildoc.com",
-                Estado=true
+                Estado=true,
+                EmailConfirmed = true,
             };
             string defaultPassword = "Admin123#";
 

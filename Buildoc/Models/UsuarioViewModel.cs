@@ -4,6 +4,10 @@ namespace Buildoc.Models
 {
     public class UsuarioViewModel
     {
+        public UsuarioViewModel()
+        {
+            FechaNacimiento = DateOnly.FromDateTime(DateTime.Now);
+        }
         [Required(ErrorMessage = "Campo requerido")]
         [Display(Name = "Apellidos")]
         public string Apellidos { get; set; }

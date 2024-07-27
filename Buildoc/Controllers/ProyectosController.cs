@@ -66,8 +66,6 @@ namespace Buildoc.Controllers
         public async Task<IActionResult> Archivados()
         {
 
-
-
             var proyectosArchivados = await _context.Proyectos
                 .Where(p => p.Estado == "Archivado")
                 .ToListAsync();
