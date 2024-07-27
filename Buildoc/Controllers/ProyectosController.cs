@@ -337,7 +337,7 @@ namespace Buildoc.Controllers
                 proyecto.Estado = "Archivado";
                 _context.Proyectos.Update(proyecto);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; ;
+                TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; 
             }
 
 

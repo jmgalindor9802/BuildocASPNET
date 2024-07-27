@@ -29,8 +29,14 @@ builder.Services.AddScoped<UserManager<Usuario>>();
 
 // Add EmailSender service
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IEmailSender, EmailSender>(); 
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
+//Contenedor
+builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
+
+
+//Cors
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -69,13 +75,19 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+});
+
+
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
-
 
 
 app.Run();

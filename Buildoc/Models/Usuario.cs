@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Buildoc.Models
 {
@@ -16,7 +17,8 @@ namespace Buildoc.Models
         public bool Estado { get; set; }
         public string? Profesion { get; set; }
         public DateOnly? FechaNacimiento { get; set; }
-
+        [NotMapped]
+        public string NombreCompleto => $"{Nombres} {Apellidos}";
         public ICollection<Proyecto> Proyectos { get; set; }
         public Usuario()
         {
