@@ -4,7 +4,7 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Detalles</h1>
 
 <div>
     <h4>Incidente</h4>
@@ -22,55 +22,166 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.FechaCreacion)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descripcion)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descripcion)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FechaIncidente)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FechaIncidente)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.HoraIncidente)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HoraIncidente)
+        <dd class="col-sm-10">
+            @if (Model.HoraIncidente.HasValue)
+            {
+                @Model.HoraIncidente.Value.ToString("HH:mm")
+            }
+            else
+            {
+                <span>Se desconoce la hora</span>
+            }
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Estado)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
+        <dd class="col-sm-10">
+            @if (Model.Estado)
+            {
+                <span>Activo</span>
+            }
+            else
+            {
+                <span>Inactivo</span>
+            }
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sugerencia)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sugerencia)
-        </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Proyecto)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Proyecto.Departamento)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Proyecto.Nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Usuario)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Usuario.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Usuario.Email)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoIncidente)
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Descripcion)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoIncidente.Id)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Sugerencia)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Sugerencia)
         </dd>
     </dl>
+    <h4>Tipo de incidente</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoIncidente.Categoria)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoIncidente.Categoria)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoIncidente)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoIncidente.Titulo)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoIncidente.Gravedad)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoIncidente.Gravedad)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TipoIncidente.Descripcion)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TipoIncidente.Descripcion)
+        </dd>
+    </dl>
+    <h4>Afectados</h4>
+    <hr />
+    @if (Model.Afectados != null && Model.Afectados.Any())
+    {
+        <dl class="row">
+            @foreach (var afectado in Model.Afectados)
+            {
+                @if (!string.IsNullOrEmpty(afectado.Nombre) && !string.IsNullOrEmpty(afectado.Apellido))
+                {
+                    <dt class="col-sm-2">
+                        Nombre completo
+                    </dt>
+                    <dd class="col-sm-10">
+                        @($"{afectado.Nombre} {afectado.Apellido}")
+                    </dd>
+                    <dt class="col-sm-2">
+                        Correo electrónico
+                    </dt>
+                    <dd class="col-sm-10">
+                        @if (!string.IsNullOrEmpty(afectado.CorreoElectronico))
+                        {
+                            @afectado.CorreoElectronico
+                        }
+                        else
+                        {
+                            <span>No disponible</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-2">
+                        Cédula
+                    </dt>
+                    <dd class="col-sm-10">
+                        @if (afectado.Cedula.HasValue)
+                        {
+                            @afectado.Cedula
+                        }
+                        else
+                        {
+                            <span>No disponible</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-2">
+                        Defunción
+                    </dt>
+                    <dd class="col-sm-10">
+                        @if (afectado.Defuncion)
+                        {
+                            <span>Sí</span>
+                        }
+                        else
+                        {
+                            <span>No</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-2">
+                        Actividad realizada
+                    </dt>
+                    <dd class="col-sm-10">
+                        @if (!string.IsNullOrEmpty(afectado.ActividadRealizada))
+                        {
+                            @afectado.ActividadRealizada
+                        }
+                        else
+                        {
+                            <span>No disponible</span>
+                        }
+                    </dd>
+                }
+                else
+                {
+                    <p>No hay afectados</p>
+                }
+            }
+        </dl>
+    }
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

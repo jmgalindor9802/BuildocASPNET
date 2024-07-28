@@ -8,52 +8,141 @@
 
 <h4>Incidente</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-center">
+    <div class="col-md-12">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Titulo" class="control-label"></label>
+                        <input asp-for="Titulo" class="form-control" />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TipoIncidenteId" class="control-label"></label>
+                        <select asp-for="TipoIncidenteId" class="form-control" asp-items="ViewBag.TipoIncidenteId" id="tipoIncidenteSelect">
+                            <option value="">Seleccione un tipo de incidente</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            @* Campo para mostrar la descripcion del tipo de incidente *@
+            <div class="col-md-12" id="descripcionTipoIncidente" style="display:none;">
+                <label class="control-label">Descripcion del tipo de incidente</label>
+                <textarea class="form-control" id="descripcionTextArea" readonly></textarea>
             </div>
-            <div class="form-group">
-                <label asp-for="FechaIncidente" class="control-label"></label>
-                <input asp-for="FechaIncidente" class="form-control" />
-                <span asp-validation-for="FechaIncidente" class="text-danger"></span>
+            @* ./Campo para mostrar la descripcion del tipo de incidente *@
+            <div class="row">
+                <div class=col-md-4>
+                    <div class="form-group">
+                        <label asp-for="FechaIncidente" class="control-label"></label>
+                        <input asp-for="FechaIncidente" type="date" class="form-control" />
+                        <span asp-validation-for="FechaIncidente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="HoraIncidente" class="control-label"></label>
+                        <input asp-for="HoraIncidente" type="time" class="form-control" id="horaIncidente" />
+                        <span asp-validation-for="HoraIncidente" class="text-danger"></span>
+                    </div>
+                </div>
+                @* checkbox para ocultar la hora *@
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label" for="desconoceHora">
+                            Se desconoce la hora del incidente
+                        </label>
+                        <input class="form-control" type="checkbox" value="" id="desconoceHora">
+                        
+                    </div>
+                </div>
+                @* checkbox para ocultar la hora *@
             </div>
-            <div class="form-group">
-                <label asp-for="HoraIncidente" class="control-label"></label>
-                <input asp-for="HoraIncidente" class="form-control" />
-                <span asp-validation-for="HoraIncidente" class="text-danger"></span>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Estado" /> @Html.DisplayNameFor(model => model.Estado)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="Sugerencia" class="control-label"></label>
-                <input asp-for="Sugerencia" class="form-control" />
-                <span asp-validation-for="Sugerencia" class="text-danger"></span>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="Sugerencia" class="control-label"></label>
+                    <textarea asp-for="Sugerencia" class="form-control"></textarea>
+                    <span asp-validation-for="Sugerencia" class="text-danger"></span>
+                </div>
             </div>
             <div class="form-group">
                 <label asp-for="ProyectoId" class="control-label"></label>
-                <select asp-for="ProyectoId" class ="form-control" asp-items="ViewBag.ProyectoId"></select>
+                <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
             </div>
-            <div class="form-group">
-                <label asp-for="UsuarioId" class="control-label"></label>
-                <select asp-for="UsuarioId" class ="form-control" asp-items="ViewBag.UsuarioId"></select>
+            @* switch para mostrar los campos de afectados *@
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="SwitchAfectados" name="switchAfectados" value="true">
+                <label class="form-check-label" for="SwitchAfectados">¿Existen afectados?</label>
             </div>
-            <div class="form-group">
-                <label asp-for="TipoIncidenteId" class="control-label"></label>
-                <select asp-for="TipoIncidenteId" class ="form-control" asp-items="ViewBag.TipoIncidenteId"></select>
+            @* ./switch para mostrar los campos de afectados *@
+            <div id="afectadosContainer" style="display:none;">
+                <div class="afectado-group" id="afectadoTemplate" style="display:none;">
+                    <h5>Afectado</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Nombre" class="control-label"></label>
+                                <input name="Afectados[0].Nombre" class="form-control" />
+                                <span asp-validation-for="Afectado.Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Apellido" class="control-label"></label>
+                                <input name="Afectados[0].Apellido" class="form-control" />
+                                <span asp-validation-for="Afectado.Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
+                        <input name="Afectados[0].CorreoElectronico" class="form-control" />
+                        <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Cedula" class="control-label"></label>
+                                <input name="Afectados[0].Cedula" class="form-control" />
+                                <span asp-validation-for="Afectado.Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Defuncion" class="control-label"></label>
+                                <input name="Afectados[0].Defuncion" class="form-control" type="checkbox" value="true"/>
+                                <span asp-validation-for="Afectado.Defuncion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label asp-for="Afectado.AsociadaProyecto" class="control-label"></label>
+                                <input name="Afectados[0].AsociadaProyecto" class="form-control" type="checkbox" value="true"/>
+                                <span asp-validation-for="Afectado.AsociadaProyecto" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
+                        <textarea name="Afectados[0].ActividadRealizada" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Afectado.ActividadRealizada" class="text-danger"></span>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-afectado">Eliminar</button>
+                </div>
+                <button type="button" class="btn btn-secondary" id="addAfectadoButton">Añadir Afectado</button>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -65,3 +154,88 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+@section Scripts {
+    <script>
+        // Obtener el elemento select del tipo de incidente
+        document.getElementById('tipoIncidenteSelect').addEventListener('change', function () {
+            // Obtener el valor seleccionado
+            var tipoIncidenteId = this.value;
+            // Obtener los elementos del div y textarea de descripción
+            var descripcionDiv = document.getElementById('descripcionTipoIncidente');
+            var descripcionTextArea = document.getElementById('descripcionTextArea');
+
+            // Si se ha seleccionado un tipo de incidente (valor no vacío)
+            if (tipoIncidenteId) {
+                // Realizar una petición fetch para obtener la descripción del tipo de incidente
+                fetch(`/Incidentes/GetTipoIncidenteDescripcion?tipoIncidenteId=${tipoIncidenteId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Mostrar el div de descripción y establecer el valor del textarea
+                        descripcionDiv.style.display = 'block';
+                        descripcionTextArea.value = data.descripcion;
+                    });
+            } else {
+                // Si no se ha seleccionado un tipo de incidente, ocultar el div de descripción y limpiar el textarea
+                descripcionDiv.style.display = 'none';
+                descripcionTextArea.value = '';
+            }
+        });
+
+        function toggleAfectadosFields() {
+            var switchAfectados = document.getElementById('SwitchAfectados');
+            var afectadosContainer = document.getElementById('afectadosContainer');
+            if (switchAfectados.checked) {
+                afectadosContainer.style.display = 'block';
+            } else {
+                afectadosContainer.style.display = 'none';
+
+                // Limpiar los datos de los afectados cuando el switch está desmarcado
+                var inputs = afectadosContainer.querySelectorAll('input, textarea');
+                inputs.forEach(function (input) {
+                    input.value = '';
+                });
+            }
+        }
+
+        // Ejecutar la función cuando se cambie el estado del switch
+        document.getElementById('SwitchAfectados').addEventListener('change', toggleAfectadosFields);
+
+        // Ejecutar la función al cargar la página para establecer el estado inicial
+        toggleAfectadosFields();
+
+        // Función para añadir un nuevo afectado
+        function addAfectado() {
+            var afectadosContainer = document.getElementById('afectadosContainer');
+            var template = document.getElementById('afectadoTemplate');
+            var clone = template.cloneNode(true);
+            clone.style.display = 'block';
+            clone.classList.remove('afectado-template');
+            clone.classList.add('afectado-group');
+
+            var afectadoCount = document.getElementsByClassName('afectado-group').length;
+            clone.querySelectorAll('input, textarea').forEach(function (input) {
+                var name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace('Afectados[0]', 'Afectados[' + afectadoCount + ']'));
+                }
+            });
+
+            afectadosContainer.insertBefore(clone, document.getElementById('addAfectadoButton'));
+
+            // Añadir evento para eliminar afectado
+            clone.querySelector('.remove-afectado').addEventListener('click', function () {
+                clone.remove();
+            });
+        }
+
+        document.getElementById('addAfectadoButton').addEventListener('click', addAfectado);
+
+        // Obtener el elemento checkbox "desconoceHora"
+        document.getElementById('desconoceHora').addEventListener('change', function () {
+            // Obtener el elemento input de hora del incidente
+            var horaIncidente = document.getElementById('horaIncidente');
+            // Habilitar o deshabilitar el input de hora según el estado del checkbox
+            horaIncidente.disabled = this.checked;
+        });
+    </script>
+}

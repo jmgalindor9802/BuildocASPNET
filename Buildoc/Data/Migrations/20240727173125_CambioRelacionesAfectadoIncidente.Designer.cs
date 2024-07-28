@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240727173125_CambioRelacionesAfectadoIncidente")]
+    partial class CambioRelacionesAfectadoIncidente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,15 +32,17 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ActividadRealizada")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Apellido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("AsociadaProyecto")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("Cedula")
+                    b.Property<long>("Cedula")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CorreoElectronico")
@@ -50,6 +55,7 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -103,7 +109,9 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("ProyectoId");
 
-                    b.HasIndex("TipoIncidenteId");
+                    b.HasIndex("TipoIncidenteId")
+                        .IsUnique()
+                        .HasFilter("[TipoIncidenteId] IS NOT NULL");
 
                     b.HasIndex("UsuarioId");
 
@@ -494,8 +502,8 @@ namespace Buildoc.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Buildoc.Models.TipoIncidente", "TipoIncidente")
-                        .WithMany("Incidentes")
-                        .HasForeignKey("TipoIncidenteId")
+                        .WithOne("Incidente")
+                        .HasForeignKey("Buildoc.Models.Incidente", "TipoIncidenteId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Buildoc.Models.Usuario", "Usuario")
@@ -628,7 +636,7 @@ namespace Buildoc.Data.Migrations
 
             modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
                 {
-                    b.Navigation("Incidentes");
+                    b.Navigation("Incidente");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Usuario", b =>

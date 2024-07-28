@@ -65,15 +65,15 @@ namespace Buildoc.Data
                 .HasForeignKey(s => s.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict); // Cambiado a Restrict
 
-			// Configurar la relación entre Incidente y TipoIncidente
-			builder.Entity<Incidente>()
-				.HasOne(i => i.TipoIncidente)
-				.WithOne(ti => ti.Incidente)
-				.HasForeignKey<Incidente>(i => i.TipoIncidenteId)
-				.OnDelete(DeleteBehavior.Restrict);
+            // Configurar la relación entre Incidente y TipoIncidente
+            builder.Entity<Incidente>()
+                .HasOne(i => i.TipoIncidente)
+                .WithMany(ti => ti.Incidentes)
+                .HasForeignKey(i => i.TipoIncidenteId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-			// Configurar la relación entre Usuario y TipoIncidentes
-			builder.Entity<TipoIncidente>()
+            // Configurar la relación entre Usuario y TipoIncidentes
+            builder.Entity<TipoIncidente>()
                .HasOne(t => t.Usuario)
                .WithMany(u => u.TipoIncidentes)
                .HasForeignKey(t => t.UsuarioId)

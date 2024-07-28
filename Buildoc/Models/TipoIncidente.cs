@@ -10,10 +10,10 @@ namespace Buildoc.Models
         public string Titulo { get; set; }
         public string Descripcion { get; set; }
         public string Gravedad { get; set; }
-		// Navigation property (no required)
-		public virtual Incidente? Incidente { get; set; }
-		// Foreign key for Usuario
-		public string? UsuarioId { get; set; }
+        // Collection of Incidentes
+        public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
+        // Foreign key for Usuario
+        public string? UsuarioId { get; set; }
         // Navigation property for Usuario
         public virtual Usuario? Usuario { get; set; }
     }

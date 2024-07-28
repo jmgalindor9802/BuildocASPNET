@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240727175059_CambioOneToManyIncidenteTipoIncidente")]
+    partial class CambioOneToManyIncidenteTipoIncidente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,15 +32,17 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ActividadRealizada")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Apellido")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("AsociadaProyecto")
                         .HasColumnType("bit");
 
-                    b.Property<long?>("Cedula")
+                    b.Property<long>("Cedula")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CorreoElectronico")
@@ -50,6 +55,7 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Nombre")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

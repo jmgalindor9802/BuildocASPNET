@@ -1,0 +1,61 @@
+﻿@model IEnumerable<Buildoc.Models.Incidente>
+
+@{
+    ViewData["Title"] = "Incidentes archivados";
+}
+
+<style>
+    /* Estilos para desactivar el color azul y el subrayado en <a> */
+    a {
+        text-decoration: none; /* Elimina el subrayado */
+        cursor: pointer; /* Cambia el cursor al estilo de un botón */
+    }
+</style>
+
+<h1 class="mb-4">Incidentes resueltos</h1>
+
+<div class="row mb-3">
+    <a asp-action="index" class="btn btn-primary" role="button">Volver</a>
+</div>
+    
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaIncidente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Proyecto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoIncidente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titulo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaIncidente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Proyecto.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
+                </td>
+                <td>
+                    <a asp-action="Delete" asp-route-id="@item.Id">Restaurar</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
