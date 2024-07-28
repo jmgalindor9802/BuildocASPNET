@@ -14,11 +14,11 @@ namespace Buildoc.Models
         public Guid IncidenteId { get; set; }
 
         // Navigation property for Incidente
-        public virtual Incidente Incidente { get; set; }
+        public virtual Incidente? Incidente { get; set; }
         // Foreign key for Usuario
-        public string UsuarioId { get; set; }
+        public string? UsuarioId { get; set; }
         // Navigation property for Usuario
-        public virtual Usuario Usuario { get; set; }
+        public virtual Usuario? Usuario { get; set; }
         // Constructor para establecer la fecha de creación
         public Seguimiento()
         {

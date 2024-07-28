@@ -176,6 +176,7 @@ namespace Buildoc.Controllers
             if (ModelState.IsValid)
             {
                 incidente.Id = Guid.NewGuid();
+                // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 incidente.UsuarioId = userId;
                 incidente.Estado = true;
