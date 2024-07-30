@@ -285,7 +285,10 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
+
+			
+
+			ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
             return PartialView("Edit",inspeccion);
@@ -298,7 +301,18 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado")] Inspeccion inspeccion)
         {
-            if (id != inspeccion.Id)
+			var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
+			if (inspeccionOriginal == null)
+			{
+				return NotFound();
+			}
+
+			if (inspeccionOriginal.Estado == EstadoInspeccion.PendientesDeRevision || inspeccionOriginal.Estado == EstadoInspeccion.Aprobada)
+			{
+				return Json(new { success = false, message = "No se puede editar una inspección que está pendiente de revisión o finalizada." });
+			}
+
+			if (id != inspeccion.Id)
             {
                 return NotFound();
             }
