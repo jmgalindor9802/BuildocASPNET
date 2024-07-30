@@ -230,7 +230,22 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado")] Inspeccion inspeccion)
         {
-            if (ModelState.IsValid)
+			
+
+			if (!ModelState.IsValid)
+			{
+				// Obtener errores de validación
+				var errors = ModelState.Values.SelectMany(v => v.Errors)
+											  .Select(e => e.ErrorMessage)
+											  .ToList();
+				return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+			}
+			if (inspeccion.FechaInspeccion < DateTime.Now.Date)
+			{
+				// Enviar mensaje de error como JSON
+				return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
+			}
+			if (ModelState.IsValid)
             {
                 inspeccion.Id = Guid.NewGuid();
                 inspeccion.Estado = EstadoInspeccion.Programada;
