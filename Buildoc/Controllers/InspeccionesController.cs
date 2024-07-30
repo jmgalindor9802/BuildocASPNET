@@ -233,7 +233,7 @@ namespace Buildoc.Controllers
             if (ModelState.IsValid)
             {
                 inspeccion.Id = Guid.NewGuid();
-                inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
+                inspeccion.Estado = EstadoInspeccion.Programada;
                 _context.Add(inspeccion);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";

@@ -4,7 +4,7 @@ namespace Buildoc.Models
 {
     public enum EstadoInspeccion
     {
-        [Display(Name = "Pendientes de revisión")]
+        [Display(Name = "Pendientes de aprobación")]
         PendientesDeRevision,
         [Display(Name = "En Proceso")]
         EnProceso,

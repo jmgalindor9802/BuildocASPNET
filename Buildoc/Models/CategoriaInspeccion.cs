@@ -1,4 +1,6 @@
-﻿namespace Buildoc.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Buildoc.Models
 {
     public enum CategoriaInspeccion
     {
@@ -8,7 +10,8 @@
         Cumplimiento,
         Estructural,
         Salud,
-        GestionDeProyectos,
+		[Display(Name = "Gestión de proyectos")]
+		GestionDeProyectos,
         Peligros
     }
 }
