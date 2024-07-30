@@ -53,6 +53,7 @@ namespace Buildoc.Controllers
         }
 
         // GET: Seguimientoes/Create
+        [HttpGet]
         public IActionResult Create(Guid? incidenteId)
         {
             if (incidenteId == null)
@@ -67,11 +68,9 @@ namespace Buildoc.Controllers
         }
 
         // POST: Seguimientoes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Titulo,Descripcion")] Seguimiento seguimiento)
+        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] Seguimiento seguimiento)
         {
             if (ModelState.IsValid)
             {
@@ -85,6 +84,7 @@ namespace Buildoc.Controllers
             }
             return View(seguimiento);
         }
+
 
         // GET: Seguimientoes/Edit/5
         public async Task<IActionResult> Edit(Guid? id)

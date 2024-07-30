@@ -9,6 +9,7 @@ using Buildoc.Data;
 using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Buildoc.Controllers
 {
@@ -23,28 +24,61 @@ namespace Buildoc.Controllers
 			_userManager = userManager;
 		}
 
-        // GET: TipoIncidentes
-        public async Task<IActionResult> Index()
-        {
-            // Obtener el usuario logueado
-            var usuarioLogueado = await _userManager.GetUserAsync(User);
-            if (usuarioLogueado == null)
-            {
-                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
-            }
-            // Filtrar tipo de incidente donde el coordinador es el usuario logueado
-            var tipoIncidente = await _context.TipoIncidentes
-                .Where(t => t.UsuarioId == usuarioLogueado.Id)
-                .ToListAsync();
-            //Obtener la cantidad de tipos de incidentes creados por el coordinador logeado
-            var tipoIncidentesTotales = tipoIncidente.Count();
+		// GET: TipoIncidentes
+		[Authorize(Roles = "Administrador")]
+		public async Task<IActionResult> Index()
+		{
 
-            //Retornar a la vista la cantidad de tipos de incidentes creados por el coordinador logeado
+			// Obtener todos los tipos de incidentes
+			var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
+
+			// Contar los tipos de incidentes totales
+			var tipoIncidentesTotales = tipoIncidentes.Count;
+
+			// Contar los tipos de incidentes activos (estado true)
+			var tipoIncidentesActivos = tipoIncidentes.Count(ti => ti.Estado);
+
+			// Contar los tipos de incidentes archivados (estado false)
+			var tipoIncidentesArchivados = tipoIncidentes.Count(ti => !ti.Estado);
+
+            // Filtrar tipos de incidentes activos para mostrar en la vista
+            var tiposIncidentesActivosParaVista = tipoIncidentes
+                .Where(ti => ti.Estado)
+                .Select(ti => new TipoIncidenteViewModel
+                {
+                    Id = ti.Id,
+                    Categoria = ti.Categoria.GetDescription(),
+                    Titulo = ti.Titulo,
+                    Descripcion = ti.Descripcion,
+                    Gravedad = ti.Gravedad,
+                    Estado = ti.Estado
+                })
+                .ToList();
+
+
+            // Pasar los contadores a la vista mediante ViewBag
             ViewBag.tipoIncidentesTotales = tipoIncidentesTotales;
-            return View(tipoIncidente);
+			ViewBag.tipoIncidentesActivos = tipoIncidentesActivos;
+			ViewBag.tipoIncidentesArchivados = tipoIncidentesArchivados;
+
+			// Retornar a la vista los tipos de incidentes activos
+			return View(tiposIncidentesActivosParaVista);
+		}
+
+        // GET: TipoIncidentes
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Archivados()
+        {
+            // Obtener todos los tipos de incidentes
+            var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
+            // Filtrar tipos de incidentes archivados para mostrar en la vista
+            var tiposIncidentesActivosParaVista = tipoIncidentes.Where(ti => !ti.Estado).ToList();
+            // Retornar a la vista los tipos de incidentes activos
+            return View(tiposIncidentesActivosParaVista);
         }
 
         // GET: TipoIncidentes/Details/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -53,7 +87,6 @@ namespace Buildoc.Controllers
             }
 
             var tipoIncidente = await _context.TipoIncidentes
-                .Include(t => t.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoIncidente == null)
             {
@@ -64,8 +97,10 @@ namespace Buildoc.Controllers
         }
 
         // GET: TipoIncidentes/Create
+        [Authorize(Roles = "Administrador")]
         public IActionResult Create()
         {
+            ViewBag.Categorias = new SelectList(Enum.GetValues(typeof(CategoriaEnum)).Cast<CategoriaEnum>().Select(e => new { Value = (int)e, Text = e.GetDescription() }), "Value", "Text"); 
             return PartialView();
         }
 
@@ -74,24 +109,24 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create([Bind("Id,Categoria,Titulo,Descripcion,Gravedad")] TipoIncidente tipoIncidente)
         {
             if (ModelState.IsValid)
             {
                 tipoIncidente.Id = Guid.NewGuid();
-				// Obtener el ID del usuario actual
-				var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-				tipoIncidente.UsuarioId = userId;
+                tipoIncidente.Estado = true;
 				_context.Add(tipoIncidente);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡El tipo de incidente se ha creado exitosamente!";
                 return Json(new { success = true });
             }
-            
+            ViewBag.Categorias = new SelectList(Enum.GetValues(typeof(CategoriaEnum)).Cast<CategoriaEnum>().Select(e => new { Value = (int)e, Text = e.GetDescription() }), "Value", "Text", tipoIncidente.Categoria);
             return PartialView(tipoIncidente);
         }
 
         // GET: TipoIncidentes/Edit/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -104,14 +139,14 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Categorias = new SelectList(Enum.GetValues(typeof(CategoriaEnum)).Cast<CategoriaEnum>().Select(e => new { Value = (int)e, Text = e.GetDescription() }), "Value", "Text", tipoIncidente.Categoria);
             return PartialView(tipoIncidente);
         }
 
         // POST: TipoIncidentes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Categoria,Titulo,Descripcion,Gravedad")] TipoIncidente tipoIncidente)
         {
             if (id != tipoIncidente.Id)
@@ -123,19 +158,20 @@ namespace Buildoc.Controllers
             {
                 try
                 {
-                    // Obtener el tipo de incidente existente para mantener el UsuarioId original
+                    // Obtener el tipo de incidente existente para mantener el estado original
                     var existingTipoIncidente = await _context.TipoIncidentes
+                        .AsNoTracking() // No rastrear para evitar conflictos
                         .FirstOrDefaultAsync(ti => ti.Id == tipoIncidente.Id);
                     if (existingTipoIncidente == null)
                     {
                         return NotFound();
                     }
-                    tipoIncidente.UsuarioId = existingTipoIncidente.UsuarioId;
+
+                    // Mantener el estado existente
+                    tipoIncidente.Estado = existingTipoIncidente.Estado;
 
                     // Actualizar los valores del tipo de incidente
-                    _context.Entry(existingTipoIncidente).CurrentValues.SetValues(tipoIncidente);
-                    // Marcar la entidad para su actualización
-                    _context.Update(existingTipoIncidente);
+                    _context.Entry(tipoIncidente).State = EntityState.Modified;
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -152,10 +188,13 @@ namespace Buildoc.Controllers
                 TempData["SuccessMessage"] = "¡El tipo de incidente se ha editado exitosamente!";
                 return Json(new { success = true });
             }
+            ViewBag.Categorias = new SelectList(Enum.GetValues(typeof(CategoriaEnum)).Cast<CategoriaEnum>().Select(e => new { Value = (int)e, Text = e.GetDescription() }), "Value", "Text", tipoIncidente.Categoria);
             return PartialView(tipoIncidente);
         }
 
+
         // GET: TipoIncidentes/Delete/5
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -164,7 +203,6 @@ namespace Buildoc.Controllers
             }
 
             var tipoIncidente = await _context.TipoIncidentes
-                .Include(t => t.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoIncidente == null)
             {
@@ -176,15 +214,58 @@ namespace Buildoc.Controllers
 
         // POST: TipoIncidentes/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var tipoIncidente = await _context.TipoIncidentes.FindAsync(id);
-            if (tipoIncidente != null)
+            if (tipoIncidente == null)
             {
-                _context.TipoIncidentes.Remove(tipoIncidente);
+                return NotFound();
             }
 
+            // Cambiar el estado a false en lugar de eliminar el registro
+            tipoIncidente.Estado = false;
+            _context.Update(tipoIncidente);
+            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "¡El tipo de incidente se ha eliminado exitosamente!";
+            return Json(new { success = true });
+        }
+
+        // GET: TipoIncidentes/Delete/5
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Restaurar(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tipoIncidente = await _context.TipoIncidentes
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (tipoIncidente == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView(tipoIncidente);
+        }
+
+        // POST: TipoIncidentes/Delete/5
+        [HttpPost, ActionName("Restaurar")]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RestaurarConfirm(Guid id)
+        {
+            var tipoIncidente = await _context.TipoIncidentes.FindAsync(id);
+            if (tipoIncidente == null)
+            {
+                return NotFound();
+            }
+
+            // Cambiar el estado a true en lugar de eliminar el registro
+            tipoIncidente.Estado = true;
+            _context.Update(tipoIncidente);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "¡El tipo de incidente se ha eliminado exitosamente!";
             return Json(new { success = true });

@@ -10,6 +10,8 @@ using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.Authorization;
+using System.Data;
 
 namespace Buildoc.Controllers
 {
@@ -106,7 +108,7 @@ namespace Buildoc.Controllers
             return View(incidentesArchivados);
         }
 
-
+        [Authorize(Roles = "Coordinador,Residente")]
         // GET: Incidentes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -168,9 +170,9 @@ namespace Buildoc.Controllers
                 ModelState.Remove("Afectados[0].Apellido");
                 ModelState.Remove("Afectados[0].CorreoElectronico");
                 ModelState.Remove("Afectados[0].Cedula");
-                ModelState.Remove("Afectados[0].Defuncion");
+               
                 ModelState.Remove("Afectados[0].ActividadRealizada");
-                ModelState.Remove("Afectados[0].AsociadaProyecto");
+               
             }
 
             if (ModelState.IsValid)
@@ -240,7 +242,9 @@ namespace Buildoc.Controllers
             }
         }
 
+
         // GET: Incidentes/Edit/5
+        [Authorize(Roles = "Coordinador")]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -264,6 +268,7 @@ namespace Buildoc.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Authorize(Roles = "Coordinador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,FechaCreacion,Descripcion,FechaIncidente,Estado,ProyectoId,TipoIncidenteId")] Incidente incidente, List<Afectado> afectados, bool switchAfectados)
         {
@@ -327,6 +332,7 @@ namespace Buildoc.Controllers
         }
 
         // GET: Incidentes/Delete/5
+        [Authorize(Roles = "Coordinador")]
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -350,6 +356,7 @@ namespace Buildoc.Controllers
 
         // POST: Incidentes/Delete/5
         [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Coordinador")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {

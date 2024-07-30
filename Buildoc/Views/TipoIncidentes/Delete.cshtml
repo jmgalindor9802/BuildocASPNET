@@ -4,7 +4,7 @@
     ViewData["Title"] = "Delete";
 }
 
-<h3>¿Esta seguro de eliminar este tipo de incidente? una vez eliminado no se podra recuperar</h3>
+<h3>¿Esta seguro de eliminar este tipo de incidente?</h3>
 <div class="container">
     <h4>Detalles del Tipo de incidente</h4>
     <hr />
@@ -13,7 +13,7 @@
             @Html.DisplayNameFor(model => model.Categoria)
         </dt>
         <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.Categoria)
+            @Model.CategoriaDescripcion
         </dd>
         <dt class = "col-sm-3">
             @Html.DisplayNameFor(model => model.Titulo)
@@ -32,12 +32,6 @@
         </dt>
         <dd class = "col-sm-9">
             @Html.DisplayFor(model => model.Gravedad)
-        </dd>
-        <dt class = "col-sm-3">
-            @Html.DisplayNameFor(model => model.Usuario)
-        </dt>
-        <dd class = "col-sm-9">
-            @Html.DisplayFor(model => model.Usuario.Email)
         </dd>
     </dl>
     

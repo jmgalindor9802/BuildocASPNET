@@ -20,7 +20,6 @@ namespace Buildoc.Models
         public ICollection<Proyecto> Proyectos { get; set; }
         public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
         public virtual ICollection<Seguimiento> Seguimientos { get; set; } = new List<Seguimiento>();
-        public virtual ICollection<TipoIncidente> TipoIncidentes { get; set; } = new List<TipoIncidente>();
 
         public Usuario()
         {

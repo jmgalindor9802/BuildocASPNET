@@ -1,0 +1,52 @@
+﻿@model IEnumerable<Buildoc.Models.TipoIncidente>
+
+@{
+    ViewData["Title"] = "Archivados";
+}
+<style>
+	/* Estilos para desactivar el color azul y el subrayado en <a> */
+	a {
+		text-decoration: none; /* Elimina el subrayado */
+		cursor: pointer; /* Cambia el cursor al estilo de un botón */
+	}
+</style>
+
+<h1 class="mb-4">Tipos de incidentes archivados</h1>
+
+<p>
+    <a asp-action="Index" class="btn btn-primary">Volver</a>
+</p>
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Categoria)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Gravedad)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Categoria)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Titulo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Gravedad)
+            </td>
+            <td>
+                    <a href="#" class="delete-item" data-url="@Url.Action("Restaurar", "TipoIncidentes", new { id = item.Id })" data-title="Reactivar" data-action="restore">Restaurar</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

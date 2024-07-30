@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240729203255_anadirEstadoATipoIncidente")]
+    partial class anadirEstadoATipoIncidente
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,8 +197,9 @@ namespace Buildoc.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Categoria")
-                        .HasColumnType("int");
+                    b.Property<string>("Categoria")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
@@ -212,7 +216,12 @@ namespace Buildoc.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UsuarioId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId");
 
                     b.ToTable("TipoIncidentes");
                 });
@@ -533,6 +542,16 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
+                {
+                    b.HasOne("Buildoc.Models.Usuario", "Usuario")
+                        .WithMany("TipoIncidentes")
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -621,6 +640,8 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Incidentes");
 
                     b.Navigation("Seguimientos");
+
+                    b.Navigation("TipoIncidentes");
                 });
 #pragma warning restore 612, 618
         }

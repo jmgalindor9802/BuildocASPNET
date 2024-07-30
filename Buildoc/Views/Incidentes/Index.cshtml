@@ -114,9 +114,10 @@
                 @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-controller="Seguimientoes" asp-action="Create" asp-route-incidenteId="@item.Id">Seguimiento</a>
+                    <a asp-controller="Seguimientoes" asp-action="Create" asp-route-incidenteId="@item.Id">Seguimiento</a>
             </td>
         </tr>
 }

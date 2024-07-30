@@ -72,13 +72,6 @@ namespace Buildoc.Data
                 .HasForeignKey(i => i.TipoIncidenteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configurar la relación entre Usuario y TipoIncidentes
-            builder.Entity<TipoIncidente>()
-               .HasOne(t => t.Usuario)
-               .WithMany(u => u.TipoIncidentes)
-               .HasForeignKey(t => t.UsuarioId)
-               .OnDelete(DeleteBehavior.Restrict); // Cambiar a Restrict
-
             // Configurar valor predeterminado para FechaCreacion
             builder.Entity<Incidente>()
                 .Property(i => i.FechaCreacion)
