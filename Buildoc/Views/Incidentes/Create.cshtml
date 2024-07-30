@@ -13,14 +13,25 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-group">
                         <label asp-for="Titulo" class="control-label"></label>
                         <input asp-for="Titulo" class="form-control" />
                         <span asp-validation-for="Titulo" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Categoria del tipo de incidente</label>
+                        <select class="form-control" id="CategoriaTipoIncidente" name="CategoriaTipoIncidente">
+                            @foreach (var categoria in Enum.GetValues(typeof(Buildoc.Models.CategoriaEnum)).Cast<Buildoc.Models.CategoriaEnum>())
+                            {
+                                <option value="@((int)categoria)">@categoria.GetDescription()</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="form-group">
                         <label asp-for="TipoIncidenteId" class="control-label"></label>
                         <select asp-for="TipoIncidenteId" class="form-control" asp-items="ViewBag.TipoIncidenteId" id="tipoIncidenteSelect">
@@ -121,14 +132,20 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="Afectado.Defuncion" class="control-label"></label>
-                                <input name="Afectados[0].Defuncion" class="form-control" type="checkbox" value="true"/>
+                                <select name="Afectados[0].Defuncion" class="form-control">
+                                    <option value="true">Sí</option>
+                                    <option value="false">No</option>
+                                </select>
                                 <span asp-validation-for="Afectado.Defuncion" class="text-danger"></span>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label asp-for="Afectado.AsociadaProyecto" class="control-label"></label>
-                                <input name="Afectados[0].AsociadaProyecto" class="form-control" type="checkbox" value="true"/>
+                                <select name="Afectados[0].AsociadaProyecto" class="form-control">
+                                    <option value="true">Sí</option>
+                                    <option value="false">No</option>
+                                </select>
                                 <span asp-validation-for="Afectado.AsociadaProyecto" class="text-danger"></span>
                             </div>
                         </div>
@@ -156,6 +173,21 @@
 
 @section Scripts {
     <script>
+        document.getElementById('CategoriaTipoIncidente').addEventListener('change', function () {
+            var categoriaId = this.value;
+            fetch(`/Incidentes/GetTiposDeIncidentePorCategoria?categoriaId=${categoriaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    var tipoIncidenteSelect = document.getElementById('tipoIncidenteSelect');
+                    tipoIncidenteSelect.innerHTML = '<option value="">Seleccione un tipo de incidente</option>';
+                    data.forEach(tipo => {
+                        var option = document.createElement('option');
+                        option.value = tipo.id;
+                        option.text = tipo.nombre;
+                        tipoIncidenteSelect.appendChild(option);
+                    });
+                });
+        });
         // Obtener el elemento select del tipo de incidente
         document.getElementById('tipoIncidenteSelect').addEventListener('change', function () {
             // Obtener el valor seleccionado

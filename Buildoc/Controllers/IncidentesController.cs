@@ -136,21 +136,43 @@ namespace Buildoc.Controllers
         // GET: Incidentes/Create
         public IActionResult Create()
         {
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre");
+            // Obtener el ID del usuario actual
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            //Obtener los proyectos creados por el coordinador
+            var proyectos = _context.Proyectos
+                .Where(p => p.CoordinadorId == userId)
+                .ToList();
+            ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
+            // Pasar las categorías a la vista
+            ViewBag.CategoriaTipoIncidente = Enum.GetValues(typeof(CategoriaEnum))
+                                              .Cast<CategoriaEnum>()
+                                              .Select(e => new { Id = (int)e, Name = e.GetDescription() })
+                                              .ToList();
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetTiposDeIncidentePorCategoria(int categoriaId)
+        {
+            var categoria = (CategoriaEnum)categoriaId;
+            var tipos = await _context.TipoIncidentes
+                .Where(t => t.Categoria == categoria)
+                .Select(t => new { id = t.Id, nombre = t.Titulo })
+                .ToListAsync();
+            return Json(tipos);
         }
 
         // Método para obtener la descripción del tipo de incidente
         [HttpGet]
-        public async Task<IActionResult> GetTipoIncidenteDescripcion(Guid tipoIncidenteId)
+        public async Task<IActionResult> GetDescripcionTipoIncidente(Guid tipoId)
         {
-            var tipoIncidente = await _context.TipoIncidentes.FindAsync(tipoIncidenteId);
-            if (tipoIncidente == null)
-            {
-                return NotFound();
-            }
-            return Json(new { descripcion = tipoIncidente.Descripcion });
+            var tipo = await _context.TipoIncidentes
+                .Where(t => t.Id == tipoId)
+                .Select(t => new { descripcion = t.Descripcion })
+                .FirstOrDefaultAsync();
+            return Json(tipo);
         }
 
         // POST: Incidentes/Create
@@ -158,7 +180,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Incidente incidente, List<Afectado> afectados, bool switchAfectados)
+        public async Task<IActionResult> Create(Incidente incidente, List<Afectado> afectados, bool switchAfectados, string CategoriaTipoIncidente)
         {
             if (!switchAfectados)
             {
@@ -221,6 +243,12 @@ namespace Buildoc.Controllers
 
             ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", incidente.TipoIncidenteId);
+            // Pasar nuevamente las categorías a la vista en caso de error
+            var categorias = Enum.GetValues(typeof(CategoriaEnum))
+                                 .Cast<CategoriaEnum>()
+                                 .Select(c => new { Id = (int)c, Name = c.GetDescription() })
+                                 .ToList();
+            ViewData["CategoriaTipoIncidente"] = new SelectList(categorias, "Id", "Name");
             return View(incidente);
         }
 
