@@ -16,6 +16,9 @@ namespace Buildoc.Models
         SinResponder,
 
        [Display(Name = "Aprobada")]
-       Aprobada
+       Aprobada,
+
+             [Display(Name = "Desaprobada")]
+       Desaprobada
     }
 }

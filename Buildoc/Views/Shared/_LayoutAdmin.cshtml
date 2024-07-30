@@ -331,20 +331,7 @@
 			<!-- /.modal -->
 			<!-- Mensajes de notificacion tipo alerts -->
 			<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-			<script>
-				$(document).ready(function () {
-					// Configuración global de Toastr
-					toastr.options.positionClass = 'toast-top-right'; // Posición del mensaje
-
-                    // Mostrar Toastr si TempData contiene un mensaje de éxito
-                @if (TempData["SuccessMessage"] != null)
-                {
-                    <text>
-                            toastr.success('@TempData["SuccessMessage"]');
-                    </text>
-                }
-                                });
-            </script>
+		
             <!-- /. Mensajes de notificacion tipo alerts -->
         <!-- /.content-wrapper -->
 
@@ -668,15 +655,56 @@
 		<!-- Toastr script -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 		<script>
+
+
+
 			$(document).ready(function () {
+
 				// Configuración global de Toastr
-				toastr.options.positionClass = 'toast-top-right'; // Posición del mensaje
+				toastr.options = {
+					closeButton: true,
+					debug: false,
+					newestOnTop: false,
+					progressBar: true,
+					positionClass: 'toast-top-right', // Posición del mensaje
+					preventDuplicates: false,
+					onclick: null,
+					showDuration: "300",
+					hideDuration: "1000",
+					timeOut: "5000",
+					extendedTimeOut: "1000",
+					showEasing: "swing",
+					hideEasing: "linear",
+					showMethod: "fadeIn",
+					hideMethod: "fadeOut",
+				
+
+				};
+
 
 				// Mostrar Toastr si TempData contiene un mensaje de éxito
 			@if (TempData["SuccessMessage"] != null)
 			{
 				<text>
 						toastr.success('@TempData["SuccessMessage"]');
+				</text>
+			}			
+			@if (TempData["ErrorMessage"] != null)
+			{
+				<text>
+						toastr.error('@TempData["ErrorMessage"]');
+				</text>
+			}
+			@if (TempData["WarningMessage"] != null)
+			{
+				<text>
+						toastr.warning('@TempData["WarningMessage"]');
+				</text>
+			}
+			@if (TempData["InfoMessage"] != null)
+			{
+				<text>
+						toastr.info('@TempData["InfoMessage"]');
 				</text>
 			}
 													});

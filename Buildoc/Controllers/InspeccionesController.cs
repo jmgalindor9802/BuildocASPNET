@@ -133,7 +133,7 @@ namespace Buildoc.Controllers
             return View(inspeccionesPendientesRevision);
         }
 
-        // GET: Inpsecciones Pendientes de Revision
+        // GET: Inpsecciones sin responder
         public async Task<IActionResult> SinResponder()
         {
 
@@ -396,5 +396,47 @@ namespace Buildoc.Controllers
         {
             return _context.Inspeccion.Any(e => e.Id == id);
         }
+        [HttpPost]
+        public async Task<IActionResult> ChangeState(Guid id, EstadoInspeccion newState)
+        {
+            var inspeccion = await _context.Inspeccion.FindAsync(id);
+            if (inspeccion == null)
+            {
+                return Json(new { success = false, message = "Inspección no encontrada." });
+            }
+
+            // Verifica que el nuevo estado sea diferente al actual y que sea un estado permitido
+            if (inspeccion.Estado == newState)
+            {
+                return Json(new { success = false, message = "La inspección ya se encuentra en el estado seleccionado." });
+            }
+
+            if (newState != EstadoInspeccion.Aprobada && newState != EstadoInspeccion.Desaprobada)
+            {
+                return Json(new { success = false, message = "Estado inválido. Solo se permite cambiar a 'Aprobada' o 'Desaprobada'." });
+            }
+
+            try
+            {
+                inspeccion.Estado = newState;
+                _context.Update(inspeccion);
+                await _context.SaveChangesAsync();
+                if (newState == EstadoInspeccion.Aprobada)
+                {
+                    TempData["SuccessMessage"] = "La inspección ha sido aprobada exitosamente.";
+                }
+                else if (newState == EstadoInspeccion.Desaprobada)
+                {
+                    TempData["WarningMessage"] = "La inspección ha sido desaprobada.";
+                }
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al cambiar el estado: " + ex.Message });
+            }
+        }
+
     }
 }
