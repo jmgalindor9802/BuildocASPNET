@@ -67,13 +67,38 @@ namespace Buildoc.Controllers
         // GET: Proyectos/Archivados
         public async Task<IActionResult> Archivados()
         {
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
             var proyectosArchivados = await _context.Proyectos
-                .Where(p => p.Estado == Proyecto.EstadoProyecto.Archivado)
+                .Where(p => p.Estado == Proyecto.EstadoProyecto.Archivado && p.CoordinadorId == coordinadorId)
                 .ToListAsync();
 
             return View(proyectosArchivados);
         }
+
+        // GET: Proyectos/EnCurso
+        public async Task<IActionResult> EnCurso()
+        {
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var proyectosEnCurso = await _context.Proyectos
+                .Where(p => p.Estado == Proyecto.EstadoProyecto.EnCurso && p.CoordinadorId == coordinadorId)
+                .ToListAsync();
+
+            return View(proyectosEnCurso);
+        }
+        // GET: Proyectos/Finalizados
+        public async Task<IActionResult> Finalizados()
+        {
+            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            var proyectosFinalizados = await _context.Proyectos
+                .Where(p => p.Estado == Proyecto.EstadoProyecto.Finalizado && p.CoordinadorId == coordinadorId)
+                .ToListAsync();
+
+            return View(proyectosFinalizados);
+        }
+
 
 
         // GET: Proyectos/Details/5
@@ -85,6 +110,7 @@ namespace Buildoc.Controllers
             }
 
             var proyecto = await _context.Proyectos
+                  .Include(p => p.Coordinador)
                    .Include(p => p.Residentes) // Incluir residentes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (proyecto == null)
@@ -236,11 +262,28 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente,Estado,CoordinadorId")] Proyecto proyecto, List<string> ResidentesIds)
         {
+
+            // Verificar si ya existe un proyecto con el mismo nombre, excluyendo el proyecto actual
+            var proyectoConMismoNombre = await _context.Proyectos
+                .FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre && p.Id != proyecto.Id);
+
+            if (proyectoConMismoNombre != null)
+            {
+                return Json(new { success = false, message = "Ya existe un proyecto con este nombre." });
+            }
+
             if (id != proyecto.Id)
             {
                 return NotFound();
             }
-
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
             if (ModelState.IsValid)
             {
                 try
@@ -317,6 +360,7 @@ namespace Buildoc.Controllers
                     }
                 }
             }
+           
             return PartialView("Edit", proyecto);
         }
 

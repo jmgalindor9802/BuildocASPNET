@@ -10,14 +10,17 @@ namespace Buildoc.Models
         [Required]
         public string Nombre { get; set; }
         [Display(Name = "Descripción")]
+        [Required]
         public string Descripcion { get; set; }
         [Required]
 
         public string Departamento { get; set; }
+        [Required]
         public string Municipio { get; set; }
-
+        [Required]
         public string Cliente { get; set; }
         [Display(Name = "Dirección")]
+        [Required]
         public string Direccion { get; set; }
 
         public EstadoProyecto Estado { get; set; }
@@ -25,7 +28,7 @@ namespace Buildoc.Models
     
 
         public string? CoordinadorId { get; set; }
-
+        [Display(Name = "Coordinador")]
         public virtual Usuario? Coordinador { get; set; }
 
 
