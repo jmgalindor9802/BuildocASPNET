@@ -291,7 +291,9 @@ namespace Buildoc.Controllers
 			ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
-            return PartialView("Edit",inspeccion);
+			// Pasar el estado de la inspección a la vista
+			ViewData["Estado"] = inspeccion.Estado;
+			return PartialView("Edit",inspeccion);
         }
 
         // POST: Inspecciones/Edit/5
