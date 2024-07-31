@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+
 }
 
 <h1>Detalles</h1>
@@ -110,78 +111,243 @@
     <h4>Afectados</h4>
     <hr />
     @if (Model.Afectados != null && Model.Afectados.Any())
-    {
-        <dl class="row">
-            @foreach (var afectado in Model.Afectados)
+{
+    <ul>
+        @foreach (var afectado in Model.Afectados)
+        {
+            @if (!string.IsNullOrEmpty(afectado.Nombre) && !string.IsNullOrEmpty(afectado.Apellido))
             {
-                @if (!string.IsNullOrEmpty(afectado.Nombre) && !string.IsNullOrEmpty(afectado.Apellido))
-                {
-                    <dt class="col-sm-2">
-                        Nombre completo
-                    </dt>
-                    <dd class="col-sm-10">
-                        @($"{afectado.Nombre} {afectado.Apellido}")
-                    </dd>
-                    <dt class="col-sm-2">
-                        Correo electrónico
-                    </dt>
-                    <dd class="col-sm-10">
-                        @if (!string.IsNullOrEmpty(afectado.CorreoElectronico))
-                        {
-                            @afectado.CorreoElectronico
-                        }
-                        else
-                        {
-                            <span>No disponible</span>
-                        }
-                    </dd>
-                    <dt class="col-sm-2">
-                        Cédula
-                    </dt>
-                    <dd class="col-sm-10">
-                        @if (afectado.Cedula.HasValue)
-                        {
-                            @afectado.Cedula
-                        }
-                        else
-                        {
-                            <span>No disponible</span>
-                        }
-                    </dd>
-                    <dt class="col-sm-2">
-                        Defunción
-                    </dt>
-                    <dd class="col-sm-10">
-                        @if (afectado.Defuncion)
-                        {
-                            <span>Sí</span>
-                        }
-                        else
-                        {
-                            <span>No</span>
-                        }
-                    </dd>
-                    <dt class="col-sm-2">
-                        Actividad realizada
-                    </dt>
-                    <dd class="col-sm-10">
-                        @if (!string.IsNullOrEmpty(afectado.ActividadRealizada))
-                        {
-                            @afectado.ActividadRealizada
-                        }
-                        else
-                        {
-                            <span>No disponible</span>
-                        }
-                    </dd>
-                }
-                else
-                {
-                    <p>No hay afectados</p>
-                }
+                <li>
+                    <strong>Cédula:</strong>
+                    @if (afectado.Cedula.HasValue)
+                    {
+                        @afectado.Cedula
+                    }
+                    else
+                    {
+                        <span>No disponible</span>
+                    }
+                </li>
+                <li>
+                    <strong>Nombre completo:</strong> @($"{afectado.Nombre} {afectado.Apellido}")
+                </li>
+                <li>
+                    <strong>Correo electrónico:</strong>
+                    @if (!string.IsNullOrEmpty(afectado.CorreoElectronico))
+                    {
+                        @afectado.CorreoElectronico
+                    }
+                    else
+                    {
+                        <span>No disponible</span>
+                    }
+                </li>
+                <li>
+                    <strong>Genero del afectado:</strong>
+                    @if (!string.IsNullOrEmpty(afectado.GeneroAfectado))
+                    {
+                        @afectado.GeneroAfectado
+                    }
+                    else
+                    {
+                        <span>No disponible</span>
+                    }
+                </li>
+                <li>
+                    <strong>El afectado está muerto:</strong>
+                    @if (afectado.Defuncion)
+                    {
+                        <span>Sí</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </li>
+                <li>
+                    <strong>El afectado es un trabajador:</strong>
+                    @if (afectado.AsociadaProyecto)
+                    {
+                        <span>Sí</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </li>
+                <li>
+                    <strong>¿Se brindaron primeros auxilios?:</strong>
+                    @if (afectado.PrimerosAuxilios)
+                    {
+                        <span>Sí</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </li>
+                <li>
+                    <strong>Tuvieron que hospitalizar al afectado:</strong>
+                    @if (afectado.Hospitalizado)
+                    {
+                        <span>Sí</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </li>
+                    @if(afectado.AbrasionRasgunos && afectado.Hernia && afectado.Amputacion && afectado.ConmocionCerebral && afectado.CorteLaceracionPerforacion && afectado.EsguinceTension && afectado.HuesosRotos && afectado.LesionAplastamiento && afectado.Moreton && afectado.QuemaduraCalor && afectado.QuemadurasQuimicas)
+                    {
+                        <strong>Lesiones</strong>
+                        <li>
+                            <strong>Abrasion, rasguños</strong>
+                            @if (afectado.AbrasionRasgunos)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Amputación</strong>
+                            @if (afectado.Amputacion)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Hueso roto</strong>
+                            @if (afectado.HuesosRotos)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Moretón</strong>
+                            @if (afectado.Moreton)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Quemadura (calor)</strong>
+                            @if (afectado.QuemaduraCalor)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Quemaduras (quimica)</strong>
+                            @if (afectado.QuemadurasQuimicas)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Conmoción cerebral</strong>
+                            @if (afectado.ConmocionCerebral)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Lesión por aplastamiento</strong>
+                            @if (afectado.LesionAplastamiento)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Corte, laceración, perforación</strong>
+                            @if (afectado.CorteLaceracionPerforacion)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Hernia</strong>
+                            @if (afectado.Hernia)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                        <li>
+                            <strong>Esguince, tensión</strong>
+                            @if (afectado.EsguinceTension)
+                            {
+                                <span>Sí</span>
+                            }
+                            else
+                            {
+                                <span>No</span>
+                            }
+                        </li>
+                    }
+                    else
+                    {
+                        <strong>Lesiones:</strong>
+                        <span>No existe ninguna lecion</span>
+                    }
+                    <li>
+                    <strong>Actividad realizada:</strong>
+                    @if (!string.IsNullOrEmpty(afectado.ActividadRealizada))
+                    {
+                        @afectado.ActividadRealizada
+                    }
+                    else
+                    {
+                        <span>No disponible</span>
+                    }
+                </li>
             }
-        </dl>
-    }
+        }
+    </ul>
+    <hr />
+}
+else
+{
+    <p>No hay afectados</p>
+}
+
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |

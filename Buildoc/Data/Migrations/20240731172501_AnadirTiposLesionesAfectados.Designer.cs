@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240731172501_AnadirTiposLesionesAfectados")]
+    partial class AnadirTiposLesionesAfectados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -61,9 +64,11 @@ namespace Buildoc.Data.Migrations
                     b.Property<bool>("EsguinceTension")
                         .HasColumnType("bit");
 
-                    b.Property<string>("GeneroAfectado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<bool>("GeneroFemenino")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("GeneroMasculino")
+                        .HasColumnType("bit");
 
                     b.Property<bool>("Hernia")
                         .HasColumnType("bit");
@@ -76,9 +81,6 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<Guid>("IncidenteId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("LesionAplastamiento")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("Moreton")
                         .HasColumnType("bit");
@@ -93,6 +95,9 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("QuemadurasQuimicas")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("UsoEPP")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");

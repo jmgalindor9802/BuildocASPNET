@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240730230758_AnadirCamposBoolAfectado")]
+    partial class AnadirCamposBoolAfectado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,14 +31,8 @@ namespace Buildoc.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("AbrasionRasgunos")
-                        .HasColumnType("bit");
-
                     b.Property<string>("ActividadRealizada")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Amputacion")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Apellido")
                         .HasColumnType("nvarchar(max)");
@@ -46,53 +43,34 @@ namespace Buildoc.Data.Migrations
                     b.Property<long?>("Cedula")
                         .HasColumnType("bigint");
 
-                    b.Property<bool>("ConmocionCerebral")
-                        .HasColumnType("bit");
-
                     b.Property<string>("CorreoElectronico")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("CorteLaceracionPerforacion")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("Defuncion")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("EsguinceTension")
+                    b.Property<bool>("GeneroFemenino")
                         .HasColumnType("bit");
 
-                    b.Property<string>("GeneroAfectado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Hernia")
+                    b.Property<bool>("GeneroMasculino")
                         .HasColumnType("bit");
 
                     b.Property<bool>("Hospitalizado")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("HuesosRotos")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("IncidenteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("LesionAplastamiento")
+                    b.Property<bool>("LesionGravedad")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("Moreton")
+                    b.Property<bool>("LesionLeve")
                         .HasColumnType("bit");
 
                     b.Property<string>("Nombre")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("PrimerosAuxilios")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("QuemaduraCalor")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("QuemadurasQuimicas")
+                    b.Property<bool>("UsoEPP")
                         .HasColumnType("bit");
 
                     b.HasKey("Id");
