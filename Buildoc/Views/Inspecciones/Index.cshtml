@@ -17,60 +17,70 @@
 
     <!-- /.card -->
     <div class="row">
-        <!-- Caja de información para inspecciones programadas -->
-        <div class="col-md-3 col-sm-6 col-12">
-        <a href="@Url.Action("Programadas", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-info"><i class="far fa-clock"></i></span>
 
-                <div class="info-box-content">
-                    <span class="info-box-text">Programadas</span>
-                    <span class="info-box-number">@ViewBag.CountProgramadas</span>
-                </div>
-                <!-- /.info-box-content -->
+    <!-- Caja de información para inspecciones programadas -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@ViewBag.CountProgramadas</h3>
+                <p>Programadas</p>
             </div>
-        </div>
-
-        <!-- Caja de información para inspecciones pendientes de revision -->
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("PendientesRevision", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-warning"><i class="far fa-flag"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-text">Pendientes de revisión</span>
-                    <span class="info-box-number">@ViewBag.CountPendienteRevision</span>
-                </div>
-
-                <!-- /.info-box-content -->
+            <div class="icon">
+                <i class="far fa-clock" style="font-size:70px;"></i>
             </div>
-        </div>
-        <!-- Caja de información para inspecciones vencidas-->
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("SinResponder", "Inspecciones")">
-            <div class="info-box">
-                <span class="info-box-icon bg-danger"><i class="far fa-flag"></i></span>
-
-                <div class="info-box-content">
-                    <span class="info-box-text">Sin responder</span>
-                    <span class="info-box-number">@ViewBag.CountSinResponder</span>
-                </div>
-                <!-- /.info-box-content -->
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6 col-12">
-            <a href="@Url.Action("Aprobadas", "Inspecciones")">
-                <div class="info-box shadow">
-                    <span class="info-box-icon bg-success"><i class="far fa-copy"></i></span>
-
-                    <div class="info-box-content">
-                        <span class="info-box-text">Aprobadas</span>
-                        <span class="info-box-number">@ViewBag.CountAprobadas</span>
-                    </div>
-                    <!-- /.info-box-content -->
-                </div>
+            <a href="@Url.Action("Programadas", "Inspecciones")" class="small-box-footer">
+                Ver detalles <i class="fas fa-arrow-circle-right"></i>
             </a>
         </div>
+    </div>
+
+    <!-- Caja de información para inspecciones pendientes de revisión -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>@ViewBag.CountPendienteRevision</h3>
+                <p>Pendientes de revisión</p>
+            </div>
+            <div class="icon">
+                <i class="far fa-flag" style="font-size:70px;"></i>
+            </div>
+            <a href="@Url.Action("PendientesRevision", "Inspecciones")" class="small-box-footer">
+                Ver detalles <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Caja de información para inspecciones sin responder -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@ViewBag.CountSinResponder</h3>
+                <p>Sin responder</p>
+            </div>
+            <div class="icon">
+                <i class="far fa-flag" style="font-size:70px;"></i>
+            </div>
+            <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
+                Ver detalles <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Caja de información para inspecciones aprobadas -->
+    <div class="col-lg-3 col-6">
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@ViewBag.CountAprobadas</h3>
+                <p>Aprobadas</p>
+            </div>
+            <div class="icon">
+                <i class="far fa-copy" style="font-size:70px;"></i>
+            </div>
+            <a href="@Url.Action("Aprobadas", "Inspecciones")" class="small-box-footer">
+                Ver detalles <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
 
     </div>
     <!-- /.info-box -->
