@@ -1,0 +1,42 @@
+﻿@model Buildoc.Models.TipoIncidente
+
+@{
+    ViewData["Title"] = "Restaurar";
+}
+
+<h1>Restaurar</h1>
+
+<h3>¿Esta seguro restaurar este tipo de incidente?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Categoria)
+        </dt>
+        <dd class = "col-sm-9">
+            @Model.CategoriaDescripcion
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Titulo)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Titulo)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Gravedad)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Gravedad)
+        </dd>
+    </dl>
+    
+    <form asp-action="Restaurar">
+        <input type="hidden" asp-for="Id" />
+    </form>
+</div>

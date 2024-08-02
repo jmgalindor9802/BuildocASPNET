@@ -12,22 +12,24 @@ QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(connectionString));
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<Usuario>(options => options.SignIn.RequireConfirmedAccount = false)
-	.AddRoles<IdentityRole>()
-	.AddEntityFrameworkStores<ApplicationDbContext>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
 
-// Añadir SignInManager y UserManager
+// A�adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
 
+
+
 // Add EmailSender service
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>(); 
 
 //Contenedor
 builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
@@ -38,31 +40,35 @@ builder.Services.AddCors();
 
 var app = builder.Build();
 
-// Inicialización de datos
+// Inicializaci?n de datos
 using (var scope = app.Services.CreateScope())
 {
-	var services = scope.ServiceProvider;
-	try
-	{
-		var userManager = services.GetRequiredService<UserManager<Usuario>>();
-		var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+var services = scope.ServiceProvider;
+try
+{
+var userManager = services.GetRequiredService<UserManager<Usuario>>();
+var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-		await DatabaseInitializer.SeedDataAsync(userManager, roleManager);
-	}
-	catch (Exception ex)
-	{
-		// Manejar cualquier error de inicialización aquí
-		var logger = services.GetRequiredService<ILogger<Program>>();
-		logger.LogError(ex, "An error occurred during database initialization.");
-	}
+await DatabaseInitializer.SeedDataAsync(userManager, roleManager);
 }
+catch (Exception ex)
+{
+// Manejar cualquier error de inicializaci?n aqu?
+var logger = services.GetRequiredService<ILogger<Program>>();
+logger.LogError(ex, "An error occurred during database initialization.");
+}
+}
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
+
+
 {
-	app.UseExceptionHandler("/Home/Error");
-	// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-	app.UseHsts();
+    app.UseExceptionHandler("/Home/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -79,8 +85,10 @@ app.UseCors(options =>
 app.UseAuthorization();
 
 app.MapControllerRoute(
-	name: "default",
-	pattern: "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+
 
 app.Run();
