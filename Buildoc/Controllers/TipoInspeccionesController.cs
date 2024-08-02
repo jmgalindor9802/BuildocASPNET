@@ -67,6 +67,15 @@ namespace Buildoc.Controllers
             {
                 return Json(new { success = false, message = "Ya existe un tipo de inspección con este nombre." });
             }
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
+
 
             if (ModelState.IsValid)
             {
