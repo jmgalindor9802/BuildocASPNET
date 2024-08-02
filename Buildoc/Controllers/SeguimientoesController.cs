@@ -31,6 +31,15 @@ namespace Buildoc.Controllers
             var applicationDbContext = _context.Seguimientos.Include(s => s.Incidente).Include(s => s.Usuario);
             return View(await applicationDbContext.ToListAsync());
         }
+        public async Task<IActionResult> LineaTiempo(Guid incidenteId)
+        {
+			var seguimientos = await _context.Seguimientos
+		        .Where(s => s.IncidenteId == incidenteId)
+		        .Include(s => s.Usuario)
+		        .ToListAsync();
+			ViewBag.IncidenteId = incidenteId;
+			return View(seguimientos);
+		}
 
         // GET: Seguimientoes/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -80,7 +89,7 @@ namespace Buildoc.Controllers
                 seguimiento.UsuarioId = userId;
                 _context.Add(seguimiento);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("LineaTiempo", new { incidenteId = seguimiento.IncidenteId });
             }
             return View(seguimiento);
         }
