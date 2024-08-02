@@ -38,6 +38,8 @@ namespace Buildoc.Data
         }
 
         public DbSet<Proyecto> Proyectos { get; set; }
+        public DbSet<TipoInspeccion> TipoInspeccion { get; set; }
+        public DbSet<Buildoc.Models.Inspeccion> Inspeccion { get; set; }
         
     }
 }

@@ -1,4 +1,3 @@
-using Azure.Storage.Blobs;
 using Buildoc.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-var blobStorageConnectionString = builder.Configuration.GetConnectionString("Blobstorage") ?? throw new InvalidOperationException("Connection string 'Blobstorage' not found.");
-builder.Services.AddSingleton<IBlobStorageService, BlobStorageService>();
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
@@ -32,8 +29,12 @@ builder.Services.AddScoped<UserManager<Usuario>>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 
-// Configuración de Blob Storage
-builder.Services.AddSingleton(new BlobServiceClient(blobStorageConnectionString));
+//Contenedor
+builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
+
+
+//Cors
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -67,6 +68,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+});
+
 
 app.UseAuthorization();
 

@@ -211,17 +211,25 @@
 							@if (User.IsInRole("Administrador"))
 							{
 
-								<li class="nav-item">
-									<a asp-action="Index" asp-controller="Usuarios" class="nav-link">
-										<i class="nav-icon fas fa-users"></i>
-										<p>
-											Usuarios
-										</p>
-									</a>
-								</li>
-							}
-							else if (User.IsInRole("Coordinador"))
-							{
+                                <li class="nav-item">
+                                    <a asp-action="Index" asp-controller="Usuarios" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Usuarios
+                                        </p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a asp-action="Index" asp-controller="TipoInspecciones" class="nav-link">
+                                        <i class="nav-icon fas fa-users"></i>
+                                        <p>
+                                            Inspecciones
+                                        </p>
+                                    </a>
+                                </li>
+                            }
+                            else if (User.IsInRole("Coordinador"))
+                            {
 
 								<li class="nav-item">
 									<a href="@Url.Action("Index", "Proyectos")" class="nav-link">
@@ -233,11 +241,11 @@
 									</a>
 								</li>
 
-								<li class="nav-item">
-									<a href="@Url.Action("Index", "Proyectos")" class="nav-link">
-										<i class="nav-icon fas fa-building"></i>
-										<p>
-											Inpecciones
+                                <li class="nav-item">
+                                    <a href="@Url.Action("Index", "Inspecciones")" class="nav-link">
+                                        <i class="nav-icon fas fa-paste"></i>
+                                        <p>
+                                            Inspecciones
 
 										</p>
 									</a>
@@ -257,9 +265,9 @@
 
 								<li class="nav-item">
 									<a href="@Url.Action("Index", "Proyectos")" class="nav-link">
-										<i class="nav-icon fas fa-building"></i>
+										<i class="nav-icon fas fa-magnifying-glass"></i>
 										<p>
-											Inpecciones
+											Inspecciones
 
 										</p>
 									</a>
@@ -517,6 +525,55 @@
                 return;
             }
 
+                    var formData = form.serialize();
+                    $.ajax({
+                        url: form.attr('action'),
+                        type: form.attr('method'),
+                        data: formData,
+                        success: function (response) {
+                            if (response.success) {
+                                $('#modal-lg').modal('hide');
+                                location.reload();
+                            } else {
+                                if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                    $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
+                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
+                                }
+                            }
+                        },
+                        error: function () {
+                            if ($('#modal-lg .alert.alert-danger').length === 0 ||
+                                $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
+                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
+                            }
+                        }
+                    });
+                });
+                // Función para manejar la visibilidad del campo de nueva categoría
+                function handleCategoriaChange() {
+                    const categoriaSelect = $('#categoriaSelect');
+                    const nuevaCategoriaInput = $('#nuevaCategoria');
+
+                    function updateCategoryVisibility() {
+                        if (categoriaSelect.val() === 'Otra') {
+                            nuevaCategoriaInput.show();
+                        } else {
+                            nuevaCategoriaInput.hide();
+                        }
+                    }
+
+                    // Inicializar la visibilidad en función del valor actual
+                    updateCategoryVisibility();
+
+                    // Agregar evento para manejar cambios en el select
+                    categoriaSelect.on('change', updateCategoryVisibility);
+                }
+            });
+        </script>
+     
+        <script src="/js/departamentos.js"></script>
+
+		<script>
             var formData = form.serialize();
 
             // Mostrar el spinner

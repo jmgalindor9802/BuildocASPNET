@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240726211257_EnumCategoriasTipoInspecciones")]
+    partial class EnumCategoriasTipoInspecciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,45 +24,6 @@ namespace Buildoc.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaInspeccion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("InspectorId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Objetivo")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("ProyectoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("TipoInspeccionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("InspectorId");
-
-                    b.HasIndex("ProyectoId");
-
-                    b.HasIndex("TipoInspeccionId");
-
-                    b.ToTable("Inspeccion");
-                });
 
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
                 {
@@ -83,8 +47,8 @@ namespace Buildoc.Data.Migrations
                     b.Property<string>("Direccion")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Municipio")
                         .HasColumnType("nvarchar(max)");
@@ -375,31 +339,6 @@ namespace Buildoc.Data.Migrations
                     b.HasIndex("ResidentesId");
 
                     b.ToTable("ProyectoResidentes", (string)null);
-                });
-
-            modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-                {
-                    b.HasOne("Buildoc.Models.Usuario", "Inspector")
-                        .WithMany()
-                        .HasForeignKey("InspectorId");
-
-                    b.HasOne("Buildoc.Models.Proyecto", "Proyecto")
-                        .WithMany()
-                        .HasForeignKey("ProyectoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Buildoc.Models.TipoInspeccion", "TipoInspeccion")
-                        .WithMany()
-                        .HasForeignKey("TipoInspeccionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Inspector");
-
-                    b.Navigation("Proyecto");
-
-                    b.Navigation("TipoInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
