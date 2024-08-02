@@ -153,6 +153,45 @@ namespace Buildoc.Data.Migrations
 				b.ToTable("Incidentes");
 			});
 
+			modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
+			{
+				b.Property<Guid>("Id")
+					.ValueGeneratedOnAdd()
+					.HasColumnType("uniqueidentifier");
+
+				b.Property<string>("Descripcion")
+					.IsRequired()
+					.HasColumnType("nvarchar(max)");
+
+				b.Property<int>("Estado")
+					.HasColumnType("int");
+
+				b.Property<DateTime>("FechaInspeccion")
+					.HasColumnType("datetime2");
+
+				b.Property<string>("InspectorId")
+					.HasColumnType("nvarchar(450)");
+
+				b.Property<string>("Objetivo")
+					.HasColumnType("nvarchar(max)");
+
+				b.Property<Guid>("ProyectoId")
+					.HasColumnType("uniqueidentifier");
+
+				b.Property<int>("TipoInspeccionId")
+					.HasColumnType("int");
+
+				b.HasKey("Id");
+
+				b.HasIndex("InspectorId");
+
+				b.HasIndex("ProyectoId");
+
+				b.HasIndex("TipoInspeccionId");
+
+				b.ToTable("Inspeccion");
+			});
+
 			modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
 			{
 				b.Property<Guid>("Id")
