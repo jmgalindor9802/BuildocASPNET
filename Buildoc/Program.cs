@@ -31,6 +31,12 @@ builder.Services.AddScoped<UserManager<Usuario>>();
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailSender, EmailSender>(); 
 
+//Contenedor
+builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
+
+
+//Cors
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -68,6 +74,13 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(options =>
+{
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+});
+
 
 app.UseAuthorization();
 

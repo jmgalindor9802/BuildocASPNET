@@ -20,9 +20,9 @@ namespace Buildoc.Models
         [Display(Name = "Dirección")]
         public string Direccion { get; set; }
 
-        public string Estado { get; set; }
+        public EstadoProyecto Estado { get; set; }
 
-      
+    
 
         public string? CoordinadorId { get; set; }
 
@@ -30,7 +30,17 @@ namespace Buildoc.Models
 
 
         public virtual ICollection<Usuario> Residentes { get; set; } = new List<Usuario>();
-        public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
+		public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
 
+		public enum EstadoProyecto
+        {
+            [Display(Name = "En curso")]
+            EnCurso,
+        [Display(Name = "Finalizado")]
+            Finalizado,
+        [Display(Name = "Archivado")]
+            Archivado,
+  
+        }
     }
 }

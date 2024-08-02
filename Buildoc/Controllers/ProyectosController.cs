@@ -10,6 +10,8 @@ using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using static Buildoc.Models.Proyecto;
+using System.ComponentModel.DataAnnotations;
 
 namespace Buildoc.Controllers
 {
@@ -40,17 +42,17 @@ namespace Buildoc.Controllers
 
             // Filtrar proyectos donde el coordinador es el usuario logueado
             var proyectos = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id && p.Estado != "Archivado")
+                .Where(p => p.CoordinadorId == usuarioLogueado.Id && p.Estado != Proyecto.EstadoProyecto.Archivado)
                 .ToListAsync();
 
             // Contar los proyectos con estado "Activo"
-            var countActivos = await _context.Proyectos.CountAsync(p => p.Estado == "En curso" && p.CoordinadorId == usuarioLogueado.Id);
+            var countActivos = await _context.Proyectos.CountAsync(p => p.Estado == Proyecto.EstadoProyecto.EnCurso && p.CoordinadorId == usuarioLogueado.Id);
 
             // Contar los proyectos con estado "Archivado"
-            var countArchivados = await _context.Proyectos.CountAsync(p => p.Estado == "Archivado" && p.CoordinadorId == usuarioLogueado.Id);
+            var countArchivados = await _context.Proyectos.CountAsync(p => p.Estado == Proyecto.EstadoProyecto.Archivado && p.CoordinadorId == usuarioLogueado.Id);
 
             // Contar los proyectos con estado "Finalizado"
-            var countFinalizados = await _context.Proyectos.CountAsync(p => p.Estado == "Finalizado" && p.CoordinadorId == usuarioLogueado.Id);
+            var countFinalizados = await _context.Proyectos.CountAsync(p => p.Estado == Proyecto.EstadoProyecto.Finalizado && p.CoordinadorId == usuarioLogueado.Id);
 
             // Pasar los datos a la vista
             ViewBag.CountActivos = countActivos;
@@ -66,10 +68,8 @@ namespace Buildoc.Controllers
         public async Task<IActionResult> Archivados()
         {
 
-
-
             var proyectosArchivados = await _context.Proyectos
-                .Where(p => p.Estado == "Archivado")
+                .Where(p => p.Estado == Proyecto.EstadoProyecto.Archivado)
                 .ToListAsync();
 
             return View(proyectosArchivados);
@@ -128,7 +128,7 @@ namespace Buildoc.Controllers
             if (ModelState.IsValid)
             {
                 proyecto.Id = Guid.NewGuid();
-                proyecto.Estado = "En curso";
+                proyecto.Estado = Proyecto.EstadoProyecto.EnCurso;
 
                 // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -193,10 +193,24 @@ namespace Buildoc.Controllers
         // GET: Proyectos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
+
+
             if (id == null)
             {
                 return NotFound();
             }
+
+            ViewBag.EstadosProyecto = Enum.GetValues(typeof(EstadoProyecto))
+                      .Cast<EstadoProyecto>()
+                      .Select(e => new SelectListItem
+                      {
+                          Value = e.ToString(),
+                          Text = e.GetType()
+                    .GetField(e.ToString())
+                    .GetCustomAttributes(typeof(DisplayAttribute), false)
+                    .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
+
+                      }).ToList();
 
             var proyecto = await _context.Proyectos
                                          .Include(p => p.Coordinador) // Incluir el Coordinador
@@ -334,10 +348,10 @@ namespace Buildoc.Controllers
             if (proyecto != null)
             {
                 // Cambiar el estado a "Archivado" en lugar de eliminar
-                proyecto.Estado = "Archivado";
+                proyecto.Estado = Proyecto.EstadoProyecto.Archivado;
                 _context.Proyectos.Update(proyecto);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; ;
+                TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; 
             }
 
 
@@ -357,7 +371,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            proyecto.Estado = "En curso";
+            proyecto.Estado = Proyecto.EstadoProyecto.EnCurso;
             _context.Update(proyecto);
             await _context.SaveChangesAsync();
 
