@@ -36,9 +36,9 @@ namespace Buildoc.Models
         {
             [Display(Name = "En curso")]
             EnCurso,
-        [Display(Name = "Finalizado")]
+            [Display(Name = "Finalizado")]
             Finalizado,
-        [Display(Name = "Archivado")]
+            [Display(Name = "Archivado")]
             Archivado,
   
         }
