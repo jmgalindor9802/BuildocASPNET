@@ -14,8 +14,8 @@ namespace Buildoc.Models
         public string Objetivo { get; set; }
 
         [Display(Name = "Descripción")]
-        [Required]
-        public string Descripcion { get; set; }
+        
+        public string? Descripcion { get; set; }
 
         [Display(Name = "Tipo de Inspección")]
         [Required]
