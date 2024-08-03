@@ -4,42 +4,66 @@
     Layout = null;
 }
 
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="row mb-4">
+    <!-- Margen inferior para el formulario -->
+    <form asp-action="Create" class="ml-3 mr-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        <div class="row">
+            <div class="col-lg-8">
                 <div class="form-group row">
-                    <div class="col-md-4">
+                    <div class="col-md-8">
                         <label asp-for="ProyectoId" class="control-label"></label>
                         <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
                     </div>
-                    <div class="col-md-4">
-                        <label asp-for="TipoInspeccionId" class="control-label"></label>
-                        <select asp-for="TipoInspeccionId" class="form-control" asp-items="ViewBag.TipoInspeccionId"></select>
-                    </div>
+
                     <div class="col-md-4">
                         <label asp-for="FechaInspeccion" class="control-label"></label>
                         <input asp-for="FechaInspeccion" class="form-control" />
                         <span asp-validation-for="FechaInspeccion" class="text-danger"></span>
                     </div>
                 </div>
-            <div class="form-group">
-                <label asp-for="Objetivo" class="control-label"></label>
-                <input asp-for="Objetivo" class="form-control" />
-                <span asp-validation-for="Objetivo" class="text-danger"></span>
+                <div class="form-group">
+                    <label asp-for="Objetivo" class="control-label"></label>
+                    <input asp-for="Objetivo" class="form-control" />
+                    <span asp-validation-for="Objetivo" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <input asp-for="Descripcion" class="form-control" />
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="InspectorId" class="control-label"></label>
+                    <select asp-for="InspectorId" class="form-control" asp-items="ViewBag.InspectorId"></select>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            <div class="col-lg-4 order-1 order-md-2">
+                <div class="form-group mb-3">
+                    <!-- Margen inferior para separar del siguiente contenido -->
+                    <label asp-for="TipoInspeccionId" class="control-label"></label>
+                    <select asp-for="TipoInspeccionId" class="form-control" asp-items="ViewBag.TipoInspeccionId" id="TipoInspeccionId">
+                        <option value="" disabled selected>Seleccionar</option>
+                    </select>
+                </div>
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
+                <p><span  style="display: block; font-size: 0.9em;">Nombre</span> <span id="TipoInspeccionNombre" class="text-muted"></span></p>
+                <p><span  style="display: block; font-size: 0.9em;">Categoría</span> <span id="TipoInspeccionCategoria" class="text-muted"></span></p>
+                <p><span  style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
+
+                <div class="text-center mt-5 mb-3">
+                    <a href="#" class="btn btn-sm btn-primary">Agregar archivos</a>
+             
+                </div>
             </div>
-         
-          
-            <div class="form-group">
-                <label asp-for="InspectorId" class="control-label"></label>
-                <select asp-for="InspectorId" class ="form-control" asp-items="ViewBag.InspectorId"></select>
-            </div>
- 
-        </form>
+        </div>
+    </form>
+</div>
+
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="/js/detalleTipoInspeccion.js"></script>
 }

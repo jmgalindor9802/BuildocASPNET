@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
+using Buildoc.Utilities;
 
 namespace Buildoc.Controllers
 {
@@ -26,6 +27,28 @@ namespace Buildoc.Controllers
 
             return View(await _context.TipoInspeccion.ToListAsync());
         }
+        public async Task<IActionResult> GetTipoInspeccionDetails(int id)
+        {
+            var tipoInspeccion = await _context.TipoInspeccion
+                .Where(t => t.Id == id)
+                .Select(t => new
+                {
+                    t.Nombre,
+                    Categoria = ((CategoriaInspeccion)t.Categoria).GetDisplayName(), // Usa el método de extensión para obtener el nombre de visualización
+                    t.Descripcion
+                })
+                .FirstOrDefaultAsync();
+
+            Console.WriteLine("TipoInspeccion Details: " + tipoInspeccion); // Para verificar en la consola del servidor
+
+            if (tipoInspeccion == null)
+            {
+                return NotFound();
+            }
+
+            return Json(tipoInspeccion);
+        }
+
 
         // GET: TipoInspecciones/Details/5
         public async Task<IActionResult> Details(int? id)

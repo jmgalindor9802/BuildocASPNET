@@ -8,7 +8,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>AdminLTE 3 | Blank Page</title>
+	<title>Buildoc</title>
 
 	<!-- Google Font: Source Sans Pro -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -20,20 +20,29 @@
 	<link rel="stylesheet" href="/AdminLTE/plugins/datatables-buttons/css/buttons.bootstrap4.min.css">
 	<!-- Theme style -->
 	<link rel="stylesheet" href="/AdminLTE/css/adminlte.min.css">
-
+	<!-- Toastr -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+	<!-- jQuery -->
+	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+	<!-- jQuery Validation -->
+	<script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
+	<script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- Toastr -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+	<!-- Toastr Setup -->
+	<script src="/js/toastr-setup.js"></script>
 
+	<!-- AdminLTE App -->
+	<script src="/AdminLTE/js/adminlte.min.js"></script>
+
+	<script src="/js/modal-operations.js"></script>
 	<style>
 		.btn-primary {
 			background-color: #001f3f; /* Color de fondo personalizado */
 			border-color: #001f3f; /* Color de borde personalizado */
 			color: #ffffff; /* Color de texto personalizado */
 		}
-
-		
 	</style>
-
 </head>
 <body class="hold-transition sidebar-mini">
 
@@ -339,10 +348,9 @@
 				<!-- /.modal-dialog -->
 			</div>
 			<!-- /.modal -->
-			<!-- Mensajes de notificacion tipo alerts -->
-			<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 		
-            <!-- /. Mensajes de notificacion tipo alerts -->
+		
+   
         <!-- /.content-wrapper -->
 
        
@@ -354,269 +362,33 @@
         <!-- /.control-sidebar -->
     </div>
     <!-- ./wrapper -->
-    <!-- jQuery -->
-    <script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
+   
+    
     <!-- Bootstrap 4 -->
     <script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <!-- AdminLTE App -->
-    <script src="/AdminLTE/js/adminlte.min.js"></script>
+
     <!-- AdminLTE for demo purposes -->
         <script src="/AdminLTE/js/demo.js"></script>
 
-        <!-- jQuery Validation -->   
-        <script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
-        <script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
-        <script>
-            // Función para añadir una alerta si no existe una con el mismo mensaje, o actualizarla si ya existe
-            function addAlert(message, type) {
-                $('#modal-lg .modal-body .alert').remove();
-                $('#modal-lg .modal-body').prepend('<div class="alert alert-' + type + '">' + message + '</div>');
-            }
-
-    $(document).ready(function () {
-        // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
-        $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item', function (e) {
-            e.preventDefault();
-            var url = $(this).data('url');
-            var title = $(this).data('title');
-            var action = $(this).data('action'); // 'create', 'edit', 'details', 'delete', 'restore'
-
-            $('#modal-lg .modal-title').text(title);
-            $.get(url).done(function (data) {
-                $('#modal-lg .modal-body').html(data);
-                $('#modal-lg').modal('show');
-
-                // Intento de método para mostrar validaciones
-                // $.validator.unobtrusive.parse($('#modal-lg'));
-
-                // Configurar los botones del modal según la acción
-                if (action === 'create' || action === 'edit') {
-                    $('.btn-save').show();
-                    $('.btn-delete').hide();
-                    $('.btn-edit').hide();
-                    $('.btn-restore').hide();
-                } else if (action === 'delete') {
-                    $('.btn-save').hide();
-                    $('.btn-delete').show();
-                    $('.btn-edit').hide();
-                    $('.btn-restore').hide();
-                } else if (action === 'details') {
-                    $('.btn-save').hide();
-                    $('.btn-delete').hide();
-					$('.btn-edit').hide();
-                    $('.btn-restore').hide();
-                } else if (action === 'restore') {
-                    $('.btn-save').hide();
-                    $('.btn-delete').hide();
-                    $('.btn-edit').hide();
-                    $('.btn-restore').show();
-                }
-            }).fail(function () {
-                console.log('Error al cargar el contenido del modal.');
-            });
-        });
-
-        // Manejar la acción de guardar
-        $('#modal-lg').on('click', '.btn-save', function (e) {
-            e.preventDefault();
-
-            var form = $('#modal-lg').find('form');
-            if (form.length === 0) {
-                console.log('No se encontró el formulario dentro del modal.');
-                addAlert('No se encontró el formulario dentro del modal.', 'danger');
-                return;
-            }
-
-            var formData = form.serialize();
-
-            // Mostrar el spinner
-            $("#spinner").show();
-
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'),
-                data: formData,
-                success: function (response) {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    if (response.success) {
-                        $('#modal-lg').modal('hide');
-                        location.reload();
-                    } else {
-                        addAlert(response.message || 'Error no especificado.', 'danger');
-                    }
-                },
-                error: function () {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    addAlert('Se produjo un error al procesar la solicitud.', 'danger');
-                }
-            });
-        });
-
-        // Manejar la acción de eliminar
-        $('#modal-lg').on('click', '.btn-delete', function (e) {
-            e.preventDefault();
-
-            var form = $('#modal-lg').find('form');
-            if (form.length === 0) {
-                console.log('No se encontró el formulario dentro del modal.');
-                addAlert('No se encontró el formulario dentro del modal.', 'danger');
-                return;
-            }
-
-            var formData = form.serialize();
-
-            // Mostrar el spinner
-            $("#spinner").show();
-
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'), // Asegúrate de que el método sea correcto para eliminar
-                data: formData,
-                success: function (response) {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    if (response.success) {
-                        $('#modal-lg').modal('hide');
-                        location.reload();
-                    } else {
-                        addAlert(response.message || 'Error no especificado.', 'danger');
-                    }
-                },
-                error: function () {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    addAlert('Se produjo un error al procesar la solicitud.', 'danger');
-                }
-            });
-        });
-
-        // Manejar la acción de editar desde los detalles
-        $('#modal-lg').on('click', '.btn-edit', function (e) {
-            e.preventDefault();
-            var editUrl = $(this).data('url');
-
-            $.get(editUrl).done(function (data) {
-                $('#modal-lg .modal-body').html(data);
-                $('#modal-lg').modal('show');
-                $('#modal-lg .btn-save').show();
-                $('#modal-lg .btn-edit').hide();
-            }).fail(function () {
-                console.log('Error al cargar el contenido del modal de edición.');
-            });
-        });
-
-        // Manejar la acción de restaurar
-        $('#modal-lg').on('click', '.btn-restore', function (e) {
-            e.preventDefault();
-
-            var form = $('#modal-lg').find('form');
-            if (form.length === 0) {
-                console.log('No se encontró el formulario dentro del modal.');
-                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">No se encontró el formulario dentro del modal.</div>');
-                return;
-            }
-
-                    var formData = form.serialize();
-                    $.ajax({
-                        url: form.attr('action'),
-                        type: form.attr('method'),
-                        data: formData,
-                        success: function (response) {
-                            if (response.success) {
-                                $('#modal-lg').modal('hide');
-                                location.reload();
-                            } else {
-                                if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                                    $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
-                                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
-                                }
-                            }
-                        },
-                        error: function () {
-                            if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                                $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
-                                $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
-                            }
-                        }
-                    });
-                });
-                // Función para manejar la visibilidad del campo de nueva categoría
-                function handleCategoriaChange() {
-                    const categoriaSelect = $('#categoriaSelect');
-                    const nuevaCategoriaInput = $('#nuevaCategoria');
-
-                    function updateCategoryVisibility() {
-                        if (categoriaSelect.val() === 'Otra') {
-                            nuevaCategoriaInput.show();
-                        } else {
-                            nuevaCategoriaInput.hide();
-                        }
-                    }
-
-                    // Inicializar la visibilidad en función del valor actual
-                    updateCategoryVisibility();
-
-                    // Agregar evento para manejar cambios en el select
-                    categoriaSelect.on('change', updateCategoryVisibility);
-                }
-            });
-        </script>
-     
-        <script src="/js/departamentos.js"></script>
-
-		<script>
-            var formData = form.serialize();
-
-            // Mostrar el spinner
-            $("#spinner").show();
-
-            $.ajax({
-                url: form.attr('action'),
-                type: form.attr('method'),
-                data: formData,
-                success: function (response) {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    if (response.success) {
-                        $('#modal-lg').modal('hide');
-                        location.reload();
-                    } else {
-                        if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                            $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
-                            $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
-                        }
-                    }
-                },
-                error: function () {
-                    // Ocultar el spinner
-                    $("#spinner").hide();
-
-                    if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                        $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
-                        $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
-                    }
-                }
-            });
-        });
-    });
-</script>
+       
 
 
 		<script src="/js/departamentos.js"></script>
 
 		@* Script para la data table *@
 
-		<script src="~/adminlte/plugins/jquery/jquery.min.js"></script>
+		<script>
+			console.log('jQuery versión:', $.fn.jquery); // Deberías ver la versión de jQuery en la consola
+		</script>
+	
+		<script>
+			// Pasar mensajes de TempData a JavaScript
+			var successMessage = '@TempData["SuccessMessage"]';
+			var errorMessage = '@TempData["ErrorMessage"]';
+			var warningMessage = '@TempData["WarningMessage"]';
+			var infoMessage = '@TempData["InfoMessage"]';
+		</script>
 
-		<!-- Bootstrap 4 -->
-		<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 		<!-- DataTables  & Plugins -->
 		<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
@@ -632,9 +404,6 @@
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 		<script src="/espanol.json"></script>
 
-            
-
-   
        
         <script>
             $(document).ready(function () {
@@ -662,63 +431,5 @@
 		</script>
 
 		@RenderSection("Scripts", required: false)
-		<!-- Toastr script -->
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-		<script>
-
-
-
-			$(document).ready(function () {
-
-				// Configuración global de Toastr
-				toastr.options = {
-					closeButton: true,
-					debug: false,
-					newestOnTop: false,
-					progressBar: true,
-					positionClass: 'toast-top-right', // Posición del mensaje
-					preventDuplicates: false,
-					onclick: null,
-					showDuration: "300",
-					hideDuration: "1000",
-					timeOut: "5000",
-					extendedTimeOut: "1000",
-					showEasing: "swing",
-					hideEasing: "linear",
-					showMethod: "fadeIn",
-					hideMethod: "fadeOut",
-				
-
-				};
-
-
-				// Mostrar Toastr si TempData contiene un mensaje de éxito
-			@if (TempData["SuccessMessage"] != null)
-			{
-				<text>
-						toastr.success('@TempData["SuccessMessage"]');
-				</text>
-			}			
-			@if (TempData["ErrorMessage"] != null)
-			{
-				<text>
-						toastr.error('@TempData["ErrorMessage"]');
-				</text>
-			}
-			@if (TempData["WarningMessage"] != null)
-			{
-				<text>
-						toastr.warning('@TempData["WarningMessage"]');
-				</text>
-			}
-			@if (TempData["InfoMessage"] != null)
-			{
-				<text>
-						toastr.info('@TempData["InfoMessage"]');
-				</text>
-			}
-													});
-		</script>
-
 </body>
 </html>

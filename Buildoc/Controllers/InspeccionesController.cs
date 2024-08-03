@@ -29,6 +29,26 @@ namespace Buildoc.Controllers
                                  .Where(p => p.CoordinadorId == coordinadorId)
                                  .ToListAsync();
         }
+        //Detalles dle tipo de inspeccion para el create
+        public async Task<IActionResult> GetTipoInspeccionDetails(int id)
+        {
+            var tipoInspeccion = await _context.TipoInspeccion
+                .Where(t => t.Id == id)
+                .Select(t => new
+                {
+                    t.Nombre,
+                    t.Categoria,
+                    t.Descripcion
+                })
+                .FirstOrDefaultAsync();
+
+            if (tipoInspeccion == null)
+            {
+                return NotFound();
+            }
+
+            return Json(tipoInspeccion);
+        }
 
 
         // GET: Inspecciones
