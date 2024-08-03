@@ -1,89 +1,111 @@
 ﻿@model Buildoc.Models.Inspeccion
 
-
 @{
     Layout = null;
     var estadoActual = ViewData["Estado"] != null ? (EstadoInspeccion)ViewData["Estado"] : EstadoInspeccion.Programada;
     var isReadonly = estadoActual == EstadoInspeccion.Desaprobada;
 }
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Edit</title>
+    <link rel="stylesheet" href="/AdminLTE/plugins/jquery-validation/jquery.validate.min.css" />
 </head>
 <body>
 
-
-<div class="row">
-    <div class="col-md-12">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-                <div class="form-group row">
-                    <div class="col-md-4">
-                        <label asp-for="ProyectoId" class="control-label"></label>
-                        <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
-                    </div>
-                    <div class="col-md-4">
-                        <label asp-for="TipoInspeccionId" class="control-label"></label>
-                        <select asp-for="TipoInspeccionId" class="form-control" asp-items="ViewBag.TipoInspeccionId"></select>
-                    </div>
-                        <div class="col-md-4">
-                            <label asp-for="FechaInspeccion" class="control-label"></label>
-                            <div>
-                                @if (isReadonly)
-                                {
-                                    <input asp-for="FechaInspeccion" class="form-control" type="text" readonly />
-                                }
-                                else
-                                {
-                                    <input asp-for="FechaInspeccion" class="form-control" type="text" />
-                                }
-                            </div>
-                            <span asp-validation-for="FechaInspeccion" class="text-danger"></span>
-                        </div>
-                   
+<div class="mb-4">
+    <form asp-action="Edit" method="post" class="ml-3 mr-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+        
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <label asp-for="ProyectoId" class="control-label"></label>
+                    <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
+                    <span asp-validation-for="ProyectoId" class="text-danger"></span>
                 </div>
-            
-            <div class="form-group">
-                <label asp-for="Objetivo" class="control-label"></label>
-                <input asp-for="Objetivo" class="form-control" />
-                <span asp-validation-for="Objetivo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="TipoInspeccionId" class="control-label"></label>
-                <select asp-for="TipoInspeccionId" class="form-control" asp-items="ViewBag.TipoInspeccionId"></select>
-                <span asp-validation-for="TipoInspeccionId" class="text-danger"></span>
-            </div>
-       
-            <div class="form-group">
-                <label asp-for="InspectorId" class="control-label"></label>
-                <select asp-for="InspectorId" class="form-control" asp-items="ViewBag.InspectorId"></select>
-                <span asp-validation-for="InspectorId" class="text-danger"></span>
-            </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="FechaInspeccion" class="control-label"></label>
+                                <div>
+                                    @if (isReadonly)
+                                    {
+                                        <input asp-for="FechaInspeccion" class="form-control" type="text" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input asp-for="FechaInspeccion" class="form-control" type="text" />
+                                    }
+                                </div>
+                                <span asp-validation-for="FechaInspeccion" class="text-danger"></span>
+                            </div>
+                        </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="DuracionHoras" class="control-label"></label>
+                                    <input asp-for="DuracionHoras" class="form-control" id="DuracionHoras" />
+                                    <span asp-validation-for="DuracionHoras" class="text-danger"></span>
+                                </div>
+                           </div>
+                        
+                    </div>
+                <div class="form-group form-check">
+                    <input asp-for="EsTodoElDia" class="form-check-input" id="EsTodoElDia" />
+                    <label asp-for="EsTodoElDia" class="form-check-label"></label>
+                    <span asp-validation-for="EsTodoElDia" class="text-danger"></span>
+                </div>
 
                 <div class="form-group">
-                    <label asp-for="Estado" class="control-label"></label>
-                    <select asp-for="Estado" class="form-control" asp-items="ViewBag.EstadoList"></select>
-                    <span asp-validation-for="Estado" class="text-danger"></span>
+                    <label asp-for="Objetivo" class="control-label"></label>
+                    <input asp-for="Objetivo" class="form-control" />
+                    <span asp-validation-for="Objetivo" class="text-danger"></span>
                 </div>
 
-         
-        </form>
-    </div>
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <textarea asp-for="Descripcion" class="form-control"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="InspectorId" class="control-label"></label>
+                    <select asp-for="InspectorId" class="form-control" asp-items="ViewBag.InspectorId"></select>
+                    <span asp-validation-for="InspectorId" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="form-group mb-3">
+                    <label asp-for="TipoInspeccionId" class="control-label"></label>
+                    <select asp-for="TipoInspeccionId" class="form-control" asp-items="ViewBag.TipoInspeccionId" id="TipoInspeccionId">
+                     
+                    </select>
+                </div>
+
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
+                <p><span style="display: block; font-size: 0.9em;">Nombre</span> <span id="TipoInspeccionNombre" class="text-muted"></span></p>
+                <p><span style="display: block; font-size: 0.9em;">Categoría</span> <span id="TipoInspeccionCategoria" class="text-muted"></span></p>
+                <p><span style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
+
+                <div class="text-center mt-5 mb-3">
+                    <a href="#" class="btn btn-sm btn-primary">Agregar archivos</a>
+                </div>
+            </div>
+        </div>
+
+       
+    </form>
 </div>
 
-
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
+    <script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
+    <script src="/js/edit.js"></script>
 }
+
 </body>
 </html>

@@ -1,30 +1,23 @@
 $(document).ready(function () {
-    // Este código debería funcionar cuando la vista se carga inicialmente
+    // Cargar detalles del tipo de inspección cuando la página se carga inicialmente
+    // Si el valor está preseleccionado, cargar los detalles.
+    var tipoInspeccionId = $('#TipoInspeccionId').val();
+    if (tipoInspeccionId) {
+        cargarDetallesTipoInspeccion(tipoInspeccionId);
+    }
 });
 
 $(document).on('shown.bs.modal', '#modal-lg', function () {
-    // Este código se ejecutará cuando el modal se muestre
+    // Código para ejecutar cuando el modal se muestra
+    var tipoInspeccionId = $('#TipoInspeccionId').val();
+    if (tipoInspeccionId) {
+        cargarDetallesTipoInspeccion(tipoInspeccionId);
+    }
+
     $('#TipoInspeccionId').change(function () {
-        console.log('El evento change se activó');
         var tipoInspeccionId = $(this).val();
-        console.log('ID de Tipo de Inspección:', tipoInspeccionId);
         if (tipoInspeccionId) {
-            $.ajax({
-                url: '/TipoInspecciones/GetTipoInspeccionDetails',
-                data: { id: tipoInspeccionId },
-                success: function (data) {
-                    console.log('Datos recibidos:', data);
-                    $('#TipoInspeccionNombre').text(data.nombre);
-                    $('#TipoInspeccionCategoria').text(data.categoria);
-                    $('#TipoInspeccionDescripcion').text(data.descripcion);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
-                    $('#TipoInspeccionNombre').text('Error al obtener los detalles');
-                    $('#TipoInspeccionCategoria').text('');
-                    $('#TipoInspeccionDescripcion').text('');
-                }
-            });
+            cargarDetallesTipoInspeccion(tipoInspeccionId);
         } else {
             $('#TipoInspeccionNombre').text('');
             $('#TipoInspeccionCategoria').text('');
@@ -32,3 +25,21 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         }
     });
 });
+
+function cargarDetallesTipoInspeccion(tipoInspeccionId) {
+    $.ajax({
+        url: '/TipoInspecciones/GetTipoInspeccionDetails',
+        data: { id: tipoInspeccionId },
+        success: function (data) {
+            $('#TipoInspeccionNombre').text(data.nombre);
+            $('#TipoInspeccionCategoria').text(data.categoria);
+            $('#TipoInspeccionDescripcion').text(data.descripcion);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.error('Error en la solicitud AJAX:', textStatus, errorThrown);
+            $('#TipoInspeccionNombre').text('Error al obtener los detalles');
+            $('#TipoInspeccionCategoria').text('');
+            $('#TipoInspeccionDescripcion').text('');
+        }
+    });
+}

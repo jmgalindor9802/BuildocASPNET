@@ -201,5 +201,14 @@ $(document).ready(function () {
             .fail(function (jqxhr, settings, exception) {
                 console.error('Error al cargar el script otroScript.js:', exception);
             });
+
+    $.getScript('/AdminLTE/plugins/jquery-validation/jquery.validate.min.js')
+        .done(function () {
+            console.log('Script jquery.validate.min.js cargado correctamente.');
+        })
+        .fail(function (jqxhr, settings, exception) {
+            console.error('Error al cargar jquery.validate.min.js:', exception);
+        });
+
   
 });

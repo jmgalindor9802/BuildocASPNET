@@ -10,6 +10,7 @@ using Buildoc.Models;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis;
 
 namespace Buildoc.Controllers
 {
@@ -359,7 +360,22 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
-			var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
+
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
+            if (inspeccion.FechaInspeccion < DateTime.Now.Date)
+            {
+                // Enviar mensaje de error como JSON
+                return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
+            }
+
+            var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
 			if (inspeccionOriginal == null)
 			{
 				return NotFound();
@@ -374,20 +390,10 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
-			if (inspeccion.FechaInspeccion < DateTime.Now.Date)
-			{
-				// Enviar mensaje de error como JSON
-				return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
-			}
-			if (!ModelState.IsValid)
-			{
-				// Obtener errores de validación
-				var errors = ModelState.Values.SelectMany(v => v.Errors)
-											  .Select(e => e.ErrorMessage)
-											  .ToList();
-				return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
-			}
-			if (ModelState.IsValid)
+            // No modificar el estado, solo actualizar los campos permitidos
+            inspeccion.Estado = inspeccionOriginal.Estado;
+
+            if (ModelState.IsValid)
             {
                 try
                 {
@@ -408,6 +414,8 @@ namespace Buildoc.Controllers
                 TempData["SuccessMessage"] = "¡La inspección se ha editado exitosamente!";
                 return Json(new { success = true });
             }
+
+         
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);

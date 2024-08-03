@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     function toggleDuracionHoras() {
         // Verificar si el elemento existe antes de manipularlo
@@ -18,6 +17,11 @@ $(document).ready(function () {
 
     // Adjuntar la función al evento change del checkbox
     $(document).on('change', '#EsTodoElDia', function () {
+        toggleDuracionHoras();
+    });
+
+    // Ejecutar la función al abrir el modal
+    $(document).on('shown.bs.modal', '#modal-lg', function () {
         toggleDuracionHoras();
     });
 });
