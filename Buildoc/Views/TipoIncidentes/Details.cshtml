@@ -1,0 +1,42 @@
+﻿@using System.ComponentModel
+@model Buildoc.Models.TipoIncidente
+
+@{
+    ViewData["Title"] = "Details";
+
+}
+
+
+
+<div class="container">
+   
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Categoria)
+        </dt>
+        <dd class = "col-sm-9">
+            @Model.CategoriaDescripcion
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Titulo)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Titulo)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Gravedad)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Gravedad)
+        </dd>
+    </dl>
+</div>
+<div>
+    
+</div>

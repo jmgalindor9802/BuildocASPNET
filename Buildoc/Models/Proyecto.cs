@@ -33,14 +33,15 @@ namespace Buildoc.Models
 
 
         public virtual ICollection<Usuario> Residentes { get; set; } = new List<Usuario>();
+		public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
 
-        public enum EstadoProyecto
+		public enum EstadoProyecto
         {
             [Display(Name = "En curso")]
             EnCurso,
-        [Display(Name = "Finalizado")]
+            [Display(Name = "Finalizado")]
             Finalizado,
-        [Display(Name = "Archivado")]
+            [Display(Name = "Archivado")]
             Archivado,
   
         }

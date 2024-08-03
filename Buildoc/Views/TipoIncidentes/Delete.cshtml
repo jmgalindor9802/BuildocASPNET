@@ -1,0 +1,41 @@
+﻿@model Buildoc.Models.TipoIncidente
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h3>¿Esta seguro de eliminar este tipo de incidente?</h3>
+<div class="container">
+    <h4>Detalles del Tipo de incidente</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Categoria)
+        </dt>
+        <dd class = "col-sm-9">
+            @Model.CategoriaDescripcion
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Titulo)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Titulo)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Descripcion)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Descripcion)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Gravedad)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Gravedad)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+    </form>
+</div>

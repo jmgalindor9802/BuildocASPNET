@@ -1,0 +1,407 @@
+﻿@model Buildoc.Models.Incidente
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Editar incidente</h1>
+
+<hr />
+<div class="row justify-content-center">
+    <div class="col-md-12">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="Titulo" class="control-label"></label>
+                        <input asp-for="Titulo" class="form-control" readonly />
+                        <span asp-validation-for="Titulo" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label asp-for="TipoIncidenteId" class="control-label"></label>
+                        <select asp-for="TipoIncidenteId" class="form-control" asp-items="ViewBag.TipoIncidenteId" id="tipoIncidenteSelect" readonly>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="FechaIncidente" class="control-label"></label>
+                        <input asp-for="FechaIncidente" type="date" class="form-control" readonly />
+                        <span asp-validation-for="FechaIncidente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="HoraIncidente" class="control-label"></label>
+                        <input asp-for="HoraIncidente" class="form-control" id="horaIncidente" readonly />
+                        <span asp-validation-for="HoraIncidente" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="Estado" class="control-label"></label>
+                        <select asp-for="Estado" class="form-control">
+                            <option value="true">Activo</option>
+                            <option value="false">Resuelto</option>
+                        </select>
+                        <span asp-validation-for="Estado" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="Descripcion" class="control-label"></label>
+                    <textarea asp-for="Descripcion" class="form-control" rows="3" readonly></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label asp-for="Sugerencia" class="control-label"></label>
+                    <textarea asp-for="Sugerencia" class="form-control" readonly></textarea>
+                    <span asp-validation-for="Sugerencia" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProyectoId" class="control-label"></label>
+                <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId" readonly></select>
+            </div>
+            <h4>Afectados por el incidente</h4>
+            @if (Model.Afectados.Any(a => !string.IsNullOrEmpty(a.Nombre) && !string.IsNullOrEmpty(a.Apellido)))
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Correo Electrónico</th>
+                            <th>Cédula</th>
+                            <th>Defunción</th>
+                            <th>Actividad Realizada</th>
+                            <th>Asociada al Proyecto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var afectado in Model.Afectados.Where(a => !string.IsNullOrEmpty(a.Nombre) && !string.IsNullOrEmpty(a.Apellido)))
+                        {
+                            <tr>
+                                <td>@afectado.Nombre</td>
+                                <td>@afectado.Apellido</td>
+                                <td>@afectado.CorreoElectronico</td>
+                                <td>@afectado.Cedula</td>
+                                <td>@(afectado.Defuncion ? "Sí" : "No")</td>
+                                <td>@afectado.ActividadRealizada</td>
+                                <td>@(afectado.AsociadaProyecto ? "Sí" : "No")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p>No existen afectados.</p>
+            }
+            @* switch para mostrar los campos de afectados *@
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" role="switch" id="SwitchAfectados" name="switchAfectados" value="true">
+                <label class="form-check-label" for="SwitchAfectados">¿Existen afectados?</label>
+            </div>
+            @* ./switch para mostrar los campos de afectados *@
+            <div id="afectadosContainer" style="display:none;">
+                <div class="afectado-group" id="afectadoTemplate" style="display:none;">
+                    <h5>Afectado</h5>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Cedula" class="control-label"></label>
+                                <input name="Afectados[0].Cedula" class="form-control" />
+                                <span asp-validation-for="Afectado.Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Nombre" class="control-label"></label>
+                                <input name="Afectados[0].Nombre" class="form-control" />
+                                <span asp-validation-for="Afectado.Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Apellido" class="control-label"></label>
+                                <input name="Afectados[0].Apellido" class="form-control" />
+                                <span asp-validation-for="Afectado.Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
+                        <input name="Afectados[0].CorreoElectronico" class="form-control" />
+                        <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.GeneroAfectado" class="control-label"></label>
+                                <select name="Afectados[0].GeneroAfectado" class="form-control">
+                                    <option value="Hombre">Hombre</option>
+                                    <option value="Mujer">Mujer</option>
+                                </select>
+                                <span asp-validation-for="Afectado.GeneroAfectado" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿El afectado esta muerto?</label>
+                                <select name="Afectados[0].Defuncion" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="Afectado.Defuncion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿El afectado es un trabajador?</label>
+                                <select name="Afectados[0].AsociadaProyecto" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="Afectado.AsociadaProyecto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>¿Se brindaron primeros auxilios?</label>
+                                <select name="Afectados[0].PrimerosAuxilios" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                                <span asp-validation-for="Afectado.PrimerosAuxilios"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>¿Tuvieron que hospitalizar al afectado?</label>
+                                <select name="Afectados[0].Hospitalizado" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                                <span asp-validation-for="Afectado.Hospitalizado"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4>Descripcion de lesiones</h4>
+                    <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.AbrasionRasgunos"></label>
+                                <select name="Afectados[0].AbrasionRasgunos" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                                <span asp-validation-for="Afectado.AbrasionRasgunos"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Amputacion"></label>
+                                <select name="Afectados[0].Amputacion" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.HuesosRotos"></label>
+                                <select name="Afectados[0].HuesosRotos" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Moreton"></label>
+                                <select name="Afectados[0].Moreton" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.QuemaduraCalor"></label>
+                                <select name="Afectados[0].QuemaduraCalor" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.QuemadurasQuimicas"></label>
+                                <select name="Afectados[0].QuemadurasQuimicas" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.ConmocionCerebral"></label>
+                                <select name="Afectados[0].ConmocionCerebral" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.LesionAplastamiento"></label>
+                                <select name="Afectados[0].LesionAplastamiento" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.CorteLaceracionPerforacion"></label>
+                                <select name="Afectados[0].CorteLaceracionPerforacion" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.Hernia"></label>
+                                <select name="Afectados[0].Hernia" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="Afectado.EsguinceTension"></label>
+                                <select name="Afectados[0].EsguinceTension" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Si</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
+                        <textarea name="Afectados[0].ActividadRealizada" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="Afectado.ActividadRealizada" class="text-danger"></span>
+                    </div>
+                    <button type="button" class="btn btn-danger remove-afectado">Eliminar</button>
+                </div>
+                <button type="button" class="btn btn-secondary" id="addAfectadoButton">Añadir Afectado</button>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleAfectadosFields() {
+            var switchAfectados = document.getElementById('SwitchAfectados');
+            var afectadosContainer = document.getElementById('afectadosContainer');
+            if (switchAfectados.checked) {
+                afectadosContainer.style.display = 'block';
+            } else {
+                afectadosContainer.style.display = 'none';
+
+                // Limpiar los datos de los afectados cuando el switch está desmarcado
+                var inputs = afectadosContainer.querySelectorAll('input, textarea');
+                inputs.forEach(function (input) {
+                    input.value = '';
+                });
+            }
+        }
+        //Funcion para cambiar el input de hora a un texto
+        function updateHoraIncidenteField() {
+            var horaIncidente = document.getElementById('horaIncidente');
+            var horaValue = '@Model.HoraIncidente';
+
+            if (!horaValue || horaValue === 'null') {
+                horaIncidente.setAttribute('type', 'text');
+                horaIncidente.value = 'Se desconoce la hora';
+            } else {
+                horaIncidente.setAttribute('type', 'time');
+                horaIncidente.value = horaValue;
+            }
+
+            horaIncidente.setAttribute('disabled', 'true');
+            horaIncidente.setAttribute('readonly', 'true');
+        }
+
+        // Ejecutar la función cuando se cambie el estado del switch
+        document.getElementById('SwitchAfectados').addEventListener('change', toggleAfectadosFields);
+
+        // Ejecutar la función al cargar la página para establecer el estado inicial
+        toggleAfectadosFields();
+
+        // Ejecutar la función para actualizar el campo de HoraIncidente al cargar la página
+        updateHoraIncidenteField();
+
+        // Función para añadir un nuevo afectado
+        function addAfectado() {
+            var afectadosContainer = document.getElementById('afectadosContainer');
+            var template = document.getElementById('afectadoTemplate');
+            var clone = template.cloneNode(true);
+            clone.style.display = 'block';
+            clone.classList.remove('afectado-template');
+            clone.classList.add('afectado-group');
+
+            var afectadoCount = document.getElementsByClassName('afectado-group').length;
+            clone.querySelectorAll('input, textarea, select').forEach(function (input) {
+                var name = input.getAttribute('name');
+                if (name) {
+                    input.setAttribute('name', name.replace('Afectados[0]', 'Afectados[' + afectadoCount + ']'));
+                }
+            });
+
+            afectadosContainer.insertBefore(clone, document.getElementById('addAfectadoButton'));
+
+            // Añadir evento para eliminar afectado
+            clone.querySelector('.remove-afectado').addEventListener('click', function () {
+                clone.remove();
+            });
+        }
+
+        document.getElementById('addAfectadoButton').addEventListener('click', addAfectado);
+    </script>
+}

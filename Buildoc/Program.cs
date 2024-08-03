@@ -29,7 +29,7 @@ builder.Services.AddScoped<UserManager<Usuario>>();
 
 // Add EmailSender service
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailSender, EmailSender>(); 
 
 //Contenedor
 builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
@@ -88,6 +88,7 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
 
 
 app.Run();
