@@ -253,7 +253,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado")] Inspeccion inspeccion)
+        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 			
 
@@ -284,12 +284,22 @@ namespace Buildoc.Controllers
                 // Preparar el mensaje de correo electrónico en formato HTML para el inspector
                 var subject = "Nueva Inspección Asignada";
                 var htmlMessage = $@"
-                <p>Hola {inspector.Nombres},</p>
-                <p>Se ha creado una nueva inspección para el proyecto '<strong>{inspeccion.Proyecto.Nombre}</strong>'.</p>
-                <p>Fecha de Inspección: {inspeccion.FechaInspeccion.ToShortDateString()}</p>
-                <p>Objetivo: {inspeccion.Objetivo}</p>
-                <p>Descripción: {inspeccion.Descripcion}</p>
+    <p>Hola {inspector.Nombres},</p>
+    <p>Se ha creado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+    <p>Fecha de Inspección: {inspeccion.FechaInspeccion.ToShortDateString()}</p>
+    <p>Objetivo: {inspeccion.Objetivo}</p>
+    <p>Descripción: {inspeccion.Descripcion}</p>";
 
+                if (inspeccion.EsTodoElDia)
+                {
+                    htmlMessage += "<p>Duración: Todo el día</p>";
+                }
+                else if (inspeccion.DuracionHoras.HasValue)
+                {
+                    htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+                }
+
+                htmlMessage += @"
                 <p>Saludos,</p>
                 <p>El equipo de <strong>Buildoc</strong></p>";
 
@@ -347,7 +357,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado")] Inspeccion inspeccion)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 			var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
 			if (inspeccionOriginal == null)

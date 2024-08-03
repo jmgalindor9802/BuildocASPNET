@@ -16,14 +16,7 @@ $(document).ready(function () {
         $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
-            // Cargar el script después de que el contenido del modal se haya cargado
-            $.getScript('/js/detalleTipoInspeccion.js')
-                .done(function () {
-                    console.log('Script detalleTipoInspeccion.js cargado correctamente.');
-                })
-                .fail(function (jqxhr, settings, exception) {
-                    console.error('Error al cargar el script detalleTipoInspeccion.js:', exception);
-                }); 
+     
             // Configurar los botones del modal según la acción
             if (action === 'create' || action === 'edit') {
                 $('.btn-save').show();
@@ -182,25 +175,31 @@ $(document).ready(function () {
         });
     });
 
-    // Función para manejar la visibilidad del campo de nueva categoría
-    function handleCategoriaChange() {
-        const categoriaSelect = $('#categoriaSelect');
-        const nuevaCategoriaInput = $('#nuevaCategoria');
 
-        function updateCategoryVisibility() {
-            if (categoriaSelect.val() === 'Otra') {
-                nuevaCategoriaInput.show();
-            } else {
-                nuevaCategoriaInput.hide();
-            }
-        }
+    // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
 
-        // Inicializar la visibilidad en función del valor actual
-        updateCategoryVisibility();
+        $.getScript('/js/detalleTipoInspeccion.js')
+            .done(function () {
+                console.log('Script detalleTipoInspeccion.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script detalleTipoInspeccion.js:', exception);
+            });
 
-        // Agregar evento para manejar cambios en el select
-        categoriaSelect.on('change', updateCategoryVisibility);
-    }
+        $.getScript('/js/toggleDuracionHoras.js')
+            .done(function () {
+                console.log('Script toggleDuracionHoras.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script toggleDuracionHoras.js:', exception);
+            });
 
-    handleCategoriaChange();
+        $.getScript('/js/otroScript.js')
+            .done(function () {
+                console.log('Script otroScript.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script otroScript.js:', exception);
+            });
+  
 });

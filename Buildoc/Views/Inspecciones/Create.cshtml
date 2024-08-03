@@ -16,12 +16,28 @@
                         <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
                 </div>
 
-                <div class="form-group">
-                        <label asp-for="FechaInspeccion" class="control-label"></label>
-                        <input asp-for="FechaInspeccion" class="form-control" />
-                        <span asp-validation-for="FechaInspeccion" class="text-danger"></span>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label asp-for="FechaInspeccion" class="control-label"></label>
+                            <input asp-for="FechaInspeccion" class="form-control" />
+                            <span asp-validation-for="FechaInspeccion" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6" >
+                        <div class="form-group">
+                            <label asp-for="DuracionHoras" class="control-label"></label>
+                            <input asp-for="DuracionHoras" class="form-control" id="DuracionHoras" />
+                            <span asp-validation-for="DuracionHoras" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
-               
+
+                <div class="form-group form-check">
+                    <input asp-for="EsTodoElDia" class="form-check-input" id="EsTodoElDia" />
+                    <label asp-for="EsTodoElDia" class="form-check-label"></label>
+                    <span asp-validation-for="EsTodoElDia" class="text-danger"></span>
+                </div>
                 <div class="form-group">
                     <label asp-for="Objetivo" class="control-label"></label>
                     <input asp-for="Objetivo" class="form-control" />
@@ -66,5 +82,6 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <script src="/js/detalleTipoInspeccion.js"></script>
+
+
 }

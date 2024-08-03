@@ -31,6 +31,11 @@ namespace Buildoc.Models
 
         public virtual Usuario Inspector { get; set; }
 
+        [Display(Name = "Duración en horas")]
+        public int? DuracionHoras { get; set; }
+
+        [Display(Name = "Inspección de todo el día")]
+        public bool EsTodoElDia { get; set; }
 
 
         [Required]
