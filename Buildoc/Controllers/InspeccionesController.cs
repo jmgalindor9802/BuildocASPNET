@@ -9,16 +9,21 @@ using Buildoc.Data;
 using Buildoc.Models;
 using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Identity;
 
 namespace Buildoc.Controllers
 {
     public class InspeccionesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IEmailSender _emailSender;
+        private readonly UserManager<Usuario> _userManager;
 
-        public InspeccionesController(ApplicationDbContext context)
+        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
 
@@ -271,6 +276,27 @@ namespace Buildoc.Controllers
                 inspeccion.Estado = EstadoInspeccion.Programada;
                 _context.Add(inspeccion);
                 await _context.SaveChangesAsync();
+
+                // Obtener el inspector asignado
+                var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
+                var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+
+                // Preparar el mensaje de correo electrónico en formato HTML para el inspector
+                var subject = "Nueva Inspección Asignada";
+                var htmlMessage = $@"
+                <p>Hola {inspector.Nombres},</p>
+                <p>Se ha creado una nueva inspección para el proyecto '<strong>{inspeccion.Proyecto.Nombre}</strong>'.</p>
+                <p>Fecha de Inspección: {inspeccion.FechaInspeccion.ToShortDateString()}</p>
+                <p>Objetivo: {inspeccion.Objetivo}</p>
+                <p>Descripción: {inspeccion.Descripcion}</p>
+
+                <p>Saludos,</p>
+                <p>El equipo de <strong>Buildoc</strong></p>";
+
+                // Enviar el correo electrónico al inspector
+                await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
+
+
                 TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
                 return Json(new { success = true });
             }
