@@ -271,7 +271,38 @@ namespace Buildoc.Controllers
 				// Enviar mensaje de error como JSON
 				return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
 			}
-			if (ModelState.IsValid)
+
+            // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
+            var inspeccionesExistentes = await _context.Inspeccion
+                .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada)
+                .ToListAsync();
+
+            foreach (var i in inspeccionesExistentes)
+            {
+                // Verificar si las fechas se superponen
+                if (inspeccion.FechaInspeccion.Date == i.FechaInspeccion.Date)
+                {
+                    if (inspeccion.EsTodoElDia || i.EsTodoElDia)
+                    {
+                        // Si la nueva inspección o la existente es todo el día, hay conflicto
+                        return Json(new { success = false, message = "El inspector ya tiene una inspección programada para todo el día en esta fecha." });
+                    }
+                    else
+                    {
+                        // Verificar si las duraciones se superponen
+                        var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
+                        var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
+
+                        if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
+                        {
+                            return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
+                        }
+                    }
+                }
+            }
+
+
+            if (ModelState.IsValid)
             {
                 inspeccion.Id = Guid.NewGuid();
                 inspeccion.Estado = EstadoInspeccion.Programada;
