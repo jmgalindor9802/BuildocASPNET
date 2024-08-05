@@ -254,7 +254,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 			
 
@@ -389,7 +389,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 
             if (!ModelState.IsValid)
@@ -446,6 +446,7 @@ namespace Buildoc.Controllers
                         var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
                         var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
 
+
                         if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
                         {
                             return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
@@ -460,6 +461,76 @@ namespace Buildoc.Controllers
                 {
                     _context.Update(inspeccion);
                     await _context.SaveChangesAsync();
+
+                    // Obtener el inspector original y el nuevo inspector
+                    var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
+                    var inspectorNuevo = await _userManager.FindByIdAsync(inspeccion.InspectorId);
+                    var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+
+                    // Preparar y enviar el correo si hay cambios
+                    if (inspeccionOriginal.FechaInspeccion != inspeccion.FechaInspeccion ||
+                        inspeccionOriginal.Objetivo != inspeccion.Objetivo ||
+                        inspeccionOriginal.Descripcion != inspeccion.Descripcion ||
+                        inspeccionOriginal.TipoInspeccionId != inspeccion.TipoInspeccionId ||
+                        inspeccionOriginal.ProyectoId != inspeccion.ProyectoId ||
+                        inspeccionOriginal.InspectorId != inspeccion.InspectorId ||
+                        inspeccionOriginal.DuracionHoras != inspeccion.DuracionHoras ||
+                        inspeccionOriginal.EsTodoElDia != inspeccion.EsTodoElDia)
+                    {
+                        if (inspeccionOriginal.InspectorId != inspeccion.InspectorId)
+                        {
+                            var subjectOriginal = "Inspección Reasignada";
+                            var htmlMessageOriginal = $@"
+<p>Hola {inspectorOriginal.Nombres},</p>
+<p>La inspección para el proyecto '<strong>{proyecto.Nombre}</strong>' programada para el {inspeccion.FechaInspeccion} ha sido reasignada a otro inspector.</p>
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorOriginal.Email, subjectOriginal, htmlMessageOriginal);
+
+                            var subjectNuevo = "Nueva Inspección Asignada";
+                            var htmlMessageNuevo = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se le ha asignado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {inspeccion.Objetivo}</p>
+<p>Descripción: {inspeccion.Descripcion}</p>";
+                            if (inspeccion.EsTodoElDia)
+                            {
+                                htmlMessageNuevo += "<p>Duración: Todo el día</p>";
+                            }
+                            else if (inspeccion.DuracionHoras.HasValue)
+                            {
+                                htmlMessageNuevo += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+                            }
+                            htmlMessageNuevo += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subjectNuevo, htmlMessageNuevo);
+                        }
+                        else
+                        {
+                            // Notificar al inspector nuevo si no ha cambiado
+                            var subject = "Inspección Actualizada";
+                            var htmlMessage = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se han actualizado los detalles de la inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {inspeccion.Objetivo}</p>
+<p>Descripción: {inspeccion.Descripcion}</p>";
+                            if (inspeccion.EsTodoElDia)
+                            {
+                                htmlMessage += "<p>Duración: Todo el día</p>";
+                            }
+                            else if (inspeccion.DuracionHoras.HasValue)
+                            {
+                                htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+                            }
+                            htmlMessage += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subject, htmlMessage);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
