@@ -563,6 +563,7 @@ namespace Buildoc.Controllers
             }
 
             var inspeccion = await _context.Inspeccion
+                 .Include(i => i.Inspector) // Incluir el inspector
                 .Include(i => i.Inspector)
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoInspeccion)
@@ -580,15 +581,51 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var inspeccion = await _context.Inspeccion.FindAsync(id);
-            if (inspeccion != null)
+            var inspeccion = await _context.Inspeccion
+                                  .Include(i => i.Inspector)
+                                  .Include(i => i.Proyecto)  // Incluye el proyecto si es necesario
+                                  .FirstOrDefaultAsync(i => i.Id == id);
+            if (inspeccion == null)
             {
-                _context.Inspeccion.Remove(inspeccion);
+                return Json(new { success = false, message = "Inspección no encontrada." });
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Verificar si el estado de la inspección es 'Programada'
+            if (inspeccion.Estado != EstadoInspeccion.Programada)
+            {
+                return Json(new { success = false, message = "Solo se pueden eliminar inspecciones en estado 'Programada'." });
+            }
+
+            try
+            {
+                // Verificar si el inspector está disponible
+                if (inspeccion.Inspector == null)
+                {
+                    return Json(new { success = false, message = "No se encontró información del inspector." });
+                }
+                _context.Inspeccion.Remove(inspeccion);
+                await _context.SaveChangesAsync();
+
+                // Enviar correo al inspector
+                var inspector = inspeccion.Inspector;
+                var subject = "Inspección Eliminada";
+                var htmlMessage = $@"
+            <p>Hola {inspector.Nombres},</p>
+            <p>La inspección programada para el proyecto '<strong>{inspeccion.Proyecto?.Nombre ?? "Desconocido"}</strong>' el {inspeccion.FechaInspeccion} ha sido eliminada.</p>
+            <p>Saludos,</p>
+            <p>El equipo de <strong>Buildoc</strong></p>";
+
+                await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
+
+                TempData["SuccessMessage"] = "¡La inspección se ha eliminado exitosamente!";
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar la inspección: " + ex.Message });
+            }
         }
+
 
         private bool InspeccionExists(Guid id)
         {
