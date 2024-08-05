@@ -178,6 +178,14 @@ $(document).ready(function () {
 
     // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
 
+        $.getScript('/js/ScriptIncidenteCreate.js')
+            .done(function () {
+                console.log('Script IncidenteCreate.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script IncidenteCreate.js:', exception);
+            });
+
         $.getScript('/js/detalleTipoInspeccion.js')
             .done(function () {
                 console.log('Script detalleTipoInspeccion.js cargado correctamente.');

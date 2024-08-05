@@ -129,7 +129,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            return View(incidente);
+            return PartialView(incidente);
         }
 
 
@@ -150,7 +150,7 @@ namespace Buildoc.Controllers
                                               .Cast<CategoriaEnum>()
                                               .Select(e => new { Id = (int)e, Name = e.GetDescription() })
                                               .ToList();
-            return View();
+            return PartialView();
         }
 
         [HttpGet]
@@ -238,7 +238,7 @@ namespace Buildoc.Controllers
                 }
 
                 TempData["SuccessMessage"] = "¡El incidente se ha creado exitosamente!";
-                return RedirectToAction(nameof(Index));
+                return Json(new { success = true });
             }
 
             ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
@@ -249,7 +249,7 @@ namespace Buildoc.Controllers
                                  .Select(c => new { Id = (int)c, Name = c.GetDescription() })
                                  .ToList();
             ViewData["CategoriaTipoIncidente"] = new SelectList(categorias, "Id", "Name");
-            return View(incidente);
+            return PartialView(incidente);
         }
 
 
@@ -289,7 +289,7 @@ namespace Buildoc.Controllers
             }
             ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Id", incidente.TipoIncidenteId);
-            return View(incidente);
+            return PartialView(incidente);
         }
 
         // POST: Incidentes/Edit/5
@@ -352,11 +352,12 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "¡El incidente se ha editado exitosamente!";
+                return Json(new { success = true });
             }
             ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", incidente.TipoIncidenteId);
-            return View(incidente);
+            return PartialView(incidente);
         }
 
         // GET: Incidentes/Delete/5

@@ -1,96 +1,99 @@
-    document.getElementById('CategoriaTipoIncidente').addEventListener('change', function () {
-            var categoriaId = this.value;
-    fetch(`/Incidentes/GetTiposDeIncidentePorCategoria?categoriaId=${categoriaId}`)
+$(document).on('shown.bs.modal', '#modal-lg', function () {
+    console.log("Modal abierto");
+
+    // Configuración del cambio de categoría de tipo de incidente
+    $('#CategoriaTipoIncidente').on('change', function () {
+        console.log("Cambio en CategoriaTipoIncidente detectado");
+        var categoriaId = $(this).val();
+        if (categoriaId) {
+            fetch(`/Incidentes/GetTiposDeIncidentePorCategoria?categoriaId=${categoriaId}`)
                 .then(response => response.json())
                 .then(data => {
-                    var tipoIncidenteSelect = document.getElementById('tipoIncidenteSelect');
-    tipoIncidenteSelect.innerHTML = '<option value="">Seleccione un tipo de incidente</option>';
+                    var tipoIncidenteSelect = $('#tipoIncidenteSelect');
+                    tipoIncidenteSelect.empty();
+                    tipoIncidenteSelect.append('<option value="">Seleccione un tipo de incidente</option>');
                     data.forEach(tipo => {
-                        var option = document.createElement('option');
-    option.value = tipo.id;
-    option.text = tipo.nombre;
-    tipoIncidenteSelect.appendChild(option);
+                        tipoIncidenteSelect.append(new Option(tipo.nombre, tipo.id));
                     });
+                })
+                .catch(error => {
+                    console.error("Error al obtener tipos de incidente", error);
                 });
-        });
-    // Obtener el elemento select del tipo de incidente
-    document.getElementById('tipoIncidenteSelect').addEventListener('change', function () {
-            // Obtener el valor seleccionado
-            var tipoIncidenteId = this.value;
-    // Obtener los elementos del div y textarea de descripción
-    var descripcionDiv = document.getElementById('descripcionTipoIncidente');
-    var descripcionTextArea = document.getElementById('descripcionTextArea');
-
-    // Si se ha seleccionado un tipo de incidente (valor no vacío)
-    if (tipoIncidenteId) {
-        // Realizar una petición fetch para obtener la descripción del tipo de incidente
-        fetch(`/Incidentes/GetTipoIncidenteDescripcion?tipoIncidenteId=${tipoIncidenteId}`)
-            .then(response => response.json())
-            .then(data => {
-                // Mostrar el div de descripción y establecer el valor del textarea
-                descripcionDiv.style.display = 'block';
-                descripcionTextArea.value = data.descripcion;
-            });
-            } else {
-        // Si no se ha seleccionado un tipo de incidente, ocultar el div de descripción y limpiar el textarea
-        descripcionDiv.style.display = 'none';
-    descripcionTextArea.value = '';
-            }
-        });
-
-    function toggleAfectadosFields() {
-            var switchAfectados = document.getElementById('SwitchAfectados');
-    var afectadosContainer = document.getElementById('afectadosContainer');
-    if (switchAfectados.checked) {
-        afectadosContainer.style.display = 'block';
-            } else {
-        afectadosContainer.style.display = 'none';
-
-    // Limpiar los datos de los afectados cuando el switch está desmarcado
-    var inputs = afectadosContainer.querySelectorAll('input, textarea');
-    inputs.forEach(function (input) {
-        input.value = '';
-                });
-            }
         }
+    });
 
-    // Ejecutar la función cuando se cambie el estado del switch
-    document.getElementById('SwitchAfectados').addEventListener('change', toggleAfectadosFields);
+    // Configuración del cambio de tipo de incidente
+    $('#tipoIncidenteSelect').on('change', function () {
+        console.log("Cambio en tipoIncidenteSelect detectado");
+        var tipoIncidenteId = $(this).val();
+        var descripcionDiv = $('#descripcionTipoIncidente');
+        var descripcionTextArea = $('#descripcionTextArea');
 
-    // Ejecutar la función al cargar la página para establecer el estado inicial
+        if (tipoIncidenteId) {
+            fetch(`/Incidentes/GetTipoIncidenteDescripcion?tipoIncidenteId=${tipoIncidenteId}`)
+                .then(response => response.json())
+                .then(data => {
+                    descripcionDiv.show();
+                    descripcionTextArea.val(data.descripcion);
+                })
+                .catch(error => {
+                    console.error("Error al obtener descripción de tipo de incidente", error);
+                });
+        } else {
+            descripcionDiv.hide();
+            descripcionTextArea.val('');
+        }
+    });
+
+    // Configuración del cambio de SwitchAfectados
+    $('#SwitchAfectados').on('change', function () {
+        console.log("Cambio en SwitchAfectados detectado");
+        toggleAfectadosFields();
+    });
+
     toggleAfectadosFields();
 
-    // Función para añadir un nuevo afectado
-    function addAfectado() {
-            var afectadosContainer = document.getElementById('afectadosContainer');
-    var template = document.getElementById('afectadoTemplate');
-    var clone = template.cloneNode(true);
-    clone.style.display = 'block';
-    clone.classList.remove('afectado-template');
-    clone.classList.add('afectado-group');
-
-    var afectadoCount = document.getElementsByClassName('afectado-group').length;
-    clone.querySelectorAll('input, textarea, select').forEach(function (input) {
-                var name = input.getAttribute('name');
-    if (name) {
-        input.setAttribute('name', name.replace('Afectados[0]', 'Afectados[' + afectadoCount + ']'));
-                }
-            });
-
-    afectadosContainer.insertBefore(clone, document.getElementById('addAfectadoButton'));
-
-    // Añadir evento para eliminar afectado
-    clone.querySelector('.remove-afectado').addEventListener('click', function () {
-        clone.remove();
-            });
+    function toggleAfectadosFields() {
+        var switchAfectados = $('#SwitchAfectados').is(':checked');
+        var afectadosContainer = $('#afectadosContainer');
+        if (switchAfectados) {
+            afectadosContainer.show();
+        } else {
+            afectadosContainer.hide();
+            afectadosContainer.find('input, textarea').val('');
         }
+    }
 
-    document.getElementById('addAfectadoButton').addEventListener('click', addAfectado);
+    // Configuración del botón para añadir afectados
+    $('#addAfectadoButton').on('click', function () {
+        console.log("Añadiendo afectado");
+        addAfectado();
+    });
 
-    // Obtener el elemento checkbox "desconoceHora"
-    document.getElementById('desconoceHora').addEventListener('change', function () {
-            // Obtener el elemento input de hora del incidente
-            var horaIncidente = document.getElementById('horaIncidente');
-    // Habilitar o deshabilitar el input de hora según el estado del checkbox
-    horaIncidente.disabled = this.checked;
+    function addAfectado() {
+        var afectadosContainer = $('#afectadosContainer');
+        var template = $('#afectadoTemplate').clone().removeAttr('id');
+        template.show().removeClass('afectado-template').addClass('afectado-group');
+
+        var afectadoCount = $('.afectado-group').length;
+        template.find('input, textarea, select').each(function () {
+            var name = $(this).attr('name');
+            if (name) {
+                $(this).attr('name', name.replace('Afectados[0]', 'Afectados[' + afectadoCount + ']'));
+            }
         });
+
+        afectadosContainer.append(template);
+
+        // Añadir evento para eliminar afectado
+        template.find('.remove-afectado').on('click', function () {
+            template.remove();
+        });
+    }
+
+    // Configuración del checkbox desconoceHora
+    $('#desconoceHora').on('change', function () {
+        console.log("Cambio en desconoceHora detectado");
+        $('#horaIncidente').prop('disabled', $(this).is(':checked'));
+    });
+});
