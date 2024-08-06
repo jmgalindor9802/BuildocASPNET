@@ -145,11 +145,6 @@ namespace Buildoc.Controllers
                 .ToList();
             ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
-            // Pasar las categorías a la vista
-            ViewBag.CategoriaTipoIncidente = Enum.GetValues(typeof(CategoriaEnum))
-                                              .Cast<CategoriaEnum>()
-                                              .Select(e => new { Id = (int)e, Name = e.GetDescription() })
-                                              .ToList();
             return PartialView();
         }
 
@@ -158,7 +153,7 @@ namespace Buildoc.Controllers
         {
             var categoria = (CategoriaEnum)categoriaId;
             var tipos = await _context.TipoIncidentes
-                .Where(t => t.Categoria == categoria)
+                .Where(t => t.Categoria == categoria && !string.IsNullOrEmpty(t.Titulo))
                 .Select(t => new { id = t.Id, nombre = t.Titulo })
                 .ToListAsync();
             return Json(tipos);

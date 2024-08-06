@@ -13,9 +13,9 @@ namespace Buildoc.Models
         public DateTime FechaCreacion { get; set; }
         [Display(Name = "Descripcion")]
         public string Descripcion { get; set; }
-        [Display(Name = "Fecha del incidente")]
+        [Display(Name = "Fecha")]
         public DateOnly FechaIncidente { get; set; }
-        [Display(Name = "Hora del incidente")]
+        [Display(Name = "Hora")]
         public TimeOnly? HoraIncidente { get; set; }
         public bool Estado { get; set; }
         [Display(Name = "Sugerencia")]
