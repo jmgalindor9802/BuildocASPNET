@@ -145,6 +145,25 @@ namespace Buildoc.Controllers
                 .ToList();
             ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
+            // Obtener todas las categorías del enum con sus descripciones
+            var categoriasTotales = Enum.GetValues(typeof(Buildoc.Models.CategoriaEnum))
+                .Cast<Buildoc.Models.CategoriaEnum>()
+                .Select(c => new SelectListItem { Value = ((int)c).ToString(), Text = c.GetDescription() })
+                .ToList();
+
+            // Obtener las categorías que tienen un título registrado en la tabla TipoIncidentes
+            var categoriasValidas = _context.TipoIncidentes
+                .Where(t => !string.IsNullOrEmpty(t.Titulo))
+                .Select(t => t.Categoria)
+                .Distinct()
+                .ToList();
+
+            // Filtrar las categorías totales para obtener solo las válidas
+            var categoriasConDescripcion = categoriasTotales
+                .Where(c => categoriasValidas.Contains((Buildoc.Models.CategoriaEnum)int.Parse(c.Value)))
+                .ToList();
+
+            ViewBag.CategoriaTipoIncidente = categoriasConDescripcion;
             return PartialView();
         }
 
@@ -161,15 +180,20 @@ namespace Buildoc.Controllers
 
         // Método para obtener la descripción del tipo de incidente
         [HttpGet]
-        public async Task<IActionResult> GetDescripcionTipoIncidente(Guid tipoId)
+        public async Task<IActionResult> GetTipoIncidenteDetalles(Guid tipoId)
         {
             var tipo = await _context.TipoIncidentes
                 .Where(t => t.Id == tipoId)
-                .Select(t => new { descripcion = t.Descripcion })
+                .Select(t => new
+                {
+                    categoria = t.Categoria.GetDescription(),
+                    titulo = t.Titulo,
+                    gravedad = t.Gravedad,
+                    descripcion = t.Descripcion
+                })
                 .FirstOrDefaultAsync();
             return Json(tipo);
         }
-
         // POST: Incidentes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -191,6 +215,9 @@ namespace Buildoc.Controllers
                 ModelState.Remove("Afectados[0].ActividadRealizada");
                
             }
+
+            // Limpia los elementos nulos o vacíos de la lista de afectados
+            afectados.RemoveAll(a => a == null || string.IsNullOrWhiteSpace(a.Nombre));
 
             if (ModelState.IsValid)
             {

@@ -26,24 +26,27 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
     $('#tipoIncidenteSelect').on('change', function () {
         console.log("Cambio en tipoIncidenteSelect detectado");
         var tipoIncidenteId = $(this).val();
-        var descripcionDiv = $('#descripcionTipoIncidente');
-        var descripcionTextArea = $('#descripcionTextArea');
 
         if (tipoIncidenteId) {
-            fetch(`/Incidentes/GetTipoIncidenteDescripcion?tipoIncidenteId=${tipoIncidenteId}`)
+            fetch(`/Incidentes/GetTipoIncidenteDetalles?tipoId=${tipoIncidenteId}`)
                 .then(response => response.json())
                 .then(data => {
-                    descripcionDiv.show();
-                    descripcionTextArea.val(data.descripcion);
+                    $('#TipoIncidenteCategoria').text(data.categoria || 'N/A');
+                    $('#TipoIncidenteTitulo').text(data.titulo || 'N/A');
+                    $('#TipoIncidenteGravedad').text(data.gravedad || 'N/A');
+                    $('#TipoInspeccionDescripcion').text(data.descripcion || 'N/A');
                 })
                 .catch(error => {
-                    console.error("Error al obtener descripción de tipo de incidente", error);
+                    console.error("Error al obtener detalles del tipo de incidente", error);
                 });
         } else {
-            descripcionDiv.hide();
-            descripcionTextArea.val('');
+            $('#TipoIncidenteCategoria').text('');
+            $('#TipoIncidenteTitulo').text('');
+            $('#TipoIncidenteGravedad').text('');
+            $('#TipoInspeccionDescripcion').text('');
         }
     });
+
 
     // Configuración del cambio de SwitchAfectados
     $('#SwitchAfectados').on('change', function () {
@@ -51,21 +54,28 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         toggleAfectadosFields();
     });
 
-    toggleAfectadosFields();
-
     function toggleAfectadosFields() {
         var switchAfectados = $('#SwitchAfectados').is(':checked');
         var afectadosContainer = $('#afectadosContainer');
+        var firstAfectado = $('#afectadoTemplate');
+
         if (switchAfectados) {
             afectadosContainer.show();
+            if (firstAfectado.length) {
+                firstAfectado.show();
+            }
         } else {
             afectadosContainer.hide();
-            afectadosContainer.find('input, textarea').val('');
+            afectadosContainer.find('input, textarea, select').val('');
+            afectadosContainer.find('input[type=checkbox], input[type=radio]').prop('checked', false);
         }
     }
 
+    toggleAfectadosFields(); // Llama a la función al cargar la página para establecer el estado inicial
+
+
     // Configuración del botón para añadir afectados
-    $('#addAfectadoButton').on('click', function () {
+    $('#addAfectadoButton').off('click').on('click', function () {
         console.log("Añadiendo afectado");
         addAfectado();
     });
@@ -75,25 +85,33 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         var template = $('#afectadoTemplate').clone().removeAttr('id');
         template.show().removeClass('afectado-template').addClass('afectado-group');
 
-        var afectadoCount = $('.afectado-group').length;
+        // Encuentra el número de afectados actuales y usa ese índice
+        var afectadoCount = afectadosContainer.find('.afectado-group').length;
+
+        // Actualiza los nombres de los campos para reflejar el índice correcto
         template.find('input, textarea, select').each(function () {
             var name = $(this).attr('name');
             if (name) {
-                $(this).attr('name', name.replace('Afectados[0]', 'Afectados[' + afectadoCount + ']'));
+                $(this).attr('name', name.replace(/\[\d+\]/, '[' + afectadoCount + ']'));
             }
         });
 
         afectadosContainer.append(template);
 
         // Añadir evento para eliminar afectado
-        template.find('.remove-afectado').on('click', function () {
+        template.find('.remove-afectado').off('click').on('click', function () {
             template.remove();
         });
     }
 
+
     // Configuración del checkbox desconoceHora
     $('#desconoceHora').on('change', function () {
         console.log("Cambio en desconoceHora detectado");
-        $('#horaIncidente').prop('disabled', $(this).is(':checked'));
+        if ($(this).is(':checked')) {
+            $('#horaIncidente').prop('disabled', true).val('');
+        } else {
+            $('#horaIncidente').prop('disabled', false);
+        }
     });
 });

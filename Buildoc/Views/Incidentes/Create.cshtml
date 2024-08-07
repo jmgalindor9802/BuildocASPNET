@@ -27,9 +27,9 @@
                     <div class="form-group">
                         <label class="control-label">Categoria del tipo de incidente</label>
                         <select class="form-control" id="CategoriaTipoIncidente" name="CategoriaTipoIncidente">
-                            @foreach (var categoria in Enum.GetValues(typeof(Buildoc.Models.CategoriaEnum)).Cast<Buildoc.Models.CategoriaEnum>())
+                            @foreach (var categoria in ViewBag.CategoriaTipoIncidente as List<SelectListItem>)
                             {
-                                <option value="@((int)categoria)">@categoria.GetDescription()</option>
+                                <option value="@categoria.Value">@categoria.Text</option>
                             }
                         </select>
                     </div>
@@ -42,21 +42,26 @@
                         </select>
                     </div>
                 </div>
+                @* Campos para mostrar la informacion del tipo de incidente *@
+                <div class="col-md-12 order-1">
+                    <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
+                    <p><span style="display: block; font-size: 0.9em;">Categoria</span> <span id="TipoIncidenteCategoria" class="text-muted"></span></p>
+                    <p><span style="display: block; font-size: 0.9em;">Nombre</span> <span id="TipoIncidenteTitulo" class="text-muted"></span></p>
+                    <p><span style="display: block; font-size: 0.9em;">Gravedad</span> <span id="TipoIncidenteGravedad" class="text-muted"></span></p>
+                    <p><span style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
+                </div>
+                @* ./Fin Campos para mostrar la informacion del tipo de incidente *@
             </div>
-            @* Campo para mostrar la descripcion del tipo de incidente *@
-            <div class="col-md-12" id="descripcionTipoIncidente" style="display:none;">
-                <label class="control-label">Descripcion del tipo de incidente</label>
-                <textarea class="form-control" id="descripcionTextArea" readonly></textarea>
-            </div>
-            @* ./Campo para mostrar la descripcion del tipo de incidente *@
+
             <div class="row">
-                <div class=col-md-6>
+                <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="FechaIncidente" class="control-label"></label>
-                        <input asp-for="FechaIncidente" type="date" class="form-control" />
+                        <input asp-for="FechaIncidente" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
                         <span asp-validation-for="FechaIncidente" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="HoraIncidente" class="control-label"></label>
@@ -104,11 +109,18 @@
                 <div class="afectado-group" id="afectadoTemplate" style="display:none;">
                     <h5>Afectado</h5>
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-6">
                             <div class="form-group">
                                 <label asp-for="Afectado.Cedula" class="control-label"></label>
                                 <input name="Afectados[0].Cedula" class="form-control" />
                                 <span asp-validation-for="Afectado.Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
+                                <input name="Afectados[0].CorreoElectronico" class="form-control" />
+                                <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
                             </div>
                         </div>
                     </div>
@@ -127,11 +139,6 @@
                                 <span asp-validation-for="Afectado.Apellido" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
-                        <input name="Afectados[0].CorreoElectronico" class="form-control" />
-                        <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
                     </div>
 
                     <div class="row">
@@ -187,9 +194,21 @@
                         </div>
                     </div>
 
-                    <h4>Descripcion de lesiones</h4>
-                    <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
+                    @* campo del switch para mostrar los campos de lesion si el afectado presenta alguna lesion *@
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="AfectadosLesiones" name="AfectadosLesiones" value="true">
+                                <label class="form-check-label" for="AfectadosLesiones">¿El afectado presenta alguna lesion?</label>
+                            </div>
+                        </div>
+                    </div>
+                    @*./ fin campo del switch para mostrar los campos de lesion si el afectado presenta alguna lesion *@
+
+                    @* Campos de lesiones de los afectados *@
+                    <div id="lesionesContainer"  class="row">
+                        <h4>Descripcion de lesiones</h4>
+                        <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label asp-for="Afectado.AbrasionRasgunos"></label>
@@ -218,9 +237,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label asp-for="Afectado.Moreton"></label>
@@ -248,9 +265,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
+                    
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label asp-for="Afectado.ConmocionCerebral"></label>
@@ -278,9 +293,7 @@
                                 </select>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="row">
+                    
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label asp-for="Afectado.Hernia"></label>
@@ -300,6 +313,7 @@
                             </div>
                         </div>
                     </div>
+                    @*/. fin Campos de lesiones de los afectados *@
 
                     <div class="form-group">
                         <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
