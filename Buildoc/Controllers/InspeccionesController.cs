@@ -11,6 +11,8 @@ using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis;
+using System.Reflection;
+
 
 namespace Buildoc.Controllers
 {
@@ -239,6 +241,60 @@ namespace Buildoc.Controllers
 
             return View(inspeccion);
         }
+        // Método para obtener la descripción de un enum
+        public static string GetEnumDisplayName(Enum value)
+        {
+            var type = value.GetType();
+            var memberInfo = type.GetMember(value.ToString());
+            if (memberInfo.Length > 0)
+            {
+                var attribute = memberInfo[0].GetCustomAttribute<DisplayAttribute>();
+                if (attribute != null)
+                {
+                    return attribute.Name;
+                }
+            }
+            return value.ToString();
+        }
+        //Categorias 
+        [HttpGet]
+        public async Task<IActionResult> GetCategoriasConTipoInspeccion()
+        {
+            var categoriasConTipos = await _context.TipoInspeccion
+                .GroupBy(t => t.Categoria)
+                .Where(g => g.Any())
+                .Select(g => new SelectListItem
+                {
+                    Value = g.Key.ToString(),
+                    Text = GetEnumDisplayName(g.Key)
+                })
+                .ToListAsync();
+
+            return Json(categoriasConTipos);
+        }
+
+        [HttpGet]
+        public JsonResult GetTipoInspeccionesPorCategoria(string categoria)
+        {
+            // Verificar si la cadena de categoría puede ser convertida a un valor del enum
+            if (!Enum.TryParse(categoria, out CategoriaInspeccion categoriaEnum))
+            {
+                // Si no se puede convertir, retornar una lista vacía
+                return Json(new List<object>());
+            }
+
+            // Filtrar los tipos de inspección según la categoría
+            var tiposInspeccion = _context.TipoInspeccion
+                .Where(t => t.Categoria == categoriaEnum)
+                .Select(t => new {
+                    id = t.Id,
+                    nombre = t.Nombre
+                })
+                .ToList();
+
+            return Json(tiposInspeccion);
+        }
+
 
         // GET: Inspecciones/Create
         public async Task<IActionResult> Create()
@@ -246,6 +302,7 @@ namespace Buildoc.Controllers
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto");
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
+       
             return View();
         }
 
