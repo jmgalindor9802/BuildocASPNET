@@ -203,39 +203,26 @@ namespace Buildoc.Controllers
         {
             if (!switchAfectados)
             {
-                // Limpiar el objeto afectados si el switch no está marcado
+                // Si no se activa el switch de afectados, limpiamos la lista de afectados
                 afectados = new List<Afectado>();
-                afectados.Clear();
-                ModelState.Remove("Afectados");
-                ModelState.Remove("Afectados[0].Nombre");
-                ModelState.Remove("Afectados[0].Apellido");
-                ModelState.Remove("Afectados[0].CorreoElectronico");
-                ModelState.Remove("Afectados[0].Cedula");
-               
-                ModelState.Remove("Afectados[0].ActividadRealizada");
-               
+                incidente.Afectados.Clear();
             }
-
-            // Limpia los elementos nulos o vacíos de la lista de afectados
-            afectados.RemoveAll(a => a == null || string.IsNullOrWhiteSpace(a.Nombre));
+            else
+            {
+                // Si el switch está activado, vinculamos directamente la lista de afectados al incidente
+                incidente.Afectados = afectados;
+            }
 
             if (ModelState.IsValid)
             {
                 incidente.Id = Guid.NewGuid();
-                // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 incidente.UsuarioId = userId;
                 incidente.Estado = true;
 
-                // Agregar incidente
+                // Agregar el incidente a la base de datos
                 _context.Add(incidente);
-                await _context.SaveChangesAsync(); // Guardar el incidente primero
-
-                // Solo agregar afectados si el switch está marcado
-                if (switchAfectados)
-                {
-                    await CreateAfectados(afectados, incidente.Id);
-                }
+                await _context.SaveChangesAsync();
 
                 // Preparar el mensaje de correo electrónico para el coordinador
                 var proyecto = await _context.Proyectos
@@ -247,13 +234,13 @@ namespace Buildoc.Controllers
                     var coordinador = await _userManager.FindByIdAsync(proyecto.CoordinadorId);
                     var subjectCoordinador = "Incidente reportado";
                     var htmlMessageCoordinador = $@"
-            <p>Hola {coordinador.Nombres},</p>
-            <p>Se reportó un incidente '<strong>{incidente.Titulo}</strong>' en el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
-            <p>El incidente es de tipo '<strong>{incidente.TipoIncidente?.Titulo}</strong>'.</p>
-            <p>Descripción: {incidente.Descripcion}</p>
-            <p>Por favor, revisa el incidente y toma las medidas necesarias.</p>
-            <p>Saludos,</p>
-            <p>El equipo de <strong>Buildoc</strong></p>";
+                <p>Hola {coordinador.Nombres},</p>
+                <p>Se reportó un incidente '<strong>{incidente.Titulo}</strong>' en el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+                <p>El incidente es de tipo '<strong>{incidente.TipoIncidente?.Titulo}</strong>'.</p>
+                <p>Descripción: {incidente.Descripcion}</p>
+                <p>Por favor, revisa el incidente y toma las medidas necesarias.</p>
+                <p>Saludos,</p>
+                <p>El equipo de <strong>Buildoc</strong></p>";
 
                     // Enviar el correo electrónico al coordinador
                     await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
@@ -263,19 +250,23 @@ namespace Buildoc.Controllers
                 return Json(new { success = true });
             }
 
+            // Si llegamos aquí, hubo algún error en el modelo
             ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", incidente.TipoIncidenteId);
+
             // Pasar nuevamente las categorías a la vista en caso de error
             var categorias = Enum.GetValues(typeof(CategoriaEnum))
                                  .Cast<CategoriaEnum>()
                                  .Select(c => new { Id = (int)c, Name = c.GetDescription() })
                                  .ToList();
             ViewData["CategoriaTipoIncidente"] = new SelectList(categorias, "Id", "Name");
+
             return PartialView(incidente);
         }
 
 
-        private async Task CreateAfectados(List<Afectado> afectados, Guid incidenteId)
+        /*
+         private async Task CreateAfectados(List<Afectado> afectados, Guid incidenteId)
         {
             if (ModelState.IsValid)
             {
@@ -291,7 +282,7 @@ namespace Buildoc.Controllers
                 await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
             }
         }
-
+         */
 
         // GET: Incidentes/Edit/5
         [Authorize(Roles = "Coordinador")]
@@ -360,7 +351,7 @@ namespace Buildoc.Controllers
                     // Solo agregar afectados si el switch está marcado
                     if (switchAfectados)
                     {
-                        await CreateAfectados(afectados, incidente.Id);
+                        //await CreateAfectados(afectados, incidente.Id);
                     }
                 }
                 catch (DbUpdateConcurrencyException)
