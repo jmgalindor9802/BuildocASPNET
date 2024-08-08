@@ -303,7 +303,7 @@ namespace Buildoc.Controllers
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
        
-            return View();
+            return PartialView();
         }
 
         // POST: Inspecciones/Create
@@ -630,7 +630,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            return View(inspeccion);
+            return PartialView("Delete",inspeccion);
         }
 
         // POST: Inspecciones/Delete/5
