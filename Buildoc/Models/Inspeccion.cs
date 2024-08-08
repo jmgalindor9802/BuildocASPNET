@@ -9,6 +9,9 @@ namespace Buildoc.Models
 
         [Display(Name = "Fecha y hora")]
         [Required]
+        [DataType(DataType.DateTime)]
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode=true)]
+
         public DateTime FechaInspeccion { get; set; }
 
         public string Objetivo { get; set; }
