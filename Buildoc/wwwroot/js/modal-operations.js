@@ -202,7 +202,7 @@ $(document).ready(function () {
                 console.error('Error al cargar el script detallesInspeccion.js:', exception);
             });
 
-    $.getScript('/AdminLTE/plugins/jquery-validation/jquery.validate.min.js')
+    $.getScript('/AdminLTE/plugins/jquery-validation/jqu    ery.validate.min.js')
         .done(function () {
             console.log('Script jquery.validate.min.js cargado correctamente.');
         })
