@@ -6,7 +6,7 @@ function addAlert(message, type) {
 
 $(document).ready(function () {
     // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
-    $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item', function (e) {
+    $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item,.respond-item', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
         var title = $(this).data('title');
@@ -18,7 +18,7 @@ $(document).ready(function () {
             $('#modal-lg').modal('show');
      
             // Configurar los botones del modal según la acción
-            if (action === 'create' || action === 'edit') {
+            if (action === 'create' || action === 'edit' || action === 'respond') {
                 $('.btn-save').show();
                 $('.btn-delete').hide();
                 $('.btn-edit').hide();
@@ -194,12 +194,12 @@ $(document).ready(function () {
                 console.error('Error al cargar el script toggleDuracionHoras.js:', exception);
             });
 
-        $.getScript('/js/otroScript.js')
+        $.getScript('/js/detalleInspeccion.js')
             .done(function () {
-                console.log('Script otroScript.js cargado correctamente.');
+                console.log('Script detallesInspeccion.js cargado correctamente.');
             })
             .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script otroScript.js:', exception);
+                console.error('Error al cargar el script detallesInspeccion.js:', exception);
             });
 
     $.getScript('/AdminLTE/plugins/jquery-validation/jquery.validate.min.js')

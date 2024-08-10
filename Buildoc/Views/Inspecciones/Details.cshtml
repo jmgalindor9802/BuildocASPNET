@@ -3,19 +3,7 @@
 @{
     Layout = null;
 }
-<style>
 
-    .dl-horizontal dt {
-        font-weight: normal; /* Quita la negrita del texto */
-        font-size: 0.9em; /* Reduce el tamaño de la fuente */
-    }
-
-    .dl-horizontal dd {
-        font-size: 0.9em; /* Reduce el tamaño de la fuente */
-        color: #6c757d; /* Aplica la clase text-muted */
-    }
-
-</style>
 
     <div class="row">
         <!-- Columna Izquierda (Datos de la Inspección) -->
@@ -44,7 +32,15 @@
                         </dd>
 
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Estado)</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => model.Estado)</dd>
+                
+                <dd class="col-sm-8">
+                    <span class="badge @(Model.Estado == EstadoInspeccion.Programada ? "badge-programada" :
+                                          Model.Estado == EstadoInspeccion.EnProceso ? "badge-pendiente-revision" :
+                                          Model.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
+                                          Model.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
+                        @Html.DisplayFor(model => model.Estado)
+                    </span>
+                </dd>
                     </dl>
         
         </div>

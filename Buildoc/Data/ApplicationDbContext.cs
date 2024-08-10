@@ -90,6 +90,9 @@ namespace Buildoc.Data
         public DbSet<Afectado> Afectados { get; set; }
         public DbSet<Seguimiento> Seguimientos { get; set; }
         public DbSet<TipoIncidente> TipoIncidentes { get; set; }
-        
+        public DbSet<Buildoc.Models.RespuestaInspeccion> RespuestaInspeccion { get; set; }
+        public DbSet<Inspeccion> Inspecciones { get; set; }
+
+        public DbSet<RespuestaInspeccion> RespuestaInspecciones { get; set; }
     }
 }

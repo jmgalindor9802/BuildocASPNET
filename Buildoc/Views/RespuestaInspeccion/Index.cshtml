@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Buildoc.Models.RespuestaInspeccion>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Inspeccion)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Resultado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Observaciones)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaRespuesta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EsNecesariaInspeccionAdicional)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccionesCorrectivas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccionesCorrectivasLista)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DocumentacionCompleta)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecomendacionesFuturas)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RecomendacionesFuturasList)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InspeccionAdicional)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstadoRespuestaInspeccion)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Inspeccion.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Resultado)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Observaciones)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FechaRespuesta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EsNecesariaInspeccionAdicional)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccionesCorrectivas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AccionesCorrectivasLista)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DocumentacionCompleta)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecomendacionesFuturas)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RecomendacionesFuturasList)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InspeccionAdicional.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstadoRespuestaInspeccion)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

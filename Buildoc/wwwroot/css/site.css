@@ -522,6 +522,38 @@ h6,
         padding-left: 10px;
     }
 
+
+
+.badge-programada {
+    background-color: #007bff; /* primary color */
+    color: white;
+}
+
+.badge-pendiente-revision {
+    background-color: #ffc006; /* orange color */
+    color: #1e2d3c;
+}
+
+.badge-sin-responder {
+    background-color: #dc3545; /* red color */
+    color: white;
+}
+
+.badge-aprobada {
+    background-color: #28a745; /* green color */
+    color: white;
+}
+
+.dl-horizontal dt {
+    font-weight: normal; /* Quita la negrita del texto */
+    font-size: 0.9em; /* Reduce el tamaño de la fuente */
+}
+
+.dl-horizontal dd {
+    font-size: 0.9em; /* Reduce el tamaño de la fuente */
+    color: #6c757d; /* Aplica la clase text-muted */
+}
+
 @media (min-width: 767.98px) {
     .footer-about {
         margin-bottom: -75px;
