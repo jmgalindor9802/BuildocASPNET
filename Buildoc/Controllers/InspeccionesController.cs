@@ -21,12 +21,14 @@ namespace Buildoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<Usuario> _userManager;
+        private readonly ILogger<InspeccionesController> _logger;
 
-        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager)
+        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager, ILogger<InspeccionesController> logger)
         {
             _context = context;
             _emailSender = emailSender;
             _userManager = userManager;
+            _logger = logger;
         }
 
 
@@ -229,18 +231,37 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var inspeccion = await _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (inspeccion == null)
+            try
             {
-                return NotFound();
-            }
+                var inspeccion = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Respuesta)
+                    .FirstOrDefaultAsync(m => m.Id == id);
 
-            return View(inspeccion);
+                if (inspeccion == null)
+                {
+                    return NotFound();
+                }
+
+                // Verifica si inspeccion.Respuesta está correctamente poblado
+                if (inspeccion.Respuesta != null)
+                {
+                    // Verifica las propiedades de Respuesta
+                    Console.WriteLine($"Respuesta Id: {inspeccion.Respuesta.Id}");
+                }
+
+                return View(inspeccion);
+            }
+            catch (Exception ex)
+            {
+                // Registra la excepción
+                _logger.LogError(ex, "Error al obtener los detalles de la inspección.");
+                return StatusCode(500, "Se produjo un error en el servidor.");
+            }
         }
+
         // Método para obtener la descripción de un enum
         public static string GetEnumDisplayName(Enum value)
         {

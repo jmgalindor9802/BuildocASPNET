@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
+using System.Reflection.Emit;
 
 namespace Buildoc.Data
 {
@@ -26,6 +27,11 @@ namespace Buildoc.Data
                 .WithMany()
                 .HasForeignKey(p => p.CoordinadorId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+              builder.Entity<Inspeccion>()
+             .HasOne(i => i.Respuesta)
+             .WithOne(r => r.Inspeccion)
+             .HasForeignKey<RespuestaInspeccion>(r => r.InspeccionId);
 
             // Configurar la relación muchos a muchos entre Proyecto y Residentes
             builder.Entity<Proyecto>()

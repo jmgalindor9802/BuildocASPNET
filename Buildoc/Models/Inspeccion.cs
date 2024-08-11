@@ -43,6 +43,8 @@ namespace Buildoc.Models
 
         [Required]
         public EstadoInspeccion Estado { get; set; }
+        public Guid? RespuestaId { get; set; }
 
+        public RespuestaInspeccion? Respuesta { get; set; }
     }
 }

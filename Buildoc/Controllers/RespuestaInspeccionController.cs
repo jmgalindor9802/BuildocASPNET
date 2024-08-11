@@ -106,8 +106,6 @@ namespace Buildoc.Controllers
                 respuestaInspeccion.EstadoRespuestaInspeccion = EstadoRespuestaInspeccion.Respondida;
                 respuestaInspeccion.FechaRespuesta = DateTime.Now;
                 respuestaInspeccion.Id = Guid.NewGuid();
-               
-                _context.Add(respuestaInspeccion);
 
                 // Obtener la inspección relacionada
                 var inspeccion = await _context.Inspecciones
@@ -115,21 +113,34 @@ namespace Buildoc.Controllers
 
                 if (inspeccion != null)
                 {
-                    // Cambiar el estado de la inspección a PendientesDeRevision
+                    // Establecer la relación entre Inspeccion y RespuestaInspeccion
+                    inspeccion.RespuestaId = respuestaInspeccion.Id; // Asignar el Id de la respuesta a la inspección
                     inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
+
+                    // Añadir la respuesta al contexto
+                    _context.Add(respuestaInspeccion);
 
                     // Actualizar la inspección en la base de datos
                     _context.Update(inspeccion);
+
+                    // Guardar los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "¡La inspección se ha respondido exitosamente!";
+                    return Json(new { success = true });
                 }
 
-                await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "¡La inspección se ha respondido exitosamente!";
-                return Json(new { success = true });
+                // Si no se encontró la inspección, devolver un error
+                TempData["ErrorMessage"] = "No se encontró la inspección.";
+                return Json(new { success = false });
             }
-            ViewData["InspeccionId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionId);
-            ViewData["InspeccionAdicionalId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionAdicionalId);
-            return PartialView();
+
+            // Si el modelo no es válido, devolver la vista parcial con los datos existentes
+            ViewData["InspeccionId"] = new SelectList(_context.Inspecciones, "Id", "Id", respuestaInspeccion.InspeccionId);
+            ViewData["InspeccionAdicionalId"] = new SelectList(_context.Inspecciones, "Id", "Id", respuestaInspeccion.InspeccionAdicionalId);
+            return PartialView(respuestaInspeccion);
         }
+
 
         // GET: RespuestaInspeccion/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
