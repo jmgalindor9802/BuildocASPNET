@@ -139,9 +139,9 @@ namespace Buildoc.Controllers
             // Obtener el ID del usuario actual
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            //Obtener los proyectos creados por el coordinador
+            // Obtener los proyectos creados por el coordinador logeado y que estén en estado "EnCurso"
             var proyectos = _context.Proyectos
-                .Where(p => p.CoordinadorId == userId)
+                .Where(p => p.CoordinadorId == userId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
                 .ToList();
             ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
@@ -212,11 +212,24 @@ namespace Buildoc.Controllers
                 // Si el switch está activado, vinculamos directamente la lista de afectados al incidente
                 incidente.Afectados = afectados;
             }
-
+            // Validar que la fecha del incidente no sea mayor a la fecha actual
+            if (incidente.FechaIncidente > DateOnly.FromDateTime(DateTime.Today))
+            {
+                return Json(new { success = false, message = "La fecha del incidente no puede ser superior a la actual" });
+            }
+            // Declarar la variable userId aquí para que esté disponible en todo el método
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
             if (ModelState.IsValid)
             {
                 incidente.Id = Guid.NewGuid();
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 incidente.UsuarioId = userId;
                 incidente.Estado = true;
 
@@ -224,26 +237,53 @@ namespace Buildoc.Controllers
                 _context.Add(incidente);
                 await _context.SaveChangesAsync();
 
-                // Preparar el mensaje de correo electrónico para el coordinador
-                var proyecto = await _context.Proyectos
-                    .Include(p => p.Coordinador)
-                    .FirstOrDefaultAsync(p => p.Id == incidente.ProyectoId);
+                // Obtener el incidente con su TipoIncidente
+                var incidenteConTipo = await _context.Incidentes
+                    .Include(i => i.TipoIncidente)
+                    .FirstOrDefaultAsync(i => i.Id == incidente.Id);
 
-                if (proyecto != null && proyecto.Coordinador != null)
+                if (incidenteConTipo != null && incidenteConTipo.TipoIncidente != null)
                 {
-                    var coordinador = await _userManager.FindByIdAsync(proyecto.CoordinadorId);
-                    var subjectCoordinador = "Incidente reportado";
-                    var htmlMessageCoordinador = $@"
-                <p>Hola {coordinador.Nombres},</p>
-                <p>Se reportó un incidente '<strong>{incidente.Titulo}</strong>' en el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
-                <p>El incidente es de tipo '<strong>{incidente.TipoIncidente?.Titulo}</strong>'.</p>
-                <p>Descripción: {incidente.Descripcion}</p>
-                <p>Por favor, revisa el incidente y toma las medidas necesarias.</p>
-                <p>Saludos,</p>
-                <p>El equipo de <strong>Buildoc</strong></p>";
+                    var tipoIncidenteTitulo = incidenteConTipo.TipoIncidente.Titulo;
 
-                    // Enviar el correo electrónico al coordinador
-                    await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
+                    if (tipoIncidenteTitulo != null && (incidenteConTipo.TipoIncidente.Gravedad.Equals("Medio", StringComparison.OrdinalIgnoreCase) || incidenteConTipo.TipoIncidente.Gravedad.Equals("Alto", StringComparison.OrdinalIgnoreCase)))
+                    {
+                        // Preparar y enviar el correo solo si la gravedad es "Medio" o "Alto"
+                        var proyecto = await _context.Proyectos
+                            .Include(p => p.Coordinador)
+                            .FirstOrDefaultAsync(p => p.Id == incidenteConTipo.ProyectoId);
+
+                        if (proyecto != null && proyecto.Coordinador != null)
+                        {
+                            var coordinador = await _userManager.FindByIdAsync(proyecto.CoordinadorId);
+                            var horaIncidente = incidenteConTipo.HoraIncidente.HasValue
+                                ? incidenteConTipo.HoraIncidente.Value.ToString("HH:mm")
+                                : "Hora desconocida";
+
+                            var cantidadAfectados = incidenteConTipo.Afectados != null && incidenteConTipo.Afectados.Any()
+                                ? $"{incidenteConTipo.Afectados.Count} afectado(s) reportado(s)"
+                                : "No se han reportado afectados";
+
+                            var subjectCoordinador = "Reporte de Incidente - Acción Requerida";
+                            var htmlMessageCoordinador = $@"
+                                <p>Estimado/a {coordinador.Nombres},</p>
+                                <p>Se ha registrado un incidente <strong>{incidenteConTipo.Titulo}</strong> en el proyecto <strong>{proyecto.Nombre}</strong>. A continuación, se detallan los datos del incidente:</p>
+                                <ul>
+                                    <li><strong>Fecha del Incidente:</strong> {incidenteConTipo.FechaIncidente.ToString("dd/MM/yyyy")}</li>
+                                    <li><strong>Hora del Incidente:</strong> {horaIncidente}</li>
+                                    <li><strong>Categoría:</strong> {incidenteConTipo.TipoIncidente.CategoriaDescripcion}</li>
+                                    <li><strong>Título:</strong> {incidenteConTipo.Titulo}</li>
+                                    <li><strong>Gravedad:</strong> {incidenteConTipo.TipoIncidente.Gravedad}</li>
+                                    <li><strong>Afectados:</strong> {cantidadAfectados}</li>
+                                </ul>
+                                <p><strong>Descripción del Incidente:</strong> {incidenteConTipo.Descripcion}</p>
+                                <p>Le solicitamos que revise el incidente a la mayor brevedad y tome las medidas necesarias para mitigar cualquier riesgo adicional.</p>
+                                <p>Saludos cordiales,</p>
+                                <p>El equipo de <strong>Buildoc</strong></p>";
+
+                            await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
+                        }
+                    }
                 }
 
                 TempData["SuccessMessage"] = "¡El incidente se ha creado exitosamente!";
@@ -251,7 +291,12 @@ namespace Buildoc.Controllers
             }
 
             // Si llegamos aquí, hubo algún error en el modelo
-            ViewData["ProyectoId"] = new SelectList(_context.Proyectos, "Id", "Nombre", incidente.ProyectoId);
+            // Reutilizamos la variable userId en lugar de declararla nuevamente
+            var proyectos = _context.Proyectos
+            .Where(p => p.CoordinadorId == userId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
+        .ToList();
+
+            ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre", incidente.ProyectoId);
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", incidente.TipoIncidenteId);
 
             // Pasar nuevamente las categorías a la vista en caso de error
@@ -259,30 +304,11 @@ namespace Buildoc.Controllers
                                  .Cast<CategoriaEnum>()
                                  .Select(c => new { Id = (int)c, Name = c.GetDescription() })
                                  .ToList();
+
             ViewData["CategoriaTipoIncidente"] = new SelectList(categorias, "Id", "Name");
 
             return PartialView(incidente);
         }
-
-
-        /*
-         private async Task CreateAfectados(List<Afectado> afectados, Guid incidenteId)
-        {
-            if (ModelState.IsValid)
-            {
-                foreach (var afectado in afectados)
-                {
-                    if (afectado != null) // Asegúrate de que el afectado no sea nulo
-                    {
-                        afectado.Id = Guid.NewGuid(); // Generar un nuevo ID para el afectado
-                        afectado.IncidenteId = incidenteId; // Asociar el afectado con el incidente
-                        _context.Add(afectado); // Agregar el afectado al contexto
-                    }
-                }
-                await _context.SaveChangesAsync(); // Guardar los cambios en la base de datos
-            }
-        }
-         */
 
         // GET: Incidentes/Edit/5
         [Authorize(Roles = "Coordinador")]

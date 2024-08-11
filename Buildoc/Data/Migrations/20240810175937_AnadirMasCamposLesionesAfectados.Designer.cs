@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240810175937_AnadirMasCamposLesionesAfectados")]
+    partial class AnadirMasCamposLesionesAfectados
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -117,7 +120,6 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Estado")
@@ -140,11 +142,10 @@ namespace Buildoc.Data.Migrations
                     b.Property<string>("Sugerencia")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TipoIncidenteId")
+                    b.Property<Guid?>("TipoIncidenteId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsuarioId")
@@ -605,8 +606,7 @@ namespace Buildoc.Data.Migrations
                     b.HasOne("Buildoc.Models.TipoIncidente", "TipoIncidente")
                         .WithMany("Incidentes")
                         .HasForeignKey("TipoIncidenteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Buildoc.Models.Usuario", "Usuario")
                         .WithMany("Incidentes")

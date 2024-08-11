@@ -217,6 +217,13 @@ $(document).ready(function () {
         .fail(function (jqxhr, settings, exception) {
             console.error('Error al cargar jquery.validate.min.js:', exception);
         });
+    $.getScript('/adminlte/plugins/bs-stepper/js/bs-stepper.min.js')
+        .done(function () {
+            console.log('Script bs-stepper.min.js cargado correctamente.');
+        })
+        .fail(function (jqxhr, settings, exception) {
+            console.error('Error al cargar bs-stepper.min.js:', exception);
+        });
 
   
 });

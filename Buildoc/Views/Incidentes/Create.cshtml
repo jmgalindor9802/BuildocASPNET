@@ -7,322 +7,379 @@
     <div class="col-md-12">
         <form asp-action="Create" class="ml-3 mr-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="Titulo" class="control-label"></label>
-                        <input asp-for="Titulo" class="form-control" />
-                        <span asp-validation-for="Titulo" class="text-danger"></span>
+            <div class="bs-stepper">
+                <!-- Encabezado del formulario paso a paso --> 
+                <div class="bs-stepper-header" role="tablist">
+                    <div class="step" data-target="#incidente-part">
+                        <button type="button" class="step-trigger" role="tab" aria-controls="incidente-part" id="incidente-part-trigger">
+                            <span class="bs-stepper-circle">1</span>
+                            <span class="bs-stepper-label">Detalles del Incidente</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#afectados-part">
+                        <button type="button" class="step-trigger" role="tab" aria-controls="afectados-part" id="afectados-part-trigger">
+                            <span class="bs-stepper-circle">2</span>
+                            <span class="bs-stepper-label">Detalles de los Afectados</span>
+                        </button>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="ProyectoId" class="control-label"></label>
-                        <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label class="control-label">Categoria del tipo de incidente</label>
-                        <select class="form-control" id="CategoriaTipoIncidente" name="CategoriaTipoIncidente">
-                            @foreach (var categoria in ViewBag.CategoriaTipoIncidente as List<SelectListItem>)
-                            {
-                                <option value="@categoria.Value">@categoria.Text</option>
-                            }
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="TipoIncidenteId" class="control-label"></label>
-                        <select asp-for="TipoIncidenteId" class="form-control" asp-items="ViewBag.TipoIncidenteId" id="tipoIncidenteSelect">
-                            <option value="">Seleccione un tipo de incidente</option>
-                        </select>
-                    </div>
-                </div>
-                @* Campos para mostrar la informacion del tipo de incidente *@
-                <div class="col-md-12 order-1">
-                    <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
-                    <p><span style="display: block; font-size: 0.9em;">Categoria</span> <span id="TipoIncidenteCategoria" class="text-muted"></span></p>
-                    <p><span style="display: block; font-size: 0.9em;">Nombre</span> <span id="TipoIncidenteTitulo" class="text-muted"></span></p>
-                    <p><span style="display: block; font-size: 0.9em;">Gravedad</span> <span id="TipoIncidenteGravedad" class="text-muted"></span></p>
-                    <p><span style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
-                </div>
-                @* ./Fin Campos para mostrar la informacion del tipo de incidente *@
-            </div>
+                <!--Cuerpo del formulario paso a paso-->
+                <div class="bs-stepper-content">
+                <!-- Step 1: Detalles del Incidente -->
+                    <div id="incidente-part" class="content" role="tabpanel" aria-labelledby="incidente-part-trigger">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Titulo" class="control-label"></label>
+                                            <input asp-for="Titulo" class="form-control" />
+                                            <span asp-validation-for="Titulo" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="ProyectoId" class="control-label"></label>
+                                            <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId"></select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="FechaIncidente" class="control-label"></label>
+                                            <input asp-for="FechaIncidente" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                                            <span asp-validation-for="FechaIncidente" class="text-danger"></span>
+                                        </div>
+                                    </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="FechaIncidente" class="control-label"></label>
-                        <input asp-for="FechaIncidente" type="date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
-                        <span asp-validation-for="FechaIncidente" class="text-danger"></span>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="HoraIncidente" class="control-label"></label>
+                                            <input asp-for="HoraIncidente" type="time" class="form-control" id="horaIncidente" />
+                                            <span asp-validation-for="HoraIncidente" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class=col-md-6></div>
+                                    <div class=col-md-6>
+                                        @* checkbox para ocultar la hora *@
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" value="" id="desconoceHora">
+                                            <label class="form-check-label" for="desconoceHora">¿Se desconoce la hora?</label>
+                                        </div>
+                                        @* checkbox para ocultar la hora *@
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Descripcion" class="control-label"></label>
+                                    <p>
+                                        Describa detalladamente el incidente, sus causas, e identifique los objetos o sustancias involucrados.
+                                    </p>
+                                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label asp-for="Sugerencia" class="control-label"></label>
+                                    <textarea asp-for="Sugerencia" class="form-control"></textarea>
+                                    <span asp-validation-for="Sugerencia" class="text-danger"></span>
+                                </div>
+
+                                @* switch para mostrar los campos de afectados *@
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" role="switch" id="SwitchAfectados" name="switchAfectados" value="true">
+                                    <label class="form-check-label" for="SwitchAfectados">¿Existen afectados?</label>
+                                </div>
+                                <div class="row">
+                                    <!-- Botón para ir al siguiente paso -->
+                                    <button type="button" class="btn btn-primary btn-next" id="btnNext" style="display: none;">Siguiente</button>
+                                </div>
+                            </div>
+                            @* ./switch para mostrar los campos de afectados *@
+                            <div class="col-lg-4 order-1 order-md-2">
+                                <div class="form-group mb-3">
+                                    <label class="control-label">Categoria del tipo de incidente</label>
+                                    <select class="form-control" id="CategoriaTipoIncidente" name="CategoriaTipoIncidente">
+                                        @foreach (var categoria in ViewBag.CategoriaTipoIncidente as List<SelectListItem>)
+                                        {
+                                            <option value="@categoria.Value">@categoria.Text</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="form-group mb-3">
+                                    <label asp-for="TipoIncidenteId" class="control-label"></label>
+                                    <select asp-for="TipoIncidenteId" class="form-control" asp-items="ViewBag.TipoIncidenteId" id="tipoIncidenteSelect">
+                                        <option value="">Seleccione un tipo de incidente</option>
+                                    </select>
+                                </div>
+
+                                @* Campos para mostrar la informacion del tipo de incidente *@
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="text-primary mb-0"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><span style="display: block; font-size: 0.9em;">Categoria</span> <span id="TipoIncidenteCategoria" class="text-muted"></span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Nombre</span> <span id="TipoIncidenteTitulo" class="text-muted"></span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Gravedad</span> <span id="TipoIncidenteGravedad" class="text-muted"></span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
+                                    </div>
+                                </div>
+                                @* ./Fin Campos para mostrar la informacion del tipo de incidente *@
+                            </div>
+                            
+                        </div>
+                    </div>
+                    <!-- Step 2: Detalles de los Afectados -->
+                    <div id="afectados-part" class="content" role="tabpanel" aria-labelledby="afectados-part-trigger">
+                        <div id="afectadosContainer">
+                            <div class="afectado-group" id="afectadoTemplate">
+                                <h5>Afectado</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Cedula" class="control-label"></label>
+                                            <input name="Afectados[0].Cedula" class="form-control" />
+                                            <span asp-validation-for="Afectado.Cedula" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
+                                            <input name="Afectados[0].CorreoElectronico" class="form-control" />
+                                            <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Nombre" class="control-label"></label>
+                                            <input name="Afectados[0].Nombre" class="form-control" />
+                                            <span asp-validation-for="Afectado.Nombre" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Apellido" class="control-label"></label>
+                                            <input name="Afectados[0].Apellido" class="form-control" />
+                                            <span asp-validation-for="Afectado.Apellido" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.GeneroAfectado" class="control-label"></label>
+                                            <select name="Afectados[0].GeneroAfectado" class="form-control">
+                                                <option value="Hombre">Hombre</option>
+                                                <option value="Mujer">Mujer</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.GeneroAfectado" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">¿El afectado esta muerto?</label>
+                                            <select name="Afectados[0].Defuncion" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Sí</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.Defuncion" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label class="control-label">¿El afectado es un trabajador?</label>
+                                            <select name="Afectados[0].AsociadaProyecto" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Sí</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.AsociadaProyecto" class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>¿Se brindaron primeros auxilios?</label>
+                                            <select name="Afectados[0].PrimerosAuxilios" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.PrimerosAuxilios"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>¿Tuvieron que hospitalizar al afectado?</label>
+                                            <select name="Afectados[0].Hospitalizado" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.Hospitalizado"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @* Campos de lesiones de los afectados *@
+                                <div class="row lesion-fields">
+                                    <h4>Descripcion de lesiones</h4>
+                                    <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.AbrasionRasgunos"></label>
+                                            <select name="Afectados[0].AbrasionRasgunos" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                            <span asp-validation-for="Afectado.AbrasionRasgunos"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Amputacion"></label>
+                                            <select name="Afectados[0].Amputacion" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.HuesosRotos"></label>
+                                            <select name="Afectados[0].HuesosRotos" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Moreton"></label>
+                                            <select name="Afectados[0].Moreton" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.QuemaduraCalor"></label>
+                                            <select name="Afectados[0].QuemaduraCalor" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.QuemadurasQuimicas"></label>
+                                            <select name="Afectados[0].QuemadurasQuimicas" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.ConmocionCerebral"></label>
+                                            <select name="Afectados[0].ConmocionCerebral" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.LesionAplastamiento"></label>
+                                            <select name="Afectados[0].LesionAplastamiento" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.CorteLaceracionPerforacion"></label>
+                                            <select name="Afectados[0].CorteLaceracionPerforacion" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.Hernia"></label>
+                                            <select name="Afectados[0].Hernia" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.EsguinceTension"></label>
+                                            <select name="Afectados[0].EsguinceTension" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.LesionDeLaMedulaEspinal"></label>
+                                            <select name="Afectados[0].LesionDeLaMedulaEspinal" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.LesionOcular"></label>
+                                            <select name="Afectados[0].LesionOcular" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label asp-for="Afectado.TraumatismoCraneoencefalico"></label>
+                                            <select name="Afectados[0].TraumatismoCraneoencefalico" class="form-control">
+                                                <option value="false">No</option>
+                                                <option value="true">Si</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                @*/. fin Campos de lesiones de los afectados *@
+
+                                <div class="form-group">
+                                    <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
+                                    <textarea name="Afectados[0].ActividadRealizada" class="form-control" rows="3"></textarea>
+                                    <span asp-validation-for="Afectado.ActividadRealizada" class="text-danger"></span>
+                                </div>
+                                <button type="button" class="btn btn-danger remove-afectado mb-4">Eliminar</button>
+                            </div>
+                        </div>
+                        <!-- Contenedor de los botones -->
+                        <div class="d-flex">
+                            <button type="button" class="btn btn-block btn-outline-info me-2 col-md-3 mr-3" id="addAfectadoButton"><i class="fa fa-plus-circle"></i>  Añadir Afectado</button>
+                            <!-- Botones para navegar entre pasos -->
+                            <button type="button" class="btn btn-primary btn-previous">Anterior</button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label asp-for="HoraIncidente" class="control-label"></label>
-                        <input asp-for="HoraIncidente" type="time" class="form-control" id="horaIncidente" />
-                        <span asp-validation-for="HoraIncidente" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class=col-md-6></div>
-                <div class=col-md-6>
-                    @* checkbox para ocultar la hora *@
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" value="" id="desconoceHora">
-                        <label class="form-check-label" for="desconoceHora">¿Se desconoce la hora?</label>
-                    </div>
-                    @* checkbox para ocultar la hora *@
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label asp-for="Descripcion" class="control-label"></label>
-                    <p>
-                        Con el mayor detalle posible, describa qué causó el incidente, qué estaba haciendo justo antes del
-                        incidente y qué hizo después del incidente. Nombre los objetos o sustancias involucrados.
-                    </p>
-                    <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
-                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label asp-for="Sugerencia" class="control-label"></label>
-                    <textarea asp-for="Sugerencia" class="form-control"></textarea>
-                    <span asp-validation-for="Sugerencia" class="text-danger"></span>
-                </div>
-            </div>
-            @* switch para mostrar los campos de afectados *@
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" role="switch" id="SwitchAfectados" name="switchAfectados" value="true">
-                <label class="form-check-label" for="SwitchAfectados">¿Existen afectados?</label>
-            </div>
-            @* ./switch para mostrar los campos de afectados *@
-            <div id="afectadosContainer" style="display:none;">
-                <div class="afectado-group" id="afectadoTemplate" style="display:none;">
-                    <h5>Afectado</h5>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Cedula" class="control-label"></label>
-                                <input name="Afectados[0].Cedula" class="form-control" />
-                                <span asp-validation-for="Afectado.Cedula" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Afectado.CorreoElectronico" class="control-label"></label>
-                                <input name="Afectados[0].CorreoElectronico" class="form-control" />
-                                <span asp-validation-for="Afectado.CorreoElectronico" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Nombre" class="control-label"></label>
-                                <input name="Afectados[0].Nombre" class="form-control" />
-                                <span asp-validation-for="Afectado.Nombre" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Apellido" class="control-label"></label>
-                                <input name="Afectados[0].Apellido" class="form-control" />
-                                <span asp-validation-for="Afectado.Apellido" class="text-danger"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.GeneroAfectado" class="control-label"></label>
-                                <select name="Afectados[0].GeneroAfectado" class="form-control">
-                                    <option value="Hombre">Hombre</option>
-                                    <option value="Mujer">Mujer</option>
-                                </select>
-                                <span asp-validation-for="Afectado.GeneroAfectado" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="control-label">¿El afectado esta muerto?</label>
-                                <select name="Afectados[0].Defuncion" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Sí</option>
-                                </select>
-                                <span asp-validation-for="Afectado.Defuncion" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label class="control-label">¿El afectado es un trabajador?</label>
-                                <select name="Afectados[0].AsociadaProyecto" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Sí</option>
-                                </select>
-                                <span asp-validation-for="Afectado.AsociadaProyecto" class="text-danger"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>¿Se brindaron primeros auxilios?</label>
-                                <select name="Afectados[0].PrimerosAuxilios" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                                <span asp-validation-for="Afectado.PrimerosAuxilios"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>¿Tuvieron que hospitalizar al afectado?</label>
-                                <select name="Afectados[0].Hospitalizado" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                                <span asp-validation-for="Afectado.Hospitalizado"></span>
-                            </div>
-                        </div>
-                    </div>
-
-                    @* campo del switch para mostrar los campos de lesion si el afectado presenta alguna lesion *@
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="AfectadosLesiones" name="AfectadosLesiones" value="true">
-                                <label class="form-check-label" for="AfectadosLesiones">¿El afectado presenta alguna lesion?</label>
-                            </div>
-                        </div>
-                    </div>
-                    @*./ fin campo del switch para mostrar los campos de lesion si el afectado presenta alguna lesion *@
-
-                    @* Campos de lesiones de los afectados *@
-                    <div id="lesionesContainer"  class="row">
-                        <h4>Descripcion de lesiones</h4>
-                        <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.AbrasionRasgunos"></label>
-                                <select name="Afectados[0].AbrasionRasgunos" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                                <span asp-validation-for="Afectado.AbrasionRasgunos"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Amputacion"></label>
-                                <select name="Afectados[0].Amputacion" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.HuesosRotos"></label>
-                                <select name="Afectados[0].HuesosRotos" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Moreton"></label>
-                                <select name="Afectados[0].Moreton" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.QuemaduraCalor"></label>
-                                <select name="Afectados[0].QuemaduraCalor" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.QuemadurasQuimicas"></label>
-                                <select name="Afectados[0].QuemadurasQuimicas" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.ConmocionCerebral"></label>
-                                <select name="Afectados[0].ConmocionCerebral" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.LesionAplastamiento"></label>
-                                <select name="Afectados[0].LesionAplastamiento" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.CorteLaceracionPerforacion"></label>
-                                <select name="Afectados[0].CorteLaceracionPerforacion" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Hernia"></label>
-                                <select name="Afectados[0].Hernia" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.EsguinceTension"></label>
-                                <select name="Afectados[0].EsguinceTension" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    @*/. fin Campos de lesiones de los afectados *@
-
-                    <div class="form-group">
-                        <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
-                        <textarea name="Afectados[0].ActividadRealizada" class="form-control" rows="3"></textarea>
-                        <span asp-validation-for="Afectado.ActividadRealizada" class="text-danger"></span>
-                    </div>
-                    <button type="button" class="btn btn-danger remove-afectado">Eliminar</button>
-                </div>
-                <button type="button" class="btn btn-secondary" id="addAfectadoButton">Añadir Afectado</button>
             </div>
         </form>
     </div>

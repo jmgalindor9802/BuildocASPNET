@@ -58,15 +58,7 @@ namespace Buildoc.Models
         Electrocucion,
         [Description("Tropiezos y resbalones")]
         TropiezosYResbalones,
-        [Description("Traumatismo craneoencefalico")]
-        TraumatismoCraneoencefalico,
         [Description("Derrumbes del suelo")]
-        DerrumbesDelSuelo,
-        [Description("Lesion ocular")]
-        LesionOcular,
-        [Description("Lesion de la medula espinal")]
-        LesionDeLaMedulaEspinal,
-        [Description("Quemaduras")]
-        Quemaduras
+        DerrumbesDelSuelo
 	}
 }

@@ -7,12 +7,15 @@ namespace Buildoc.Models
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
         [Display(Name = "Incidente")]
         public string Titulo { get; set; }
-        [Display(Name = "Fecha de creacion")]
+        [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
-        [Display(Name = "Descripcion")]
+        [Required]
+        [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
+        [Required]
         [Display(Name = "Fecha")]
         public DateOnly FechaIncidente { get; set; }
         [Display(Name = "Hora")]
@@ -20,6 +23,7 @@ namespace Buildoc.Models
         public bool Estado { get; set; }
         [Display(Name = "Sugerencia")]
         public string? Sugerencia { get; set; }
+        [Required]
         [Display(Name = "Proyecto")]
         public Guid ProyectoId { get; set; }
         public virtual Proyecto? Proyecto { get; set; }
@@ -27,8 +31,9 @@ namespace Buildoc.Models
         public string? UsuarioId { get; set; }
         public virtual Usuario? Usuario { get; set; }
         // Foreign key for TipoIncidente
+        [Required]
         [Display(Name = "Tipo de incidente")]
-        public Guid? TipoIncidenteId { get; set; }
+        public Guid TipoIncidenteId { get; set; }
         // Navigation property for TipoIncidente
         public virtual TipoIncidente? TipoIncidente { get; set; }
         [NotMapped]

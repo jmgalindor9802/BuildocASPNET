@@ -1,5 +1,27 @@
 $(document).on('shown.bs.modal', '#modal-lg', function () {
     console.log("Modal abierto");
+    // Verificar si el contenido de bs-stepper-content se carga correctamente
+    console.log($('.bs-stepper-content').html());
+    // Inicializar bs-stepper
+    var stepper = new Stepper($('.bs-stepper')[0]);
+    // Función para actualizar la visibilidad del botón "Siguiente"
+    function updateNextButtonVisibility() {
+        var isChecked = $('#SwitchAfectados').is(':checked');
+        if (isChecked) {
+            $('#btnNext').show();
+        } else {
+            $('#btnNext').hide();
+        }
+    }
+
+    // Inicializa la visibilidad del botón en función del estado inicial del switch
+    updateNextButtonVisibility();
+
+    // Maneja el cambio en el switch para mostrar/ocultar el botón "Siguiente"
+    $('#SwitchAfectados').on('change', function () {
+        updateNextButtonVisibility();
+    });
+
 
     // Configuración del cambio de categoría de tipo de incidente
     $('#CategoriaTipoIncidente').on('change', function () {
@@ -47,33 +69,6 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         }
     });
 
-
-    // Configuración del cambio de SwitchAfectados
-    $('#SwitchAfectados').on('change', function () {
-        console.log("Cambio en SwitchAfectados detectado");
-        toggleAfectadosFields();
-    });
-
-    function toggleAfectadosFields() {
-        var switchAfectados = $('#SwitchAfectados').is(':checked');
-        var afectadosContainer = $('#afectadosContainer');
-        var firstAfectado = $('#afectadoTemplate');
-
-        if (switchAfectados) {
-            afectadosContainer.show();
-            if (firstAfectado.length) {
-                firstAfectado.show();
-            }
-        } else {
-            afectadosContainer.hide();
-            afectadosContainer.find('input, textarea, select').val('');
-            afectadosContainer.find('input[type=checkbox], input[type=radio]').prop('checked', false);
-        }
-    }
-
-    toggleAfectadosFields(); // Llama a la función al cargar la página para establecer el estado inicial
-
-
     // Configuración del botón para añadir afectados
     $('#addAfectadoButton').off('click').on('click', function () {
         console.log("Añadiendo afectado");
@@ -113,5 +108,16 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         } else {
             $('#horaIncidente').prop('disabled', false);
         }
+    });
+    // Lógica para el botón "Siguiente"
+    $(document).on('click', '.btn-next', function () {
+        console.log("Botón Siguiente presionado");
+        stepper.next();
+    });
+
+    // Lógica para el botón "Anterior"
+    $(document).on('click', '.btn-previous', function () {
+        console.log("Botón Anterior presionado");
+        stepper.previous();
     });
 });

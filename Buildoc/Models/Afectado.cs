@@ -8,17 +8,17 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         //Datos de informacion general
-        [Display(Name ="Nombres")]
+        [Display(Name = "Nombres")]
         public string? Nombre { get; set; }
         [Display(Name = "Apellidos")]
         public string? Apellido { get; set; }
-        [Display(Name = "Correo electronico")]
+        [Display(Name = "Correo electrónico")]
         public string? CorreoElectronico { get; set; }
-        [Display(Name = "Cedula")]
+        [Display(Name = "Cédula")]
         public long? Cedula { get; set; }
         //Fin datos de informacion general
 
-        [Display(Name = "Defuncion")]
+        [Display(Name = "Defunción")]
         public bool Defuncion { get; set; }
         [Display(Name = "Actividad realizada")]
         public string? ActividadRealizada { get; set; }
@@ -26,9 +26,15 @@ namespace Buildoc.Models
         public bool AsociadaProyecto { get; set; }
 
         //Tipos de lesiones
-        [Display (Name = "Abrasion, rasguños")]
+        [Display (Name = "Lesión de la médula espinal")]
+        public bool LesionDeLaMedulaEspinal { get; set; }
+        [Display (Name = "Lesión ocular")]
+        public bool LesionOcular { get; set; }
+        [Display (Name = "Traumatismo craneoencefálico")]
+        public bool TraumatismoCraneoencefalico { get; set; }
+        [Display (Name = "Abrasión, rasguños")]
         public bool AbrasionRasgunos { get; set; }
-        [Display(Name = "Quemaduras (quimica)")]
+        [Display(Name = "Quemaduras (química)")]
         public bool QuemadurasQuimicas { get; set; }
         [Display(Name = "Hernia")]
         public bool Hernia { get; set; }
@@ -51,11 +57,11 @@ namespace Buildoc.Models
         //fin de las leciones
 
         //Genero del afectado
-        [Display (Name = "Genero del afectado")]
+        [Display (Name = "Género del afectado")]
         public string GeneroAfectado { get; set; }
-        [Display(Name = "Hospitalizacion")]
+        [Display(Name = "Hospitalización")]
         public bool Hospitalizado { get; set; }
-        [Display(Name = "Se brindo primeros auxilios")]
+        [Display(Name = "Se brindó primeros auxilios")]
         public bool PrimerosAuxilios { get; set; }
 
 

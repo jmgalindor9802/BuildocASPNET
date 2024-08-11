@@ -22,6 +22,10 @@
 	<link rel="stylesheet" href="/AdminLTE/css/adminlte.min.css">
 	<!-- Toastr -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+	@* Incluir el CSS y JS necesario para el bs-stepper *@
+	<link href="/adminlte/plugins/bs-stepper/css/bs-stepper.min.css" rel="stylesheet" />
+	@* Select2 css *@
+	<link href="/adminlte/plugins/select2/css/select2.min.css" rel="stylesheet" />
 	<!-- jQuery -->
 	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
 	<!-- jQuery Validation -->
@@ -36,6 +40,9 @@
 	<script src="/AdminLTE/js/adminlte.min.js"></script>
 
 	<script src="/js/modal-operations.js"></script>
+	<script src="~/adminlte/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+	@* Select2 js *@
+	<script src="~/adminlte/plugins/select2/js/select2.min.js"></script>
 	<style>
 		.btn-primary {
 			background-color: #001f3f; /* Color de fondo personalizado */
@@ -432,7 +439,6 @@
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 		<script src="/espanol.json"></script>
-
        
         <script>
             $(document).ready(function () {
