@@ -5,86 +5,90 @@
 }
 
 
-    <h1>Inspecciones</h1>
-
-    <p>
-        <a href="#" id="createNewModal" class="create-new btn btn-primary"
-           data-url="@Url.Action("Create", "Inspecciones")"
-           data-title="Crear nueva inspección" data-action="create">
-            <i class="fas fa-plus"></i> Crear nueva inspección
-        </a>
-    </p>
+ 
 
 
-    <!-- /.card -->
-    <div class="row">
+    <div class="row" style="height: 100vh;">
+     
 
-    <!-- Caja de información para inspecciones programadas -->
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>@ViewBag.CountProgramadas</h3>
-                <p>Programadas</p>
+        <!-- Usa height: 100vh para llenar la altura de la ventana -->
+        <!-- Columna con las cajas de información -->
+        <div class="col-lg-3 col-md-4 col-12">
+            <h1>Inspecciones</h1>
+
+            <p>
+                <a href="#" id="createNewModal" class="create-new btn btn-primary"
+                   data-url="@Url.Action("Create", "Inspecciones")"
+                   data-title="Crear nueva inspección" data-action="create">
+                    <i class="fas fa-plus"></i> Crear nueva inspección
+                </a>
+            </p>
+            <!-- Caja de información para inspecciones programadas -->
+            <div class="small-box bg-info mb-3">
+                <div class="inner">
+                    <h3>@ViewBag.CountProgramadas</h3>
+                    <p>Programadas</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-clock" style="font-size:70px;"></i>
+                </div>
+                <a href="@Url.Action("Programadas", "Inspecciones")" class="small-box-footer">
+                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                </a>
             </div>
-            <div class="icon">
-                <i class="far fa-clock" style="font-size:70px;"></i>
+
+            <!-- Caja de información para inspecciones pendientes de revisión -->
+            <div class="small-box bg-warning mb-3">
+                <div class="inner">
+                    <h3>@ViewBag.CountPendienteRevision</h3>
+                    <p>Pendientes de revisión</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-flag" style="font-size:70px;"></i>
+                </div>
+                <a href="@Url.Action("PendientesRevision", "Inspecciones")" class="small-box-footer">
+                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                </a>
             </div>
-            <a href="@Url.Action("Programadas", "Inspecciones")" class="small-box-footer">
-                Ver detalles <i class="fas fa-arrow-circle-right"></i>
-            </a>
+
+            <!-- Caja de información para inspecciones sin responder -->
+            <div class="small-box bg-danger mb-3">
+                <div class="inner">
+                    <h3>@ViewBag.CountSinResponder</h3>
+                    <p>Sin responder</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-flag" style="font-size:70px;"></i>
+                </div>
+                <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
+                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+
+            <!-- Caja de información para inspecciones aprobadas -->
+            <div class="small-box bg-success mb-3">
+                <div class="inner">
+                    <h3>@ViewBag.CountAprobadas</h3>
+                    <p>Aprobadas</p>
+                </div>
+                <div class="icon">
+                    <i class="far fa-copy" style="font-size:70px;"></i>
+                </div>
+                <a href="@Url.Action("Aprobadas", "Inspecciones")" class="small-box-footer">
+                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+
+        <!-- Columna con el mapa de Colombia -->
+        <div class="col-lg-9 col-md-8 col-12 d-flex flex-column">
+            <div id="map" style="flex: 1; width: 100%;"></div> <!-- Ajusta el tamaño del mapa -->
+            <div id="municipio-info" style="padding: 10px; background: #f9f9f9; border: 1px solid #ddd;"></div> <!-- Nuevo elemento para mostrar el nombre del municipio -->
         </div>
     </div>
 
-    <!-- Caja de información para inspecciones pendientes de revisión -->
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
-            <div class="inner">
-                <h3>@ViewBag.CountPendienteRevision</h3>
-                <p>Pendientes de revisión</p>
-            </div>
-            <div class="icon">
-                <i class="far fa-flag" style="font-size:70px;"></i>
-            </div>
-            <a href="@Url.Action("PendientesRevision", "Inspecciones")" class="small-box-footer">
-                Ver detalles <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
 
-    <!-- Caja de información para inspecciones sin responder -->
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>@ViewBag.CountSinResponder</h3>
-                <p>Sin responder</p>
-            </div>
-            <div class="icon">
-                <i class="far fa-flag" style="font-size:70px;"></i>
-            </div>
-            <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
-                Ver detalles <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
 
-    <!-- Caja de información para inspecciones aprobadas -->
-    <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>@ViewBag.CountAprobadas</h3>
-                <p>Aprobadas</p>
-            </div>
-            <div class="icon">
-                <i class="far fa-copy" style="font-size:70px;"></i>
-            </div>
-            <a href="@Url.Action("Aprobadas", "Inspecciones")" class="small-box-footer">
-                Ver detalles <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-
-    </div>
-    <!-- /.info-box -->
 
     <table id="example1" class="table table-bordered table-striped">
         <thead>
@@ -149,11 +153,27 @@
             }
         </tbody>
     </table>
+@{
+    var municipiosConInspecciones = ViewBag.MunicipiosConInspecciones as List<string>;
+}
+<!-- Verifica los datos en la vista -->
+@if (municipiosConInspecciones != null)
+{
+    <div>
+        <h3>Municipios con Inspecciones:</h3>
+        <ul>
+            @foreach (var municipio in municipiosConInspecciones)
+            {
+                <li>@municipio</li>
+            }
+        </ul>
+    </div>
+}
 
+<script>
+    // Convertir el ViewBag en una variable JavaScript global
+    var municipiosConInspecciones = @Html.Raw(Json.Serialize(municipiosConInspecciones));
+    window.municipiosConInspecciones = municipiosConInspecciones;
+</script>
 
-<style>
-    .estado-programada-text {
-        color: blue;
-    }
-</style>
-
+<script src="~/js/mapa.js"> </script>

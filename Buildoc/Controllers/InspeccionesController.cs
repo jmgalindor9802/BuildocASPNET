@@ -94,12 +94,20 @@ namespace Buildoc.Controllers
             // Calcula el número de inspecciones con estado "Aprobadas"
             var countAprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Aprobada);
 
+            // Obtén los municipios asociados a los proyectos de las inspecciones
+            var municipiosConInspecciones = await _context.Proyectos
+                .Where(p => proyectos.Contains(p.Id))
+                .Select(p => p.Municipio) // Asumiendo que 'Municipio' es un campo en el proyecto
+                .Distinct()
+                .ToListAsync();
 
             // Pasa los datos a la vista
             ViewBag.CountProgramadas = countProgramadas;
             ViewBag.CountPendienteRevision = countPendienteRevision;
             ViewBag.CountSinResponder = countSinResponder;
             ViewBag.CountAprobadas = countAprobadas;
+            ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
+
             return View(inspecciones);
         }
 
@@ -750,6 +758,10 @@ namespace Buildoc.Controllers
                 return Json(new { success = false, message = "Error al cambiar el estado: " + ex.Message });
             }
         }
+
+
+
+
 
     }
 }

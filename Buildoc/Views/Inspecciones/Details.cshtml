@@ -124,18 +124,37 @@
                             <dd class="col-sm-8">@Html.DisplayFor(model => Model.Respuesta.AccionesCorrectivasLista)</dd>
                         }
 
-                      @*   <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.DocumentacionCompleta)</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => Model.Respuesta.DocumentacionCompleta ? "Sí" : "No")</dd>
+                       
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.DocumentacionCompleta)</dt>
+                        <dd class="col-sm-8">
+                            @if (Model.Respuesta.DocumentacionCompleta)
+                            {
+                                @Html.Raw("Sí")
+                            }
+                            else
+                            {
+                                @Html.Raw("No")
+                            }
+                        </dd>
 
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.RecomendacionesFuturas)</dt>
-                        <dd class="col-sm-8">@Html.DisplayFor(model => Model.Respuesta.RecomendacionesFuturas ? "Sí" : "No")</dd>
-
+                        <dd class="col-sm-8">
+                            @if (Model.Respuesta.RecomendacionesFuturas)
+                            {
+                                @Html.Raw("Sí")
+                            }
+                            else
+                            {
+                                @Html.Raw("No")
+                            }
+                        </dd>
                         @if (!string.IsNullOrEmpty(Model.Respuesta.RecomendacionesFuturasList))
                         {
                             <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.RecomendacionesFuturasList)</dt>
                             <dd class="col-sm-8">@Html.DisplayFor(model => Model.Respuesta.RecomendacionesFuturasList)</dd>
                         }
-
+                       @*  
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.EstadoRespuestaInspeccion)</dt>
                         <dd class="col-sm-8">
                             <span class="badge @(Model.Respuesta.EstadoRespuestaInspeccion == EstadoRespuestaInspeccion.Respondida ? "badge-aprobada" :
