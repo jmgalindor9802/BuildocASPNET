@@ -209,6 +209,22 @@ namespace Buildoc.Controllers
             }
             else
             {
+                // Validar las cédulas de los afectados
+                foreach (var afectado in afectados)
+                {
+                    if (afectado.Cedula.HasValue)
+                    {
+                        string cedulaString = afectado.Cedula.Value.ToString();
+                        if (cedulaString.Length != 7 && cedulaString.Length != 10)
+                        {
+                            return Json(new { success = false, message = "La cedula debe tener 7 o 10 digitos" });
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError($"Afectados[{afectados.IndexOf(afectado)}].Cedula", "La cédula es obligatoria.");
+                    }
+                }
                 // Si el switch está activado, vinculamos directamente la lista de afectados al incidente
                 incidente.Afectados = afectados;
             }

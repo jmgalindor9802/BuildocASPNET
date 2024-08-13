@@ -8,10 +8,12 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         //Datos de informacion general
+        [Required]
         [Display(Name = "Nombres")]
-        public string? Nombre { get; set; }
+        public string Nombre { get; set; }
+        [Required]
         [Display(Name = "Apellidos")]
-        public string? Apellido { get; set; }
+        public string Apellido { get; set; }
         [Display(Name = "Correo electrónico")]
         public string? CorreoElectronico { get; set; }
         [Display(Name = "Cédula")]

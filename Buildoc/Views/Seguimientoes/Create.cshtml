@@ -4,27 +4,79 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
-
-<h4>Seguimiento</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+<div class="row justify-content-center mb-4">
+    <div class="col-md-12">
+        <form asp-action="Create" class="ml-3 mr-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IncidenteId" />
-            <div class="form-group">
-                <label asp-for="Titulo" class="control-label"></label>
-                <input asp-for="Titulo" class="form-control" />
-                <span asp-validation-for="Titulo" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <input asp-for="Descripcion" class="form-control" />
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+            <div class="bs-stepper">
+                <!-- Encabezado del formulario paso a paso -->
+                <div class="bs-stepper-header" role="tablist">
+                    <div class="step" data-target="#seguimiento-part">
+                        <button type="button" class="step-trigger" role="tab" aria-controls="seguimiento-part" id="seguimiento-part-trigger">
+                            <span class="bs-stepper-circle">1</span>
+                            <span class="bs-stepper-label">Detalles del Seguimiento</span>
+                        </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#afectadosSeguimiento-part">
+                        <button type="button" class="step-trigger" role="tab" aria-controls="afectadosSeguimiento-part" id="afectadosSeguimiento-part-trigger">
+                            <span class="bs-stepper-circle">2</span>
+                            <span class="bs-stepper-label">Detalles de los Afectados</span>
+                        </button>
+                    </div>
+                </div>
+                <!--Cuerpo del formulario paso a paso-->
+                <div class="bs-stepper-content">
+                    <!-- Step 1: Detalles del Seguimiento -->
+                    <div id="seguimiento-part" class="content" role="tabpanel" aria-labelledby="seguimiento-part-trigger">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="form-group">
+                                    <label asp-for="Titulo" class="control-label"></label>
+                                    <input asp-for="Titulo" class="form-control" />
+                                    <span asp-validation-for="Titulo" class="text-danger"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label asp-for="Descripcion" class="control-label"></label>
+                                    <input asp-for="Descripcion" class="form-control" />
+                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 order-1 order-md-2">
+                                <div class="card card-default">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Informacion del incidente</h3>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-primary btn-next" id="btnNext" style="display: none;">Siguiente</button>
+                    </div>
+                    <div id="afectadosSeguimiento-part" class="content" role="tabpanel" aria-labelledby="afectadosSeguimiento-part-trigger">
+                        <div id="afectadosContainer">
+                            <div class="afectado-group" id="afectadoTemplate">
+                                <h5>Afectado</h5>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label  class="control-label"></label>
+                                            <input name="Afectados[0].Cedula" class="form-control" />
+                                            <span  class="text-danger"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary btn-previous">Anterior</button>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

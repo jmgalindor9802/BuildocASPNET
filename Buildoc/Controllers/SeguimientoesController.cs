@@ -38,7 +38,7 @@ namespace Buildoc.Controllers
 		        .Include(s => s.Usuario)
 		        .ToListAsync();
 			ViewBag.IncidenteId = incidenteId;
-			return View(seguimientos);
+			return PartialView(seguimientos);
 		}
 
         // GET: Seguimientoes/Details/5
@@ -73,7 +73,7 @@ namespace Buildoc.Controllers
             {
                 IncidenteId = incidenteId.Value
             };
-            return View(seguimiento);
+            return PartialView(seguimiento);
         }
 
         // POST: Seguimientoes/Create
@@ -89,8 +89,9 @@ namespace Buildoc.Controllers
                 seguimiento.UsuarioId = userId;
                 _context.Add(seguimiento);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("LineaTiempo", new { incidenteId = seguimiento.IncidenteId });
-            }
+				TempData["SuccessMessage"] = "¡El seguimiento se ha creado exitosamente!";
+				return Json(new { success = true });
+			}
             return View(seguimiento);
         }
 

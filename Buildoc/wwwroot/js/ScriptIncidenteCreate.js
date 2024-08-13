@@ -1,8 +1,7 @@
 $(document).on('shown.bs.modal', '#modal-lg', function () {
     console.log("Modal abierto");
-    // Verificar si el contenido de bs-stepper-content se carga correctamente
-    console.log($('.bs-stepper-content').html());
     // Inicializar bs-stepper
+    console.log("Se esta utilizando unicamente el script de incidente")
     var stepper = new Stepper($('.bs-stepper')[0]);
     // Función para actualizar la visibilidad del botón "Siguiente"
     function updateNextButtonVisibility() {

@@ -16,6 +16,10 @@ $(document).ready(function () {
         $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
+            // Inicializar bs-stepper si existe en el modal cargado
+            if ($('#modal-lg .bs-stepper').length > 0) {
+                initializeStepper();
+            }
      
             // Configurar los botones del modal según la acción
             if (action === 'create' || action === 'edit') {
@@ -178,6 +182,13 @@ $(document).ready(function () {
 
     // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
 
+        $.getScript('/js/bs-stepper.js')
+            .done(function () {
+                console.log('Script bs-stepper.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script bs-steppers.js:', exception);
+            });
         $.getScript('/js/ScriptIncidenteCreate.js')
             .done(function () {
                 console.log('Script IncidenteCreate.js cargado correctamente.');
