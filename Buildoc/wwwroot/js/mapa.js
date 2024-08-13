@@ -37,27 +37,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     svg.call(zoom);
 
-    console.log("SVG creado:", svg);
-
     var projection = d3.geoMercator()
         .scale(2500)
-        .center([-74.0721, 4.7110])
+        .center([-73.0721, 4.0110])
         .translate([width / 2, height / 2]);
 
     var path = d3.geoPath().projection(projection);
 
     d3.json("/js/municipios.json").then(function (data) {
-        console.log("Datos cargados:", data);
-        console.log("Claves de objetos disponibles:", Object.keys(data.objects));
-
         var departamentos = topojson.feature(data, data.objects.MGN_ANM_DPTOS);
         var municipios = topojson.feature(data, data.objects.MGN_ANM_MPIOS);
-
-        console.log("Departamentos procesados:", departamentos);
-        console.log("Municipios procesados:", municipios);
-
-        window.departamentosGeoData = departamentos;
-        window.municipiosGeoData = municipios;
 
         g.selectAll("path.departamento")
             .data(departamentos.features)
@@ -79,7 +68,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
             .attr("stroke", "#c2c2c2")
             .attr("stroke-width", 0.5);
 
-        // Añadir nombres de los departamentos
         textGroup.selectAll("text.departamento-name")
             .data(departamentos.features)
             .enter()
@@ -91,19 +79,25 @@ window.addEventListener('DOMContentLoaded', (event) => {
             .attr("y", function (d) {
                 return projection(d3.geoCentroid(d))[1];
             })
-            .attr("font-size", "8px") // Tamaño más pequeño
-            .attr("fill", "#888888") // Color más claro
+            .attr("font-size", "8px")
+            .attr("fill", "#888888")
             .attr("text-anchor", "middle")
             .text(function (d) {
                 return d.properties.DPTO_CNMBR;
             });
 
-        // Añadir íconos de inspección y nombres de municipios con inspecciones después de cargar los municipios
-        if (window.municipiosGeoData && window.municipiosConInspecciones) {
+        if (window.municipiosConInspecciones && window.inspecciones) {
             addInspectionPoints();
         } else {
             console.log('Los datos de municipios o inspecciones no están disponibles.');
         }
+
+        // Agregar manejador de eventos para el filtro
+        var filterEstado = document.getElementById('filterEstado');
+        filterEstado.addEventListener('change', function () {
+            var selectedEstado = this.value;
+            updateInspectionPoints(selectedEstado);
+        });
     }).catch(function (error) {
         console.error("Error al cargar el archivo TopoJSON:", error);
     });
@@ -115,42 +109,155 @@ window.addEventListener('DOMContentLoaded', (event) => {
     function addInspectionPoints() {
         console.log("Ejecutando addInspectionPoints");
 
-        if (window.municipiosConInspecciones) {
-            console.log('Municipios con inspecciones:', window.municipiosConInspecciones);
+        if (window.inspecciones) {
+            console.log('Inspecciones:', window.inspecciones);
 
-            window.municipiosConInspecciones.forEach(function (municipio) {
+            window.inspecciones.forEach(function (inspeccion) {
                 var found = false;
-                var normalizedMunicipio = normalizeName(municipio);
+                var normalizedMunicipio = normalizeName(inspeccion.municipio);
 
                 g.selectAll("path.municipio").each(function (d) {
                     var dMunicipio = normalizeName(d.properties.MPIO_CNMBR);
 
                     if (dMunicipio === normalizedMunicipio) {
                         found = true;
-                        var lat = d.properties.LATITUD;
-                        var lng = d.properties.LONGITUD;
+                        var centroid = d3.geoCentroid(d);
+                        var lat = centroid[1];
+                        var lng = centroid[0];
 
-                        console.log('Municipio:', municipio);
+                        console.log('Municipio:', inspeccion.municipio);
                         console.log('Coordenadas:', [lat, lng]);
 
-                        g.append("image")
-                            .attr("xlink:href", "/location-icon.svg") // Ruta al archivo SVG del ícono
-                            .attr("x", projection([lng, lat])[0] - 12) // Ajusta la posición según el tamaño del ícono
-                            .attr("y", projection([lng, lat])[1] - 24) // Ajusta la posición según el tamaño del ícono
-                            .attr("width", 24) // Ajusta el tamaño del ícono
-                            .attr("height", 24) // Ajusta el tamaño del ícono
-                            .attr("class", "inspection-point");
+                        var iconColor;
+                        switch (inspeccion.estado) {
+                            case 0:
+                                iconColor = '#ffc107'; // Pendiente de aprobacion
+                                break;
+                            case 1:
+                                iconColor = '#fd7e14'; // En proceso
+                                break;
+                            case 2:
+                                iconColor = '#17a2b8'; // Finalizada
+                                break;
+                            case 3:
+                                iconColor = '#17a2b8'; // Programada
+                                break;
+                            case 4:
+                                iconColor = '#dc3545'; // Sin responder
+                                break;
+                            case 5:
+                                iconColor = '#28a745'; // Aprobada
+                                break;
+                            case 6:
+                                iconColor = '#dc3545'; // Desaprobada
+                                break;
+                            default:
+                                iconColor = '#6c757d'; // Gris personalizado
+                                break;
+                        }
 
-                        console.log('Ícono añadido para:', municipio, [lat, lng]);
+                        // Crear el ícono SVG con el color aplicado directamente
+                        var iconSvg = `
+                            <svg class="icon" viewBox="0 0 64 64" width="24" height="24">
+                                <path d="M42.138,23.162c0-5.566-4.548-10.094-10.138-10.094s-10.138,4.528-10.138,10.094S26.41,33.256,32,33.256   S42.138,28.728,42.138,23.162z" fill="${iconColor}"/>
+                                <path d="M31.995,63.996l4.109-5.375c4.289-5.678,18.282-25.024,18.282-35.601C54.387,9.253,45.391,0.004,32,0.004   S9.613,9.253,9.613,23.021c0,11.39,16.432,33.166,18.301,35.605L31.995,63.996z M17.862,23.162c0-7.771,6.342-14.094,14.138-14.094   s14.138,6.323,14.138,14.094S39.796,37.256,32,37.256S17.862,30.934,17.862,23.162z" fill="${iconColor}"/>
+                            </svg>`;
+
+                        // Añadir el ícono SVG al mapa
+                        g.append("g")
+                            .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
+                            .html(iconSvg)
+                            .attr("class", "inspection-point")
+                            .append("title")
+                            .text(`ID: ${inspeccion.id}\nEstado: ${inspeccion.estado}`);
+
+                        console.log('Ícono añadido para:', inspeccion.municipio, [lng, lat]);
                     }
                 });
 
                 if (!found) {
-                    console.log('Municipio no encontrado en los datos geográficos:', municipio);
+                    console.log('Municipio no encontrado en los datos geográficos:', inspeccion.municipio);
                 }
             });
         } else {
-            console.log("Los datos de municipios no están disponibles");
+            console.log("Los datos de inspecciones no están disponibles");
+        }
+    }
+    function updateInspectionPoints(selectedEstado) {
+        console.log("Actualizando puntos de inspección con estado:", selectedEstado);
+
+        // Limpiar los puntos existentes antes de actualizar
+        g.selectAll(".inspection-point").remove();
+
+        if (window.inspecciones) {
+            window.inspecciones.forEach(function (inspeccion) {
+                if (selectedEstado === "all" || inspeccion.estado == selectedEstado) {
+                    var found = false;
+                    var normalizedMunicipio = normalizeName(inspeccion.municipio);
+
+                    g.selectAll("path.municipio").each(function (d) {
+                        var dMunicipio = normalizeName(d.properties.MPIO_CNMBR);
+
+                        if (dMunicipio === normalizedMunicipio) {
+                            found = true;
+                            var centroid = d3.geoCentroid(d);
+                            var lat = centroid[1];
+                            var lng = centroid[0];
+
+                            var iconColor;
+                            switch (inspeccion.estado) {
+                                case 0:
+                                    iconColor = '#ffc107'; // Pendiente de aprobacion
+                                    break;
+                                case 1:
+                                    iconColor = '#fd7e14'; // En proceso
+                                    break;
+                                case 2:
+                                    iconColor = '#17a2b8'; // Finalizada
+                                    break;
+                                case 3:
+                                    iconColor = '#17a2b8'; // Programada
+                                    break;
+                                case 4:
+                                    iconColor = '#dc3545'; // Sin responder
+                                    break;
+                                case 5:
+                                    iconColor = '#28a745'; // Aprobada
+                                    break;
+                                case 6:
+                                    iconColor = '#dc3545'; // Desaprobada
+                                    break;
+                                default:
+                                    iconColor = '#6c757d'; // Gris personalizado
+                                    break;
+                            }
+
+                            // Crear el ícono SVG con el color aplicado directamente
+                            var iconSvg = `
+                                <svg class="icon" viewBox="0 0 64 64" width="24" height="24">
+                                    <path d="M42.138,23.162c0-5.566-4.548-10.094-10.138-10.094s-10.138,4.528-10.138,10.094S26.41,33.256,32,33.256   S42.138,28.728,42.138,23.162z" fill="${iconColor}"/>
+                                    <path d="M31.995,63.996l4.109-5.375c4.289-5.678,18.282-25.024,18.282-35.601C54.387,9.253,45.391,0.004,32,0.004   S9.613,9.253,9.613,23.021c0,11.39,16.432,33.166,18.301,35.605L31.995,63.996z M17.862,23.162c0-7.771,6.342-14.094,14.138-14.094   s14.138,6.323,14.138,14.094S39.796,37.256,32,37.256S17.862,30.934,17.862,23.162z" fill="${iconColor}"/>
+                                </svg>`;
+
+                            // Añadir el ícono SVG al mapa
+                            g.append("g")
+                                .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
+                                .html(iconSvg)
+                                .attr("class", "inspection-point")
+                                .append("title")
+                                .text(`ID: ${inspeccion.id}\nEstado: ${inspeccion.estado}`);
+
+                            console.log('Ícono añadido para:', inspeccion.municipio, [lng, lat]);
+                        }
+                    });
+
+                    if (!found) {
+                        console.log('Municipio no encontrado en los datos geográficos:', inspeccion.municipio);
+                    }
+                }
+            });
+        } else {
+            console.log("Los datos de inspecciones no están disponibles");
         }
     }
 });

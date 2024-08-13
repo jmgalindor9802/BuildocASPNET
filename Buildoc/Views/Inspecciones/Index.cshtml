@@ -1,4 +1,8 @@
-﻿@model IEnumerable<Buildoc.Models.Inspeccion>
+﻿
+
+@model IEnumerable<Buildoc.Models.Inspeccion>
+
+
 
 @{
     ViewData["Title"] = "Inspecciones";
@@ -90,8 +94,25 @@
 
         <!-- Columna con el mapa de Colombia -->
         <div class="col-lg-7 col-md-8 col-12 d-flex flex-column">
-            <div id="map" style="flex: 1; width: 100%;"></div> <!-- Ajusta el tamaño del mapa -->
-           
+            <div class="position-relative" style="flex: 1; width: 100%;">
+                <!-- Filtro para inspecciones dentro del mapa -->
+                <div id="map-filter" class="position-absolute p-2 bg-white border rounded">
+                    <label for="filterEstado" class="form-label">Filtrar por estado:</label>
+                    <select id="filterEstado" class="form-control">
+                        <option value="all">Todos</option>
+                        <option value="0">Pendiente de aprobación</option>
+                        <option value="1">En proceso</option>
+                        <option value="2">Finalizada</option>
+                        <option value="3">Programada</option>
+                        <option value="4">Sin responder</option>
+                        <option value="5">Aprobada</option>
+                        <option value="6">Desaprobada</option>
+                    </select>
+                </div>
+
+                <!-- Mapa -->
+                <div id="map" style="width: 100%; height: 100%;"></div> <!-- Ajusta el tamaño del mapa -->
+            </div>
         </div>
     </div>
 </div>
@@ -168,10 +189,20 @@
 }
 
 
+
 <script>
     // Convertir el ViewBag en una variable JavaScript global
-    var municipiosConInspecciones = @Html.Raw(Json.Serialize(municipiosConInspecciones));
+    var municipiosConInspecciones = @Html.Raw(Json.Serialize(ViewBag.MunicipiosConInspecciones));
     window.municipiosConInspecciones = municipiosConInspecciones;
+
+    // Verificar el contenido de ViewBag.DetallesInspecciones
+    var detallesInspecciones = @Html.Raw(Json.Serialize(ViewBag.DetallesInspecciones));
+    console.log('Detalles de Inspecciones:', detallesInspecciones);
+
+    window.inspecciones = detallesInspecciones;
+    console.log('Inspecciones:', window.inspecciones);
 </script>
+
+
 
 <script src="~/js/mapa.js"> </script>

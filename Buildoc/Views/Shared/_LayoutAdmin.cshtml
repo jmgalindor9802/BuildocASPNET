@@ -477,8 +477,21 @@
 			});
 		</script>
 
-		@RenderSection("Scripts", required: false)
 
+		@RenderSection("Scripts", required: false)
+		<object id="inspection-icon" class="icon blue" type="image/svg+xml" data="/location-icon.svg"></object>
+		<script>
+		// icon-color.js
+		function setIconColor(iconElement, colorClass) {
+		iconElement.className = 'icon ' + colorClass;
+		}
+
+		// Ejemplo de uso
+		document.addEventListener('DOMContentLoaded', function() {
+		var iconElement = document.getElementById('inspection-icon');
+		setIconColor(iconElement, 'red'); // Cambia el color del ícono a rojo
+		});
+		</script>
 
 </body>
 </html>

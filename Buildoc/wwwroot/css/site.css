@@ -573,10 +573,23 @@ h6,
     flex-direction: column;
 }
 
+
+#map-filter {
+    top: 10px; /* Ajusta la posición desde el borde superior */
+    right: 10px; /* Ajusta la posición desde el borde derecho */
+    z-index: 1000; /* Asegura que el filtro esté por encima del mapa */
+    width: 200px; /* Ajusta el ancho del filtro según sea necesario */
+}
+
 #map {
+    position: relative;
     flex: 1;
     width: 100%;
+  
 }
+
+
+
 /* Estilos para el borde del municipio seleccionado */
 .municipio-selected {
     stroke-width: 0.5px; /* Grosor aumentado para el municipio seleccionado */
@@ -608,3 +621,37 @@ h6,
 .inspection-point {
     animation: blink 1s infinite;
 }
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+.inspeccionProgramadaPoint {
+    color: blue;
+}
+
+.inspeccionPendienteRevisionPoint {
+    color: orange;
+}
+
+.inspeccionEnProcesoPoint {
+    color: red;
+}
+
+.inspeccionFinalizadaPoint {
+    color: green;
+}
+.inspeccionAprobadaPoint {
+    color: green;
+}
+.inspeccionDesaprobadaPoint {
+    color: green;
+}
+.inspeccionSinResponderPoint {
+    color: green;
+}
+.gray {
+    color: gray;
+}
+

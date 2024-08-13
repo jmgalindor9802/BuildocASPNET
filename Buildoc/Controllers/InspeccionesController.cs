@@ -101,12 +101,28 @@ namespace Buildoc.Controllers
                 .Distinct()
                 .ToListAsync();
 
+            // Obtener los detalles de las inspecciones
+            var detallesInspecciones = await _context.Inspeccion
+                .Include(i => i.Proyecto)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .Select(i => new
+                {
+                    i.Id,
+                    i.Estado,
+                    Municipio = i.Proyecto.Municipio
+                })
+                .ToListAsync();
+
+
+
+
             // Pasa los datos a la vista
             ViewBag.CountProgramadas = countProgramadas;
             ViewBag.CountPendienteRevision = countPendienteRevision;
             ViewBag.CountSinResponder = countSinResponder;
             ViewBag.CountAprobadas = countAprobadas;
             ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
+            ViewBag.DetallesInspecciones = detallesInspecciones;
 
             return View(inspecciones);
         }
