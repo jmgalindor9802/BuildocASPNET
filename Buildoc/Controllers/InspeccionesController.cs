@@ -94,9 +94,9 @@ namespace Buildoc.Controllers
             // Calcula el número de inspecciones con estado "Aprobadas"
             var countAprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Aprobada);
 
-            // Obtén los municipios asociados a los proyectos de las inspecciones
+            // Obtén los municipios asociados a los proyectos con al menos una inspección
             var municipiosConInspecciones = await _context.Proyectos
-                .Where(p => proyectos.Contains(p.Id))
+                .Where(p => proyectos.Contains(p.Id) && _context.Inspeccion.Any(i => i.ProyectoId == p.Id))
                 .Select(p => p.Municipio) // Asumiendo que 'Municipio' es un campo en el proyecto
                 .Distinct()
                 .ToListAsync();

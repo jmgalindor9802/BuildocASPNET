@@ -41,7 +41,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
     var projection = d3.geoMercator()
         .scale(2500)
-        .center([-74, 4.5])
+        .center([-74.0721, 4.7110])
         .translate([width / 2, height / 2]);
 
     var path = d3.geoPath().projection(projection);
@@ -67,29 +67,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
             .attr("d", path)
             .attr("fill", "#e0e0e0")
             .attr("stroke", "#000000")
-            .attr("stroke-width", 1)
-            .attr("fill", "#e0e0e0")
-            .on("click", function (event, d) {
-                g.selectAll("path.departamento").classed("departamento-selected", false);
-                d3.select(this).classed("departamento-selected", true);
-
-                var coords = projection(d3.geoCentroid(d));
-                var name = d.properties.DPTO_CNMBR;
-
-                textGroup.selectAll("*").remove();
-
-                textGroup.append("text")
-                    .attr("x", coords[0])
-                    .attr("y", coords[1])
-                    .attr("font-size", "12px")
-                    .attr("fill", "black")
-                    .attr("text-anchor", "middle")
-                    .text(name);
-
-                var zoomLevel = d3.zoomTransform(svg.node()).k;
-                textGroup.selectAll("text")
-                    .attr("font-size", Math.max(12 / zoomLevel, 5) + "px");
-            });
+            .attr("stroke-width", 1);
 
         g.selectAll("path.municipio")
             .data(municipios.features)
@@ -99,30 +77,28 @@ window.addEventListener('DOMContentLoaded', (event) => {
             .attr("d", path)
             .attr("fill", "none")
             .attr("stroke", "#c2c2c2")
-            .attr("stroke-width", 0.5)
-            .on("click", function (event, d) {
-                g.selectAll("path.municipio").classed("municipio-selected", false);
-                d3.select(this).classed("municipio-selected", true);
+            .attr("stroke-width", 0.5);
 
-                var coords = projection(d3.geoCentroid(d));
-                var name = d.properties.MPIO_CNMBR;
-
-                textGroup.selectAll("*").remove();
-
-                textGroup.append("text")
-                    .attr("x", coords[0])
-                    .attr("y", coords[1])
-                    .attr("font-size", "12px")
-                    .attr("fill", "black")
-                    .attr("text-anchor", "middle")
-                    .text(name);
-
-                var zoomLevel = d3.zoomTransform(svg.node()).k;
-                textGroup.selectAll("text")
-                    .attr("font-size", Math.max(12 / zoomLevel, 5) + "px");
+        // Añadir nombres de los departamentos
+        textGroup.selectAll("text.departamento-name")
+            .data(departamentos.features)
+            .enter()
+            .append("text")
+            .attr("class", "departamento-name")
+            .attr("x", function (d) {
+                return projection(d3.geoCentroid(d))[0];
+            })
+            .attr("y", function (d) {
+                return projection(d3.geoCentroid(d))[1];
+            })
+            .attr("font-size", "8px") // Tamaño más pequeño
+            .attr("fill", "#888888") // Color más claro
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                return d.properties.DPTO_CNMBR;
             });
 
-        // Añadir puntos de inspección después de cargar los municipios
+        // Añadir íconos de inspección y nombres de municipios con inspecciones después de cargar los municipios
         if (window.municipiosGeoData && window.municipiosConInspecciones) {
             addInspectionPoints();
         } else {
@@ -157,15 +133,15 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         console.log('Municipio:', municipio);
                         console.log('Coordenadas:', [lat, lng]);
 
-                        g.append("circle")
-                            .attr("cx", projection([lng, lat])[0])
-                            .attr("cy", projection([lng, lat])[1])
-                            .attr("r", 5)
-                            .attr("fill", "red")
-                            .attr("stroke", "black")
-                            .attr("stroke-width", 1);
+                        g.append("image")
+                            .attr("xlink:href", "/location-icon.svg") // Ruta al archivo SVG del ícono
+                            .attr("x", projection([lng, lat])[0] - 12) // Ajusta la posición según el tamaño del ícono
+                            .attr("y", projection([lng, lat])[1] - 24) // Ajusta la posición según el tamaño del ícono
+                            .attr("width", 24) // Ajusta el tamaño del ícono
+                            .attr("height", 24) // Ajusta el tamaño del ícono
+                            .attr("class", "inspection-point");
 
-                        console.log('Punto añadido para:', municipio, [lat, lng]);
+                        console.log('Ícono añadido para:', municipio, [lat, lng]);
                     }
                 });
 
