@@ -21563,7 +21563,8 @@ body.text-sm .control-sidebar {
 .overlay-wrapper > .loading-img,
 .info-box > .overlay,
 .info-box > .loading-img,
-.small-box > .overlay,
+.
+> .overlay,
 .small-box > .loading-img {
   height: 100%;
   left: 0;

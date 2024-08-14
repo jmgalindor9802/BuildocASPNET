@@ -92,7 +92,6 @@ window.addEventListener('DOMContentLoaded', (event) => {
             console.log('Los datos de municipios o inspecciones no están disponibles.');
         }
 
-        // Agregar manejador de eventos para el filtro
         var filterEstado = document.getElementById('filterEstado');
         filterEstado.addEventListener('change', function () {
             var selectedEstado = this.value;
@@ -156,42 +155,35 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 break;
                         }
 
-                        // Crear el ícono SVG con el color aplicado directamente
                         var iconSvg = `
                             <svg class="icon" viewBox="0 0 64 64" width="24" height="24">
                                 <path d="M42.138,23.162c0-5.566-4.548-10.094-10.138-10.094s-10.138,4.528-10.138,10.094S26.41,33.256,32,33.256   S42.138,28.728,42.138,23.162z" fill="${iconColor}"/>
                                 <path d="M31.995,63.996l4.109-5.375c4.289-5.678,18.282-25.024,18.282-35.601C54.387,9.253,45.391,0.004,32,0.004   S9.613,9.253,9.613,23.021c0,11.39,16.432,33.166,18.301,35.605L31.995,63.996z M17.862,23.162c0-7.771,6.342-14.094,14.138-14.094   s14.138,6.323,14.138,14.094S39.796,37.256,32,37.256S17.862,30.934,17.862,23.162z" fill="${iconColor}"/>
                             </svg>`;
 
-                        // Añadir el ícono SVG al mapa
                         g.append("g")
                             .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
-                            .html(iconSvg)
-                            .attr("class", "inspection-point")
-                            .append("title")
-                            .text(`ID: ${inspeccion.id}\nEstado: ${inspeccion.estado}`);
-
-                        console.log('Ícono añadido para:', inspeccion.municipio, [lng, lat]);
+                            .html(iconSvg);
                     }
                 });
 
                 if (!found) {
-                    console.log('Municipio no encontrado en los datos geográficos:', inspeccion.municipio);
+                    console.log('Municipio no encontrado:', inspeccion.municipio);
                 }
             });
         } else {
-            console.log("Los datos de inspecciones no están disponibles");
+            console.log('No se encontraron inspecciones.');
         }
     }
-    function updateInspectionPoints(selectedEstado) {
-        console.log("Actualizando puntos de inspección con estado:", selectedEstado);
 
-        // Limpiar los puntos existentes antes de actualizar
-        g.selectAll(".inspection-point").remove();
+    function updateInspectionPoints(selectedEstado) {
+        console.log("Actualizando puntos de inspección para el estado:", selectedEstado);
 
         if (window.inspecciones) {
+            g.selectAll("g").remove(); // Elimina los puntos anteriores
+
             window.inspecciones.forEach(function (inspeccion) {
-                if (selectedEstado === "all" || inspeccion.estado == selectedEstado) {
+                if (inspeccion.estado == selectedEstado) {
                     var found = false;
                     var normalizedMunicipio = normalizeName(inspeccion.municipio);
 
@@ -232,32 +224,38 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                     break;
                             }
 
-                            // Crear el ícono SVG con el color aplicado directamente
                             var iconSvg = `
                                 <svg class="icon" viewBox="0 0 64 64" width="24" height="24">
                                     <path d="M42.138,23.162c0-5.566-4.548-10.094-10.138-10.094s-10.138,4.528-10.138,10.094S26.41,33.256,32,33.256   S42.138,28.728,42.138,23.162z" fill="${iconColor}"/>
                                     <path d="M31.995,63.996l4.109-5.375c4.289-5.678,18.282-25.024,18.282-35.601C54.387,9.253,45.391,0.004,32,0.004   S9.613,9.253,9.613,23.021c0,11.39,16.432,33.166,18.301,35.605L31.995,63.996z M17.862,23.162c0-7.771,6.342-14.094,14.138-14.094   s14.138,6.323,14.138,14.094S39.796,37.256,32,37.256S17.862,30.934,17.862,23.162z" fill="${iconColor}"/>
                                 </svg>`;
 
-                            // Añadir el ícono SVG al mapa
                             g.append("g")
                                 .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
-                                .html(iconSvg)
-                                .attr("class", "inspection-point")
-                                .append("title")
-                                .text(`ID: ${inspeccion.id}\nEstado: ${inspeccion.estado}`);
-
-                            console.log('Ícono añadido para:', inspeccion.municipio, [lng, lat]);
+                                .html(iconSvg);
                         }
                     });
 
                     if (!found) {
-                        console.log('Municipio no encontrado en los datos geográficos:', inspeccion.municipio);
+                        console.log('Municipio no encontrado:', inspeccion.municipio);
                     }
                 }
             });
         } else {
-            console.log("Los datos de inspecciones no están disponibles");
+            console.log('No se encontraron inspecciones.');
         }
     }
+
+    // Manejadores de eventos para los botones de zoom
+    document.getElementById('zoom-in').addEventListener('click', function () {
+        zoom.scaleBy(svg.transition().duration(500), 1.2);
+    });
+
+    document.getElementById('zoom-out').addEventListener('click', function () {
+        zoom.scaleBy(svg.transition().duration(500), 0.8);
+    });
+
+    document.getElementById('zoom-reset').addEventListener('click', function () {
+        svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+    });
 });
