@@ -31,7 +31,7 @@
                     <!-- Step 1: Detalles del Seguimiento -->
                     <div id="seguimiento-part" class="content" role="tabpanel" aria-labelledby="seguimiento-part-trigger">
                         <div class="row">
-                            <div class="col-lg-8">
+                            <div class="col-lg-7">
                                 <div class="form-group">
                                     <label asp-for="Titulo" class="control-label"></label>
                                     <input asp-for="Titulo" class="form-control" />
@@ -43,46 +43,214 @@
                                     <span asp-validation-for="Descripcion" class="text-danger"></span>
                                 </div>
                             </div>
-                            <div class="col-lg-4 order-1 order-md-2">
-                                <div class="card card-default">
+                            <div class="col-lg-5 order-1 order-md-2">
+                                <div class="card card-default collapsed-card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Informacion del incidente</h3>
+                                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del incidente</h6>
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-minus"></i>
+                                                <i class="fas fa-plus"></i>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="card-body">
-
+                                        <p><span style="display: block; font-size: 0.9em;">Incidente:</span> <span class="text-muted">@Model.Incidente.Titulo</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Fecha:</span> <span class="text-muted">@Model.Incidente.FechaIncidente.ToShortDateString()</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Hora:</span> <span class="text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Descripción:</span> <span class="text-muted">@Model.Incidente.Descripcion</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Tipo de Incidente:</span> <span class="text-muted">@Model.Incidente.TipoIncidente?.Titulo</span></p>
+                                        @if (Model.Incidente.Afectados.Any())
+                                        {
+                                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">@Model.Incidente.Afectados.Count()</span></p>
+                                        }
+                                        else
+                                        {
+                                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card card-default collapsed-card">
+                                    <div class="card-header">
+                                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><span style="display: block; font-size: 0.9em;">Nombre:</span> <span class="text-muted">@Model.Incidente.Proyecto.Nombre</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Departamento:</span> <span class="text-muted">@Model.Incidente.Proyecto.Departamento</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Municipio:</span> <span class="text-muted">@Model.Incidente.Proyecto.Municipio</span></p>
+                                        <p><span style="display: block; font-size: 0.9em;">Dirección:</span> <span class="text-muted">@Model.Incidente.Proyecto.Direccion</span></p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary btn-next" id="btnNext" style="display: none;">Siguiente</button>
+                        <button type="button" class="btn btn-primary btn-next" id="btnNext">Siguiente</button>
                     </div>
                     <div id="afectadosSeguimiento-part" class="content" role="tabpanel" aria-labelledby="afectadosSeguimiento-part-trigger">
-                        <div id="afectadosContainer">
-                            <div class="afectado-group" id="afectadoTemplate">
-                                <h5>Afectado</h5>
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label  class="control-label"></label>
-                                            <input name="Afectados[0].Cedula" class="form-control" />
-                                            <span  class="text-danger"></span>
-                                        </div>
+                        <div class="afectado-group" id="afectadoTemplate">
+                            <h5>Afectado</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Cedula</label>
+                                        <input type="number" class="form-control" />
+                                        <span  class="text-danger"></span>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Correo electronico</label>
+                                        <input type="email" class="form-control" />
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="control-label">Genero</label>
+                                        <select class="form-control">
+                                            <option value="Hombre">Hombre</option>
+                                            <option value="Mujer">Mujer</option>
+                                        </select>
+                                        <span class="text-danger"></span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="defuncionAfectado">
+                                        <label for="defuncionAfectado">¿El afectado esta muerto?</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="trabajadorAfectado">
+                                        <label for="trabajadorAfectado">¿El afectado es un trabajador?</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="primerosAuxiliosAfectado">
+                                        <label for="primerosAuxiliosAfectado">¿Se brindaron primeros auxilios?</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="hospitalizarAfectado">
+                                        <label for="hospitalizarAfectado">¿Tuvieron que hospitalizar al afectado?</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="lesionAfectado">
+                                        <label for="lesionAfectado">¿El afectado presenta alguna lesion?</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" id="contenedorLesionesAfectado">
+                                <div class="col-12">
+                                    <h4>Descripción de lesiones</h4>
+                                    <p>Naturaleza de la lesión, seleccione todas las que se aplican</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="abrasionRasgunosAfectado">
+                                        <label for="abrasionRasgunosAfectado">Abrasión, rasguños</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="amputacionAfectado">
+                                        <label for="amputacionAfectado">Amputación</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="huesoRotoAfectado">
+                                        <label for="huesoRotoAfectado">Hueso roto</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="moretonAfectado">
+                                        <label for="moretonAfectado">Moretón</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="quemaduraCalorAfectado">
+                                        <label for="quemaduraCalorAfectado">Quemadura (calor)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="quemadurasQuímicaAfectado">
+                                        <label for="quemadurasQuímicaAfectado">Quemaduras (química)</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="conmocionCerebralAfectado">
+                                        <label for="conmocionCerebralAfectado">Conmoción cerebral</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="lesionPorAplastamientoAfectado">
+                                        <label for="lesionPorAplastamientoAfectado">Lesión por aplastamiento</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="corteLaceracionPerforacionAfectado">
+                                        <label for="corteLaceracionPerforacionAfectado">Corte, laceración, perforación</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="herniaAfectado">
+                                        <label for="herniaAfectado">Hernia</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="esguinceTensionAfectado">
+                                        <label for="esguinceTensionAfectado">Esguince, tensión</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="lesionDeLaMedulaEspinalAfectado">
+                                        <label for="lesionDeLaMedulaEspinalAfectado">Lesión de la médula espinal</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="lesionOcularAfectado">
+                                        <label for="lesionOcularAfectado">Lesión ocular</label>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="checkbox" id="traumatismoCraneoencefalicoAfectado">
+                                        <label for="traumatismoCraneoencefalicoAfectado">Traumatismo craneoencefálico</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label class="control-label">Actividad realizada</label>
+                                    <textarea class="form-control" rows="3"></textarea>
+                                    <span class="text-danger"></span>
+                                </div>
+                            </div>
                                 <button type="button" class="btn btn-primary btn-previous">Anterior</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </form>
     </div>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-

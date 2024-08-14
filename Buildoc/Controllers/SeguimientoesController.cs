@@ -63,15 +63,27 @@ namespace Buildoc.Controllers
 
         // GET: Seguimientoes/Create
         [HttpGet]
-        public IActionResult Create(Guid? incidenteId)
+        public async Task<IActionResult> Create(Guid? incidenteId)
         {
             if (incidenteId == null)
             {
                 return NotFound();
             }
+            var incidente = await _context.Incidentes
+                .Include(i => i.TipoIncidente) // Incluir el tipo de incidente si deseas mostrarlo
+                .Include(i => i.Proyecto) // Incluir la información del proyecto
+                .Include(i =>i.Afectados) //Incluir los afectados
+                .FirstOrDefaultAsync(i => i.Id == incidenteId);
+
+            if (incidente == null)
+            {
+                return NotFound();
+            }
+
             var seguimiento = new Seguimiento
             {
-                IncidenteId = incidenteId.Value
+                IncidenteId = incidenteId.Value,
+                Incidente = incidente // Pasar la información del incidente
             };
             return PartialView(seguimiento);
         }
