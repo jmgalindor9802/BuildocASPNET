@@ -3,22 +3,28 @@
 @{
     ViewData["Title"] = "Index";
 }
-   
-<h1>Proyectos</h1>
+<div class="container-page">
+
+    <div class="row mb-4 align-items-center">
+        <!-- Título de Proyectos y Botón Crear Nuevo proyecto -->
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">Proyectos</h1>
+            <p class="mb-0">
+                <a href="#" id="createNewModal" class="create-new btn btn-primary"
+                   data-url="@Url.Action("Create", "Proyectos")"
+                   data-title="Crear nueva inspección" data-action="create">
+                    <i class="fas fa-plus"></i> Crear proyecto
+                </a>
+            </p>
+        </div>
+    </div>
 
 
-<p>
-        <a href="#" id="createNewModal" class="create-new btn btn-primary"
-       data-url="@Url.Action("Create", "Proyectos")"
-       data-title="Crear nuevo proyecto" data-action="create">
-            <i class="fas fa-plus"></i> Crear nuevo proyecto   
-    </a>
-</p>
 
 <div class="row">
     <!-- Caja de información para proyectos en curso -->
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-success">
+        <div class="small-box bg-info">
             <div class="inner">
                 <h3>@ViewBag.CountActivos</h3>
                 <p>En curso</p>
@@ -34,7 +40,7 @@
 
     <!-- Caja de información para proyectos finalizados -->
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-warning">
+        <div class="small-box bg-success">
             <div class="inner">
                 <h3>@ViewBag.CountFinalizados</h3>
                 <p>Finalizados</p>
@@ -50,7 +56,7 @@
 
     <!-- Caja de información para proyectos archivados -->
     <div class="col-lg-3 col-6">
-        <div class="small-box bg-danger">
+        <div class="small-box bg-warning">
             <div class="inner">
                 <h3>@ViewBag.CountArchivados</h3>
                 <p>Archivados</p>
@@ -80,12 +86,20 @@
             <th>
                 @Html.DisplayNameFor(model => model.Municipio)
             </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Direccion)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaFinalizacion)
+                </th>
             <th>
                 @Html.DisplayNameFor(model => model.Cliente)
             </th>
+               
                 <th>
                     @Html.DisplayNameFor(model => model.Estado)
                 </th>
+
             <th></th>
         </tr>
     </thead>
@@ -96,8 +110,16 @@
                 <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
                 <td>@Html.DisplayFor(modelItem => item.Descripcion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Municipio)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Direccion)</td>
+                    <td>@Html.DisplayFor(modelItem => item.FechaFinalizacion)</td>
                 <td>@Html.DisplayFor(modelItem => item.Cliente)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                    <td>
+                        <span class="badge @(item.Estado == Proyecto.EstadoProyecto.EnCurso ? "badge-proyecto-en-curso" :
+                                  item.Estado == Proyecto.EstadoProyecto.Finalizado ? "badge-proyecto-finalizado" :
+                                  item.Estado == Proyecto.EstadoProyecto.Archivado ? "badge-proyecto-archivado" : "")">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </span>
+                    </td>
                 <td>
                   
                         <a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "Proyectos", new { id = item.Id })" data-title="Editar proyecto" data-action="edit">
@@ -123,3 +145,4 @@
 
     </tbody>
 </table>
+</div>

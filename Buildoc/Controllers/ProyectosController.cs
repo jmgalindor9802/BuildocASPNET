@@ -141,7 +141,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado")] Proyecto proyecto, List<string> ResidentesIds)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente, Estado, FechaFinalizacion")] Proyecto proyecto, List<string> ResidentesIds)
         {
             // Verificar si ya existe un proyecto con el mismo nombre
             var existingProyecto = await _context.Proyectos.FirstOrDefaultAsync(p => p.Nombre == proyecto.Nombre);
@@ -155,6 +155,10 @@ namespace Buildoc.Controllers
             {
                 proyecto.Id = Guid.NewGuid();
                 proyecto.Estado = Proyecto.EstadoProyecto.EnCurso;
+                if (proyecto.FechaFinalizacion < DateTime.Now)
+                {
+                    return Json(new { success = false, message = "La fecha de finalización no puede ser menor a la fecha actual." });
+                }
 
                 // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -288,6 +292,12 @@ namespace Buildoc.Controllers
             {
                 try
                 {
+
+                    if (proyecto.FechaFinalizacion < DateTime.Now)
+                    {
+                        return Json(new { success = false, message = "La fecha de finalización no puede ser menor a la fecha actual." });
+                    }
+
                     // Obtener el proyecto existente para mantener el CoordinadorId original
                     var existingProyecto = await _context.Proyectos
                         .Include(p => p.Residentes) // Incluir los residentes actuales

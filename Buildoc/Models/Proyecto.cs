@@ -49,6 +49,7 @@ namespace Buildoc.Models
 		[Display(Name = "Fecha de creación")]
 		public DateTime FechaCreacion { get; set; }
 		[Display(Name = "Fecha de finalización")]
-		public DateTime FechaFinalizacion {  get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
+        public DateTime FechaFinalizacion {  get; set; }
     }
 }
