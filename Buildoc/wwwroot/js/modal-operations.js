@@ -16,7 +16,9 @@ $(document).ready(function () {
         $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
-     
+            if ($('#modal-lg .bs-stepper').length > 0) {
+                initializeStepper();
+            }
             // Configurar los botones del modal según la acción
             if (action === 'create' || action === 'edit' || action === 'respond') {
                 $('.btn-save').show();
@@ -59,7 +61,7 @@ $(document).ready(function () {
 
         // Mostrar el spinner
         $("#spinner").show();
-
+        console.log("Spinner mostrado");
         $.ajax({
             url: form.attr('action'),
             type: form.attr('method'),
@@ -175,40 +177,6 @@ $(document).ready(function () {
         });
     });
 
-
-    // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
-
-        $.getScript('/js/detalleTipoInspeccion.js')
-            .done(function () {
-                console.log('Script detalleTipoInspeccion.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script detalleTipoInspeccion.js:', exception);
-            });
-
-        $.getScript('/js/toggleDuracionHoras.js')
-            .done(function () {
-                console.log('Script toggleDuracionHoras.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script toggleDuracionHoras.js:', exception);
-            });
-
-        $.getScript('/js/detalleInspeccion.js')
-            .done(function () {
-                console.log('Script detallesInspeccion.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script detallesInspeccion.js:', exception);
-            });
-
-    $.getScript('/AdminLTE/plugins/jquery-validation/jqu    ery.validate.min.js')
-        .done(function () {
-            console.log('Script jquery.validate.min.js cargado correctamente.');
-        })
-        .fail(function (jqxhr, settings, exception) {
-            console.error('Error al cargar jquery.validate.min.js:', exception);
-        });
 
   
 });
