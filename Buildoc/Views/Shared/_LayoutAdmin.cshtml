@@ -75,10 +75,11 @@
 					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
 				</li>
 				<li class="nav-item">
-
-					<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image  " style="opacity: .8; width: 100px; height: auto;">
-
+					<a href="@Url.Action("Index", "Home")">
+						<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style="opacity: .8; width: 100px; height: auto;">
+					</a>
 				</li>
+
 
 			</ul>
 
@@ -217,11 +218,14 @@
 			<div class="sidebar">
 				<!-- Sidebar user (optional) -->
 				<div class="user-panel mt-3 pb-3 mb-3 d-flex">
-					<div class="image">
-						<img src="/user.png" class="img-circle elevation-2" alt="User Image">
-					</div>
+					
 					<div class="info">
-						<a href="#" class="d-block"> @UserManager.GetUserName(User)!</a>
+						@{
+							var usuario = await UserManager.GetUserAsync(User);
+							var roles = await UserManager.GetRolesAsync(usuario);
+							var rolPrincipal = roles.FirstOrDefault(); // Obtener el primer rol asignado al usuario
+						}
+						<a href="#" class="d-block">@rolPrincipal</a>
 					</div>
 				</div>
 

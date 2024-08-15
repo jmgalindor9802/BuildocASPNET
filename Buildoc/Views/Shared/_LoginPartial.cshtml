@@ -6,6 +6,9 @@
 <ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
+        var usuario = await UserManager.GetUserAsync(User);
+        var nombreCompleto = usuario?.NombreCompleto;
+
         @if (SignInManager.IsSignedIn(User))
         {
             @if (User.IsInRole("Administrador"))
@@ -22,14 +25,14 @@
             {
                
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Coordinador: @UserManager.GetUserName(User)!</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@nombreCompleto </a>
                 </li>
             }
             else if (User.IsInRole("Residente"))
             {
               
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Residente de obra: @UserManager.GetUserName(User)!</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@nombreCompleto</a>
                 </li>
             }
 

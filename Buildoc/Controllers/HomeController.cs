@@ -1,4 +1,6 @@
+using Buildoc.Data;
 using Buildoc.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -7,18 +9,32 @@ namespace Buildoc.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _context;
+		private readonly UserManager<Usuario> _userManager;
+		public HomeController(ILogger<HomeController> logger, ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _logger = logger;
-        }
+            _context = context;
+			_userManager = userManager;
+		}
 
-        public IActionResult Index()
-        {
+		public async Task<IActionResult> Index()
+		{
             if (User.Identity.IsAuthenticated)
             {
-                // Redirigir a la vista para usuarios autenticados
-                return View("IndexAdmin");
+
+				var usuario = await _userManager.GetUserAsync(User);
+				ViewBag.NombreUsuario = usuario?.Nombres;
+
+				var inspeccionesPendientes = _context.Inspecciones
+					   .Where(i => i.Proyecto.CoordinadorId == usuario.Id && i.Estado == EstadoInspeccion.PendientesDeRevision)
+					   .ToList();
+
+				ViewBag.NumeroInspeccionesPendientes = inspeccionesPendientes.Count;
+				ViewBag.NombreUsuario = usuario.NombreCompleto;
+
+				// Redirigir a la vista para usuarios autenticados
+				return View("IndexAdmin");
             }
             else
             {

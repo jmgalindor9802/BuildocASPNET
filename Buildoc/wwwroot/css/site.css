@@ -554,18 +554,7 @@ h6,
     color: #6c757d; /* Aplica la clase text-muted */
 }
 
-@media (min-width: 767.98px) {
-    .footer-about {
-        margin-bottom: -75px;
-    }
-}
 
-
-.map-container {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
 
 .full-height {
     height: 100%;
@@ -582,12 +571,22 @@ h6,
 }
 
 #map {
-    position: relative;
-    flex: 1;
     width: 100%;
-  
+    height: 100%;
 }
 
+/* Asegúrate de que el contenedor del mapa también sea responsive */
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 500px; /* Ajusta esta altura según sea necesario */
+}
+
+@media (max-width: 768px) {
+    .map-container {
+        height: 300px; /* Ajusta la altura para pantallas más pequeñas */
+    }
+}
 
 
 /* Estilos para el borde del municipio seleccionado */
@@ -684,3 +683,31 @@ h6,
     padding-bottom: 10px;
     padding-left: 15px;
 }
+.small-box .inner {
+    display: flex;
+    align-items: center; /* Alinea verticalmente al centro */
+    justify-content: center; /* Alinea horizontalmente al centro */
+    flex-direction: row; /* Alinea los elementos en una fila */
+}
+
+    .small-box .inner h3 {
+        margin: 0;
+        margin-right: 10px; /* Espacio entre el número y el texto */
+        font-size: 36px; /* Ajusta el tamaño del número */
+    }
+
+    .small-box .inner p {
+        margin: 0;
+        font-size: 24px; /* Ajusta el tamaño del texto */
+    }
+
+.small-box .icon {
+    display: flex;
+    align-items: center; /* Alinea el ícono verticalmente al centro */
+    justify-content: center; /* Alinea el ícono horizontalmente al centro */
+}
+
+    .small-box .icon i {
+        font-size: 20px; /* Ajusta el tamaño del ícono */
+        margin-left: 10px; /* Espacio entre el número/texto y el ícono */
+    }

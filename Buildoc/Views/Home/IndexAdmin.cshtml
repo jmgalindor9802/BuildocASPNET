@@ -1,10 +1,24 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewBag.Title = "Inicio - Panel de Administración";
+    var numeroInspeccionesPendientes = ViewBag.NumeroInspeccionesPendientes;
 }
 
-<div class="text-center">
-    <br />
-    <br />
-    <h1 class="display-4">Bienvenido a Buildoc</h1>    
-    <p>Espacio para dashboard inicial</p>
+<div class="container">
+    </br>
+    <h3>Bienvenido, @ViewBag.NombreUsuario</h3>
+
+
+    @if (numeroInspeccionesPendientes > 0)
+    {
+        <div class="alert alert-warning mt-4">
+            <strong>Tienes @numeroInspeccionesPendientes inspecciones pendientes de aprobación.</strong>
+            <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-primary ml-3">Ver Inspecciones</a>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-success mt-4">
+            <strong>No tienes inspecciones pendientes de aprobación.</strong>
+        </div>
+    }
 </div>
