@@ -45,5 +45,10 @@ namespace Buildoc.Models
             Archivado,
   
         }
+
+		[Display(Name = "Fecha de creación")]
+		public DateTime FechaCreacion { get; set; }
+		[Display(Name = "Fecha de finalización")]
+		public DateTime FechaFinalizacion {  get; set; }
     }
 }

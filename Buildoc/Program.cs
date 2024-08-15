@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using Buildoc.Services;
 using System.Globalization;
+using Buildoc.Services.Proyectos;
 
 var builder = WebApplication.CreateBuilder(args);
 var cultureInfo = new CultureInfo("es-CO");
@@ -29,7 +30,7 @@ builder.Services.AddRazorPages();
 // A�adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
-
+builder.Services.AddHostedService<ProyectoEstadoService>();
 
 
 // Add EmailSender service
