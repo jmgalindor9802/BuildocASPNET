@@ -36,10 +36,8 @@ namespace Buildoc.Models
         public Guid TipoIncidenteId { get; set; }
         // Navigation property for TipoIncidente
         public virtual TipoIncidente? TipoIncidente { get; set; }
-        [NotMapped]
-        public Afectado? Afectado { get; set; }
-        // Collection of Afectados
-        public virtual ICollection<Afectado> Afectados { get; set; } = new List<Afectado>();
+        // Collection de muchos a muchos
+        public virtual ICollection<IncidenteLesionado> IncidenteLesionados { get; set; } = new List<IncidenteLesionado>();
         // Collection of Seguimientos
         public virtual ICollection<Seguimiento> Seguimientos { get; set; } = new List<Seguimiento>();
 

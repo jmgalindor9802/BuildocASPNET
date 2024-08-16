@@ -72,7 +72,7 @@ namespace Buildoc.Controllers
             var incidente = await _context.Incidentes
                 .Include(i => i.TipoIncidente) // Incluir el tipo de incidente si deseas mostrarlo
                 .Include(i => i.Proyecto) // Incluir la información del proyecto
-                .Include(i =>i.Afectados) //Incluir los afectados
+                /*.Include(i =>i.Afectados)*/ //Incluir los afectados
                 .FirstOrDefaultAsync(i => i.Id == incidenteId);
 
             if (incidente == null)

@@ -45,11 +45,16 @@ namespace Buildoc.Data
                 .WithOne(i => i.Usuario)
                 .HasForeignKey(i => i.UsuarioId);
 
-            // Configurar la relación entre Incidente y Afectados
-            builder.Entity<Incidente>()
-                .HasMany(i => i.Afectados)
-                .WithOne(a => a.Incidente)
-                .HasForeignKey(a => a.IncidenteId);
+            // Configuración de la relación muchos a muchos entre Incidente y Lesionados
+            builder.Entity<IncidenteLesionado>()
+                .HasOne(il => il.Incidente)
+                .WithMany(i => i.IncidenteLesionados)
+                .HasForeignKey(il => il.IncidenteId);
+
+            builder.Entity<IncidenteLesionado>()
+                .HasOne(il => il.Lesionado)
+                .WithMany(l => l.IncidenteLesionados)
+                .HasForeignKey(il => il.LesionadoId);
 
             // Configurar la relación entre Incidente y Seguimientos
             builder.Entity<Incidente>()
@@ -87,9 +92,9 @@ namespace Buildoc.Data
         public DbSet<Buildoc.Models.Inspeccion> Inspeccion { get; set; }
         public DbSet<Incidente> Incidentes { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Afectado> Afectados { get; set; }
         public DbSet<Seguimiento> Seguimientos { get; set; }
         public DbSet<TipoIncidente> TipoIncidentes { get; set; }
-        
+        public DbSet<Lesionado> Lesionados { get; set; }
+        public DbSet<IncidenteLesionado> IncidenteLesionados { get; set; }
     }
 }

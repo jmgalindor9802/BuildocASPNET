@@ -121,7 +121,7 @@ namespace Buildoc.Controllers
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoIncidente)
                 .Include(i => i.Usuario)
-                .Include(i => i.Afectados)  // Incluir los afectados
+                /*.Include(i => i.Afectados)*/  // Incluir los afectados
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (incidente == null)
@@ -199,34 +199,34 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Incidente incidente, List<Afectado> afectados, bool switchAfectados, string CategoriaTipoIncidente)
+        public async Task<IActionResult> Create(Incidente incidente, /*List<Afectado> afectados*/ bool switchAfectados, string CategoriaTipoIncidente)
         {
             if (!switchAfectados)
             {
                 // Si no se activa el switch de afectados, limpiamos la lista de afectados
-                afectados = new List<Afectado>();
-                incidente.Afectados.Clear();
+                //afectados = new List<Afectado>();
+                //incidente.Afectados.Clear();
             }
             else
             {
                 // Validar las cédulas de los afectados
-                foreach (var afectado in afectados)
-                {
-                    if (afectado.Cedula.HasValue)
-                    {
-                        string cedulaString = afectado.Cedula.Value.ToString();
-                        if (cedulaString.Length != 7 && cedulaString.Length != 10)
-                        {
-                            return Json(new { success = false, message = "La cedula debe tener 7 o 10 digitos" });
-                        }
-                    }
-                    else
-                    {
-                        ModelState.AddModelError($"Afectados[{afectados.IndexOf(afectado)}].Cedula", "La cédula es obligatoria.");
-                    }
-                }
+                //foreach (var afectado in afectados)
+                //{
+                //    if (afectado.Cedula.HasValue)
+                //    {
+                //        string cedulaString = afectado.Cedula.Value.ToString();
+                //        if (cedulaString.Length != 7 && cedulaString.Length != 10)
+                //        {
+                //            return Json(new { success = false, message = "La cedula debe tener 7 o 10 digitos" });
+                //        }
+                //    }
+                //    else
+                //    {
+                //        ModelState.AddModelError($"Afectados[{afectados.IndexOf(afectado)}].Cedula", "La cédula es obligatoria.");
+                //    }
+                //}
                 // Si el switch está activado, vinculamos directamente la lista de afectados al incidente
-                incidente.Afectados = afectados;
+                //incidente.Afectados = afectados;
             }
             // Validar que la fecha del incidente no sea mayor a la fecha actual
             if (incidente.FechaIncidente > DateOnly.FromDateTime(DateTime.Today))
@@ -276,9 +276,9 @@ namespace Buildoc.Controllers
                                 ? incidenteConTipo.HoraIncidente.Value.ToString("HH:mm")
                                 : "Hora desconocida";
 
-                            var cantidadAfectados = incidenteConTipo.Afectados != null && incidenteConTipo.Afectados.Any()
-                                ? $"{incidenteConTipo.Afectados.Count} afectado(s) reportado(s)"
-                                : "No se han reportado afectados";
+                            //var cantidadAfectados = incidenteConTipo.Afectados != null && incidenteConTipo.Afectados.Any()
+                            //    ? $"{incidenteConTipo.Afectados.Count} afectado(s) reportado(s)"
+                            //    : "No se han reportado afectados";
 
                             var subjectCoordinador = "Reporte de Incidente - Acción Requerida";
                             var htmlMessageCoordinador = $@"
@@ -290,7 +290,7 @@ namespace Buildoc.Controllers
                                     <li><strong>Categoría:</strong> {incidenteConTipo.TipoIncidente.CategoriaDescripcion}</li>
                                     <li><strong>Título:</strong> {incidenteConTipo.Titulo}</li>
                                     <li><strong>Gravedad:</strong> {incidenteConTipo.TipoIncidente.Gravedad}</li>
-                                    <li><strong>Afectados:</strong> {cantidadAfectados}</li>
+                                    
                                 </ul>
                                 <p><strong>Descripción del Incidente:</strong> {incidenteConTipo.Descripcion}</p>
                                 <p>Le solicitamos que revise el incidente a la mayor brevedad y tome las medidas necesarias para mitigar cualquier riesgo adicional.</p>
@@ -336,7 +336,7 @@ namespace Buildoc.Controllers
             }
 
             var incidente = await _context.Incidentes
-                .Include(i => i.Afectados)
+                //.Include(i => i.Afectados)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (incidente == null)
             {
@@ -353,7 +353,7 @@ namespace Buildoc.Controllers
         [HttpPost]
         [Authorize(Roles = "Coordinador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,FechaCreacion,Descripcion,FechaIncidente,Estado,ProyectoId,TipoIncidenteId")] Incidente incidente, List<Afectado> afectados, bool switchAfectados)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,FechaCreacion,Descripcion,FechaIncidente,Estado,ProyectoId,TipoIncidenteId")] Incidente incidente, /*List<Afectado> afectados*/ bool switchAfectados)
         {
             if (id != incidente.Id)
             {
@@ -362,16 +362,16 @@ namespace Buildoc.Controllers
             if (!switchAfectados)
             {
                 // Limpiar el objeto afectados si el switch no está marcado
-                afectados = new List<Afectado>();
-                afectados.Clear();
-                ModelState.Remove("Afectados");
-                ModelState.Remove("Afectados[0].Nombre");
-                ModelState.Remove("Afectados[0].Apellido");
-                ModelState.Remove("Afectados[0].CorreoElectronico");
-                ModelState.Remove("Afectados[0].Cedula");
-                ModelState.Remove("Afectados[0].Defuncion");
-                ModelState.Remove("Afectados[0].ActividadRealizada");
-                ModelState.Remove("Afectados[0].AsociadaProyecto");
+                //afectados = new List<Afectado>();
+                //afectados.Clear();
+                //ModelState.Remove("Afectados");
+                //ModelState.Remove("Afectados[0].Nombre");
+                //ModelState.Remove("Afectados[0].Apellido");
+                //ModelState.Remove("Afectados[0].CorreoElectronico");
+                //ModelState.Remove("Afectados[0].Cedula");
+                //ModelState.Remove("Afectados[0].Defuncion");
+                //ModelState.Remove("Afectados[0].ActividadRealizada");
+                //ModelState.Remove("Afectados[0].AsociadaProyecto");
             }
 
             if (ModelState.IsValid)
@@ -428,7 +428,7 @@ namespace Buildoc.Controllers
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoIncidente)
                 .Include(i => i.Usuario)
-                .Include(i => i.Afectados)
+                //.Include(i => i.Afectados)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (incidente == null)
             {

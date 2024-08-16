@@ -73,7 +73,7 @@
                 <select asp-for="ProyectoId" class="form-control" asp-items="ViewBag.ProyectoId" readonly></select>
             </div>
             <h4>Afectados por el incidente</h4>
-            @if (Model.Afectados.Any(a => !string.IsNullOrEmpty(a.Nombre) && !string.IsNullOrEmpty(a.Apellido)))
+            @* @if (Model.Afectados.Any(a => !string.IsNullOrEmpty(a.Nombre) && !string.IsNullOrEmpty(a.Apellido)))
             {
                 <table class="table">
                     <thead>
@@ -106,14 +106,14 @@
             else
             {
                 <p>No existen afectados.</p>
-            }
+            } *@
             @* switch para mostrar los campos de afectados *@
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" role="switch" id="SwitchAfectados" name="switchAfectados" value="true">
                 <label class="form-check-label" for="SwitchAfectados">¿Existen afectados?</label>
             </div>
             @* ./switch para mostrar los campos de afectados *@
-            <div id="afectadosContainer" style="display:none;">
+            @* <div id="afectadosContainer" style="display:none;">
                 <div class="afectado-group" id="afectadoTemplate" style="display:none;">
                     <h5>Afectado</h5>
                     <div class="row">
@@ -200,119 +200,7 @@
                         </div>
                     </div>
 
-                    <h4>Descripcion de lesiones</h4>
-                    <p>Naturaleza de la lesion, seleccione todas las que se aplican</p>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.AbrasionRasgunos"></label>
-                                <select name="Afectados[0].AbrasionRasgunos" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                                <span asp-validation-for="Afectado.AbrasionRasgunos"></span>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Amputacion"></label>
-                                <select name="Afectados[0].Amputacion" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.HuesosRotos"></label>
-                                <select name="Afectados[0].HuesosRotos" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Moreton"></label>
-                                <select name="Afectados[0].Moreton" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.QuemaduraCalor"></label>
-                                <select name="Afectados[0].QuemaduraCalor" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.QuemadurasQuimicas"></label>
-                                <select name="Afectados[0].QuemadurasQuimicas" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.ConmocionCerebral"></label>
-                                <select name="Afectados[0].ConmocionCerebral" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.LesionAplastamiento"></label>
-                                <select name="Afectados[0].LesionAplastamiento" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.CorteLaceracionPerforacion"></label>
-                                <select name="Afectados[0].CorteLaceracionPerforacion" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.Hernia"></label>
-                                <select name="Afectados[0].Hernia" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label asp-for="Afectado.EsguinceTension"></label>
-                                <select name="Afectados[0].EsguinceTension" class="form-control">
-                                    <option value="false">No</option>
-                                    <option value="true">Si</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
+                    
 
                     <div class="form-group">
                         <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
@@ -322,7 +210,7 @@
                     <button type="button" class="btn btn-danger remove-afectado">Eliminar</button>
                 </div>
                 <button type="button" class="btn btn-secondary" id="addAfectadoButton">Añadir Afectado</button>
-            </div>
+            </div> *@
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>

@@ -137,6 +137,7 @@
                     </div>
                     <!-- Step 2: Detalles de los Afectados -->
                     <div id="afectados-part" class="content" role="tabpanel" aria-labelledby="afectados-part-trigger">
+                        @* 
                         <div id="afectadosContainer">
                             <div class="afectado-group" id="afectadoTemplate">
                                 <h5>Afectado</h5>
@@ -226,145 +227,7 @@
                                     </div>
                                 </div>
 
-                                @* Campos de lesiones de los afectados *@
-                                <div class="row lesion-fields">
-                                    <div class="col-12">
-                                        <h4>Descripción de lesiones</h4>
-                                        <p>Naturaleza de la lesión, seleccione todas las que se aplican</p>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.AbrasionRasgunos"></label>
-                                            <select name="Afectados[0].AbrasionRasgunos" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                            <span asp-validation-for="Afectado.AbrasionRasgunos"></span>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.Amputacion"></label>
-                                            <select name="Afectados[0].Amputacion" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.HuesosRotos"></label>
-                                            <select name="Afectados[0].HuesosRotos" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.Moreton"></label>
-                                            <select name="Afectados[0].Moreton" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.QuemaduraCalor"></label>
-                                            <select name="Afectados[0].QuemaduraCalor" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.QuemadurasQuimicas"></label>
-                                            <select name="Afectados[0].QuemadurasQuimicas" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.ConmocionCerebral"></label>
-                                            <select name="Afectados[0].ConmocionCerebral" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.LesionAplastamiento"></label>
-                                            <select name="Afectados[0].LesionAplastamiento" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.CorteLaceracionPerforacion"></label>
-                                            <select name="Afectados[0].CorteLaceracionPerforacion" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.Hernia"></label>
-                                            <select name="Afectados[0].Hernia" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.EsguinceTension"></label>
-                                            <select name="Afectados[0].EsguinceTension" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.LesionDeLaMedulaEspinal"></label>
-                                            <select name="Afectados[0].LesionDeLaMedulaEspinal" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.LesionOcular"></label>
-                                            <select name="Afectados[0].LesionOcular" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="form-group">
-                                            <label asp-for="Afectado.TraumatismoCraneoencefalico"></label>
-                                            <select name="Afectados[0].TraumatismoCraneoencefalico" class="form-control">
-                                                <option value="false">No</option>
-                                                <option value="true">Si</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                </div>
-                                @*/. fin Campos de lesiones de los afectados *@
-
+                                
                                 <div class="form-group">
                                     <label asp-for="Afectado.ActividadRealizada" class="control-label"></label>
                                     <textarea name="Afectados[0].ActividadRealizada" class="form-control" rows="3"></textarea>
@@ -378,7 +241,7 @@
                             <button type="button" class="btn btn-block btn-outline-info me-2 col-md-3 mr-3" id="addAfectadoButton"><i class="fa fa-plus-circle"></i>  Añadir Afectado</button>
                             <!-- Botones para navegar entre pasos -->
                             <button type="button" class="btn btn-primary btn-previous">Anterior</button>
-                        </div>
+                        </div>*@
                     </div>
                 </div>
 

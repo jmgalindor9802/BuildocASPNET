@@ -59,6 +59,7 @@
                                         <p><span style="display: block; font-size: 0.9em;">Hora:</span> <span class="text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</span></p>
                                         <p><span style="display: block; font-size: 0.9em;">Descripción:</span> <span class="text-muted">@Model.Incidente.Descripcion</span></p>
                                         <p><span style="display: block; font-size: 0.9em;">Tipo de Incidente:</span> <span class="text-muted">@Model.Incidente.TipoIncidente?.Titulo</span></p>
+                                        @* 
                                         @if (Model.Incidente.Afectados.Any())
                                         {
                                             <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">@Model.Incidente.Afectados.Count()</span></p>
@@ -67,7 +68,7 @@
                                         {
                                             <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
                                         }
-                                    </div>
+                                    </div> *@
                                 </div>
                                 <div class="card card-default collapsed-card">
                                     <div class="card-header">
