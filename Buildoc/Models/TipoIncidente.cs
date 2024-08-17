@@ -36,29 +36,17 @@ namespace Buildoc.Models
 
     public enum CategoriaEnum
 	{
-		[Description("Caidas")]
-		Caidas,
+        [Description("Seguridad, logistica y convivencia")]
+        SeguridadConvivenciaLogistica,
+		[Description("Caidas, tropiezos y resbalones")]
+        CaidasTropiezosYResbalones,
         [Description("Accidentes operando maquinaria")]
         AccidentesOperandoMaquinaria,
-        [Description("Accidemtes de demolicion")]
-        AccidentesDeDemolicion,
-        [Description("Accidentes por derrumbes de zanjas")]
-        AccidentesPorDerrumbesDeZanjas,
-        [Description("Incendios y exposiones")]
-        IncendiosYExplosiones,
-        [Description("Accidentes de vehiculos en obras")]
-        AccidentesDeVehiculosEnObrasDeConstruccion,
         [Description("Exposicion a sustancias quimicas y toxinas")]
         ExposicionASustanciasQuimicasYToxinas,
-        [Description("Gruas")]
-        Gruas,
-        [Description("Incidentes de atropello")]
-        IncidentesDeAtropello,
-        [Description("Electrocucion")]
-        Electrocucion,
-        [Description("Tropiezos y resbalones")]
-        TropiezosYResbalones,
-        [Description("Derrumbes del suelo")]
+        [Description("Electrocucion, incendios y exposiones")]
+        ElectrocucionIncendiosYExplosiones,
+        [Description("Derrumbes")]
         DerrumbesDelSuelo
 	}
 }

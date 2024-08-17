@@ -199,37 +199,29 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Incidente incidente, /*List<Afectado> afectados*/ bool switchAfectados, string CategoriaTipoIncidente)
+        public async Task<IActionResult> Create(IncidenteViewModel model, /*List<Afectado> afectados*/ bool switchAfectados, string CategoriaTipoIncidente)
         {
             if (!switchAfectados)
             {
-                // Si no se activa el switch de afectados, limpiamos la lista de afectados
-                //afectados = new List<Afectado>();
-                //incidente.Afectados.Clear();
+                // Elimina las validaciones relacionadas con 'Lesionado' e 'IncidenteLesionado'
+                foreach (var key in ModelState.Keys.Where(k => k.StartsWith("Lesionado") || k.StartsWith("IncidenteLesionado")).ToList())
+                {
+                    ModelState.Remove(key);
+                }
+                // Elimina los datos relacionados con los afectados si el switch no está activado
+                model.Lesionado = null;
+                model.IncidenteLesionado = null;
             }
             else
             {
-                // Validar las cédulas de los afectados
-                //foreach (var afectado in afectados)
-                //{
-                //    if (afectado.Cedula.HasValue)
-                //    {
-                //        string cedulaString = afectado.Cedula.Value.ToString();
-                //        if (cedulaString.Length != 7 && cedulaString.Length != 10)
-                //        {
-                //            return Json(new { success = false, message = "La cedula debe tener 7 o 10 digitos" });
-                //        }
-                //    }
-                //    else
-                //    {
-                //        ModelState.AddModelError($"Afectados[{afectados.IndexOf(afectado)}].Cedula", "La cédula es obligatoria.");
-                //    }
-                //}
-                // Si el switch está activado, vinculamos directamente la lista de afectados al incidente
-                //incidente.Afectados = afectados;
+                // Si se activan los afectados, valida los datos
+                if (model.Lesionado == null || model.IncidenteLesionado == null)
+                {
+                    return Json(new { success = false, message = "Los datos del lesionado estan incompletos o mal diligenciados" });
+                }
             }
             // Validar que la fecha del incidente no sea mayor a la fecha actual
-            if (incidente.FechaIncidente > DateOnly.FromDateTime(DateTime.Today))
+            if (model.Incidente.FechaIncidente > DateOnly.FromDateTime(DateTime.Today))
             {
                 return Json(new { success = false, message = "La fecha del incidente no puede ser superior a la actual" });
             }
@@ -245,18 +237,34 @@ namespace Buildoc.Controllers
             }
             if (ModelState.IsValid)
             {
-                incidente.Id = Guid.NewGuid();
-                incidente.UsuarioId = userId;
-                incidente.Estado = true;
+                model.Incidente.Id = Guid.NewGuid();
+                model.Incidente.UsuarioId = userId;
+                model.Incidente.Estado = true;
 
                 // Agregar el incidente a la base de datos
-                _context.Add(incidente);
+                _context.Add(model.Incidente);
                 await _context.SaveChangesAsync();
+                if (switchAfectados)
+                {
+                    // Si se proporcionaron datos del lesionado
+                    if (model.Lesionado != null && model.IncidenteLesionado != null)
+                    {
+                        // Guardar el lesionado
+                        _context.Add(model.Lesionado);
+                        await _context.SaveChangesAsync();
+
+                        // Relacionar el lesionado con el incidente
+                        model.IncidenteLesionado.IncidenteId = model.Incidente.Id;
+                        model.IncidenteLesionado.LesionadoId = model.Lesionado.Id;
+                        _context.Add(model.IncidenteLesionado);
+                        await _context.SaveChangesAsync();
+                    }
+                }
 
                 // Obtener el incidente con su TipoIncidente
                 var incidenteConTipo = await _context.Incidentes
                     .Include(i => i.TipoIncidente)
-                    .FirstOrDefaultAsync(i => i.Id == incidente.Id);
+                    .FirstOrDefaultAsync(i => i.Id == model.Incidente.Id);
 
                 if (incidenteConTipo != null && incidenteConTipo.TipoIncidente != null)
                 {
@@ -312,8 +320,8 @@ namespace Buildoc.Controllers
             .Where(p => p.CoordinadorId == userId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
         .ToList();
 
-            ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre", incidente.ProyectoId);
-            ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", incidente.TipoIncidenteId);
+            ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre", model.Incidente.ProyectoId);
+            ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo", model.Incidente.TipoIncidenteId);
 
             // Pasar nuevamente las categorías a la vista en caso de error
             var categorias = Enum.GetValues(typeof(CategoriaEnum))
@@ -323,7 +331,7 @@ namespace Buildoc.Controllers
 
             ViewData["CategoriaTipoIncidente"] = new SelectList(categorias, "Id", "Name");
 
-            return PartialView(incidente);
+            return PartialView(model.Incidente);
         }
 
         // GET: Incidentes/Edit/5
