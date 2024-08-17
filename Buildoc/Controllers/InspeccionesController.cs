@@ -177,6 +177,7 @@ namespace Buildoc.Controllers
                 .Include(i => i.Inspector)
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoInspeccion)
+                 .Include(i => i.Respuesta)
                 .Where(i => proyectos.Contains(i.ProyectoId))
                 .ToListAsync();
 

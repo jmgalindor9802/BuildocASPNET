@@ -11,20 +11,20 @@
 
 
 <div class="container-page">
-    
-        <div class="row mb-4 align-items-center">
-            <!-- Título de Inspecciones y Botón Crear Nueva Inspección -->
-            <div class="col-12 d-flex justify-content-between align-items-center">
-                <h1 class="mb-0">Inspecciones</h1>
-                <p class="mb-0">
-                    <a href="#" id="createNewModal" class="create-new btn btn-primary"
-                       data-url="@Url.Action("Create", "Inspecciones")"
-                       data-title="Crear nueva inspección" data-action="create">
-                    <i class="fas fa-clock"></i> Programar inspección
-                    </a>
-                </p>
-            </div>
+
+    <div class ="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">
+                <i class="fas fa-paste"></i> Inspecciones
+            </h1><p class="mb-0">
+                <a href="#" id="createNewModal" class="create-new btn btn-light"
+                   data-url="@Url.Action("Create", "Inspecciones")"
+                   data-title="Crear nueva inspección" data-action="create">
+                    <i class="fas fa-calendar-plus"></i> Programar inspección
+                </a>
+            </p>
         </div>
+    </div>
 
         <div class="row">
             <!-- Caja de información para inspecciones programadas -->
@@ -134,7 +134,7 @@
 
         
             <tr>
-        <div class ="row mb-3">
+        <div class ="row mt-3">
                 <div class="form-group mb-3 col-4">
                     <label  class="control-label">Filtrar por proyecto</label>
                     <select id="proyecto-filter" class="form-control">
@@ -149,19 +149,26 @@
                 <!-- Las opciones se llenarán dinámicamente con los proyectos -->
             </select>
         </div>
+            <div class="form-group mb-3 col-4">
+                <label class="control-label">Filtrar por tipo de inspección</label>
+                <select id="tipo-filter" class="form-control">
+                    <option value="">Todos los tipos</option>
+                    <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                </select>
+            </div>
         </div>
             </tr>
       
  
     <table id="example1" class="table table-bordered table-striped">
-        <thead>
+        <thead class="header-bg">
             <tr>
                 <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
                 <th>@Html.DisplayNameFor(model => model.Inspector)</th>
                 <th>@Html.DisplayNameFor(model => model.Estado)</th>
-                <th></th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -253,7 +260,7 @@
             return proyectos;
         }
 
-        // Función para obtener proyectos únicos del DataTable
+        // Función para obtener inspectores únicos del DataTable
         function getInspectores() {
             const inspectores = [];
             table.rows().every(function () {
@@ -264,6 +271,19 @@
                 }
             });
             return inspectores;
+        }
+
+        // Función para obtener tipos de inspeccon únicos del DataTable
+        function getTipos() {
+            const tipos = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const tipo = data[1]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                if (!tipos.includes(tipo)) {
+                    tipos.push(tipo);
+                }
+            });
+            return tipos;
         }
 
 
@@ -291,11 +311,27 @@
             });
         }
 
+
+        // Llenar el select con las opciones de inspectores
+        function fillTipoSelect() {
+            const tipoFilterEl = $('#tipo-filter');
+            tipoFilterEl.empty(); // Limpiar el select antes de llenarlo
+            tipoFilterEl.append('<option value="">Todos los tipos de inspecciones</option>'); // Opción predeterminada
+            const tipos = getTipos();
+            tipos.forEach(tipo => {
+                const option = $('<option></option>').val(tipo).text(tipo);
+                tipoFilterEl.append(option);
+            });
+        }
+
         // Inicializa el select con proyectos
         fillProyectoSelect();
 
-        // Inicializa el select con proyectos
+        // Inicializa el select con inspectores
         fillInspectorSelect();
+
+        // Inicializa el select con tipos
+        fillTipoSelect();
 
         // Agregar evento de cambio al select para filtrar la tabla
         $('#proyecto-filter').on('change', function () {
@@ -307,6 +343,12 @@
         $('#inspector-filter').on('change', function () {
             const inspectorFilter = $(this).val();
             table.column(3).search(inspectorFilter).draw(); // Filtra la columna de proyectos
+        });
+
+        // Agregar evento de cambio al select para filtrar la tabla
+        $('#tipo-filter').on('change', function () {
+            const tipoFilter = $(this).val();
+            table.column(1).search(tipoFilter).draw(); // Filtra la columna de proyectos
         });
 
         // Agregar función de búsqueda personalizada si es necesario

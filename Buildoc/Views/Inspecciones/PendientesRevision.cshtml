@@ -3,26 +3,68 @@
 @{
     ViewData["Title"] = "Inspecciones";
 }
+<header>
 
-    <h1>Inspecciones pendientes de revisión</h1>
+    <style>
+        .titulo-inspecciones {
+    color: #1f2d3d;
+}
 
-<p>
-    <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-primary">
-        <i class="fas fa-arrow-left"></i> Volver
-    </a>
-</p>
 
+        .header-bg-warning {
+            background-color: #ffc107; 
+            color: #1f2d3d; 
+        }
+    </style>
+</header>
+
+<div class="container-page">
+         <div class="row mb-4 align-items-center  p-3" style="background-color:	#ffc107;">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h1 class="mb-0 titulo-inspecciones">
+                    <i class="fas fa-tasks"></i> Inspecciones por aprobar
+                </h1><p class="mb-0">
+                    <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-light">
+                        <i class="fas fa-arrow-left"></i> Volver
+                    </a>
+                </p>
+            </div>
+        </div>
     <!-- /.card -->
-    
+     <tr>
+        <div class="row mt-3">
+            <div class="form-group mb-3 col-4">
+                <label class="control-label">Filtrar por proyecto</label>
+                <select id="proyecto-filter" class="form-control">
+                    <option value="">Todos los proyectos</option>
+                    <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-4">
+                <label class="control-label">Filtrar por inspector</label>
+                <select id="inspector-filter" class="form-control">
+                    <option value="">Todos los inspectores</option>
+                    <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-4">
+                <label class="control-label">Filtrar por tipo de inspección</label>
+                <select id="tipo-filter" class="form-control">
+                    <option value="">Todos los tipos</option>
+                    <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                </select>
+            </div>
+        </div>
+    </tr>
 
     <table id="example1" class="table table-bordered table-striped">
-        <thead>
+        <thead class="header-bg">
             <tr>
                 <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
                 <th>@Html.DisplayNameFor(model => model.Inspector)</th>
-                <th>@Html.DisplayNameFor(model => model.Estado)</th>
+                <th>@Html.DisplayNameFor(model => model.Respuesta.FechaRespuesta)</th>
 
                 <th>Acciones</th>
             <th>Acciones</th>
@@ -35,12 +77,9 @@
                     <td>@Html.DisplayFor(modelItem => item.FechaInspeccion)</td>
                     <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Nombre)</td>
                     <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Inspector.NombreCompleto)</td>    
-                    <td>
-                        <span class="@(item.Estado == EstadoInspeccion.Programada ? "estado-programada-text" : "")">
-                            @Html.DisplayFor(modelItem => item.Estado)
-                        </span>
-                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.Inspector.NombreCompleto)</td>   
+                    <td>@Html.DisplayFor(modelItem => item.Respuesta.FechaRespuesta)</td>
+                   
                     <td>
                     @if (item.Estado == EstadoInspeccion.PendientesDeRevision || item.Estado == EstadoInspeccion.Aprobada)
                     {
@@ -64,7 +103,7 @@
             }
         </tbody>
     </table>
-
+</div>
 
 <style>
     .estado-programada-text {
@@ -110,5 +149,141 @@
             });
         }
     </script>
+        <script>
+        $(document).ready(function () {
+            // Inicializa la DataTable con la configuración deseada
+            let table = $('#example1').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+                ],
+                language: {
+                    url: "/espanol.json" // Ruta al archivo JSON para la traducción en español
+                },
+                responsive: true,
+                lengthChange: false,
+                autoWidth: false,
+                paging: true,
+                ordering: true,
+                info: true
+            });
 
+            // Función para obtener proyectos únicos del DataTable
+            function getProyectos() {
+                const proyectos = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!proyectos.includes(proyecto)) {
+                        proyectos.push(proyecto);
+                    }
+                });
+                return proyectos;
+            }
+
+            // Función para obtener inspectores únicos del DataTable
+            function getInspectores() {
+                const inspectores = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const inspector = data[3]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!inspectores.includes(inspector)) {
+                        inspectores.push(inspector);
+                    }
+                });
+                return inspectores;
+            }
+
+            // Función para obtener tipos de inspeccon únicos del DataTable
+            function getTipos() {
+                const tipos = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const tipo = data[1]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!tipos.includes(tipo)) {
+                        tipos.push(tipo);
+                    }
+                });
+                return tipos;
+            }
+
+
+            // Llenar el select con las opciones de proyecto
+            function fillProyectoSelect() {
+                const proyectoFilterEl = $('#proyecto-filter');
+                proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
+                proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
+                const proyectos = getProyectos();
+                proyectos.forEach(proyecto => {
+                    const option = $('<option></option>').val(proyecto).text(proyecto);
+                    proyectoFilterEl.append(option);
+                });
+            }
+
+            // Llenar el select con las opciones de inspectores
+            function fillInspectorSelect() {
+                const inspectorFilterEl = $('#inspector-filter');
+                inspectorFilterEl.empty(); // Limpiar el select antes de llenarlo
+                inspectorFilterEl.append('<option value="">Todos los inspectores</option>'); // Opción predeterminada
+                const inspectores = getInspectores();
+                inspectores.forEach(inspector => {
+                    const option = $('<option></option>').val(inspector).text(inspector);
+                    inspectorFilterEl.append(option);
+                });
+            }
+
+
+            // Llenar el select con las opciones de inspectores
+            function fillTipoSelect() {
+                const tipoFilterEl = $('#tipo-filter');
+                tipoFilterEl.empty(); // Limpiar el select antes de llenarlo
+                tipoFilterEl.append('<option value="">Todos los tipos de inspecciones</option>'); // Opción predeterminada
+                const tipos = getTipos();
+                tipos.forEach(tipo => {
+                    const option = $('<option></option>').val(tipo).text(tipo);
+                    tipoFilterEl.append(option);
+                });
+            }
+
+            // Inicializa el select con proyectos
+            fillProyectoSelect();
+
+            // Inicializa el select con inspectores
+            fillInspectorSelect();
+
+            // Inicializa el select con tipos
+            fillTipoSelect();
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#proyecto-filter').on('change', function () {
+                const proyectoFilter = $(this).val();
+                table.column(2).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#inspector-filter').on('change', function () {
+                const inspectorFilter = $(this).val();
+                table.column(3).search(inspectorFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#tipo-filter').on('change', function () {
+                const tipoFilter = $(this).val();
+                table.column(1).search(tipoFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar función de búsqueda personalizada si es necesario
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    const proyectoFilter = $('#proyecto-filter').val();
+                    const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    return proyectoFilter === "" || proyecto === proyectoFilter;
+                }
+            );
+
+
+        });
+
+
+    </script>
 }
