@@ -6,8 +6,11 @@ namespace Buildoc.Models
     public class Inspeccion
     {
         public Guid Id { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy HH:mm}")]
+        [Display(Name = "Creada")]
+        public DateTime FechaProgramacion {  get; set; }
 
-        [Display(Name = "Fecha y hora")]
+        [Display(Name = "Responder")]
         [Required]
         [DataType(DataType.DateTime)]
 

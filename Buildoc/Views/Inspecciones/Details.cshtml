@@ -18,6 +18,9 @@
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => model.FechaInspeccion)</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.FechaInspeccion)</dd>
 
+                <dt class="col-sm-4">@Html.DisplayNameFor(model => model.FechaProgramacion)</dt>
+                <dd class="col-sm-8">@Html.DisplayFor(model => model.FechaProgramacion)</dd>
+
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Objetivo)</dt>
                         <dd class="col-sm-8">@Html.DisplayFor(model => model.Objetivo)</dd>
 
@@ -37,7 +40,7 @@
                 
                 <dd class="col-sm-8">
                     <span class="badge @(Model.Estado == EstadoInspeccion.Programada ? "badge-programada" :
-                                          Model.Estado == EstadoInspeccion.EnProceso ? "badge-pendiente-revision" :
+                                          Model.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
                                           Model.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
                                           Model.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
                         @Html.DisplayFor(model => model.Estado)
@@ -154,7 +157,7 @@
                             <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.RecomendacionesFuturasList)</dt>
                             <dd class="col-sm-8">@Html.DisplayFor(model => Model.Respuesta.RecomendacionesFuturasList)</dd>
                         }
-                       @*  
+                       
                         <dt class="col-sm-4">@Html.DisplayNameFor(model => Model.Respuesta.EstadoRespuestaInspeccion)</dt>
                         <dd class="col-sm-8">
                             <span class="badge @(Model.Respuesta.EstadoRespuestaInspeccion == EstadoRespuestaInspeccion.Respondida ? "badge-aprobada" :
@@ -162,7 +165,7 @@
                                  "badge-default")">
                                 @Html.DisplayFor(model => Model.Respuesta.EstadoRespuestaInspeccion)                            
                             </span>
-                        </dd> *@
+                        </dd> 
                     </dl>
                 </div>
             </div>

@@ -26,8 +26,9 @@
                 <dl class="row mb-0 dl-horizontal">
                     <dt class="col-sm-4">Objetivo:</dt>
                     <dd class="col-sm-8 text-muted">@inspeccionDetalles?.Objetivo</dd>
-
-                    <dt class="col-sm-4">Fecha y hora:</dt>
+                    <dt class="col-sm-4">Creada:</dt>
+                    <dd class="col-sm-8 text-muted">@inspeccionDetalles?.FechaProgramacion</dd>
+                    <dt class="col-sm-4">Responder:</dt>
                     <dd class="col-sm-8 text-muted">@inspeccionDetalles?.FechaInspeccion</dd>
 
                     <dt class="col-sm-4">Descripción:</dt>
@@ -99,7 +100,7 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
+                <label asp-for="Observaciones" class="control-label">Observaciones (Opcional)</label>
                 <textarea asp-for="Observaciones" class="form-control"></textarea>
                 <span asp-validation-for="Observaciones" class="text-danger"></span>
             </div>
