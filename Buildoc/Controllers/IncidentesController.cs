@@ -209,13 +209,13 @@ namespace Buildoc.Controllers
                     ModelState.Remove(key);
                 }
                 // Elimina los datos relacionados con los afectados si el switch no está activado
-                model.Lesionado = null;
-                model.IncidenteLesionado = null;
+                model.Lesionados = null;
+                model.IncidenteLesionados = null;
             }
             else
             {
                 // Si se activan los afectados, valida los datos
-                if (model.Lesionado == null || model.IncidenteLesionado == null)
+                if (model.Lesionados == null || model.IncidenteLesionados == null)
                 {
                     return Json(new { success = false, message = "Los datos del lesionado estan incompletos o mal diligenciados" });
                 }
@@ -247,16 +247,21 @@ namespace Buildoc.Controllers
                 if (switchAfectados)
                 {
                     // Si se proporcionaron datos del lesionado
-                    if (model.Lesionado != null && model.IncidenteLesionado != null)
+                    if (model.Lesionados != null && model.Lesionados.Count > 0 && model.IncidenteLesionados != null && model.IncidenteLesionados.Count > 0)
                     {
-                        // Guardar el lesionado
-                        _context.Add(model.Lesionado);
-                        await _context.SaveChangesAsync();
+                        for (int i = 0; i < model.Lesionados.Count; i++)
+                        {
+                            var lesionado = model.Lesionados[i];
+                            var incidenteLesionado = model.IncidenteLesionados[i];
 
-                        // Relacionar el lesionado con el incidente
-                        model.IncidenteLesionado.IncidenteId = model.Incidente.Id;
-                        model.IncidenteLesionado.LesionadoId = model.Lesionado.Id;
-                        _context.Add(model.IncidenteLesionado);
+                            lesionado.Id = Guid.NewGuid(); // Asigna un nuevo ID al lesionado
+                            _context.Add(lesionado);
+                            await _context.SaveChangesAsync();
+
+                            incidenteLesionado.IncidenteId = model.Incidente.Id;
+                            incidenteLesionado.LesionadoId = lesionado.Id;
+                            _context.Add(incidenteLesionado);
+                        }
                         await _context.SaveChangesAsync();
                     }
                 }

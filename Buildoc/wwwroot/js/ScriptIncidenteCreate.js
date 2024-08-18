@@ -68,35 +68,52 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         }
     });
 
-    // Configuración del botón para añadir afectados
-    $('#addAfectadoButton').off('click').on('click', function () {
-        console.log("Añadiendo afectado");
-        addAfectado();
-    });
+    // Inicializar la lógica de los lesionados
+    let lesionadoIndex = 0;
 
-    function addAfectado() {
-        var afectadosContainer = $('#afectadosContainer');
-        var template = $('#afectadoTemplate').clone().removeAttr('id');
-        template.show().removeClass('afectado-template').addClass('afectado-group');
-
-        // Encuentra el número de afectados actuales y usa ese índice
-        var afectadoCount = afectadosContainer.find('.afectado-group').length;
-
-        // Actualiza los nombres de los campos para reflejar el índice correcto
-        template.find('input, textarea, select').each(function () {
-            var name = $(this).attr('name');
-            if (name) {
-                $(this).attr('name', name.replace(/\[\d+\]/, '[' + afectadoCount + ']'));
-            }
-        });
-
-        afectadosContainer.append(template);
-
-        // Añadir evento para eliminar afectado
-        template.find('.remove-afectado').off('click').on('click', function () {
-            template.remove();
+    function updateIndexes() {
+        $('#lesionados-container .lesionado-item').each(function (index) {
+            $(this).find('input, select').each(function () {
+                var name = $(this).attr('name');
+                if (name) {
+                    var newName = name.replace(/\[\d+\]/, '[' + index + ']');
+                    $(this).attr('name', newName);
+                }
+            });
         });
     }
+
+    function addLesionado() {
+        var container = $('#lesionados-container');
+        var template = container.find('.lesionado-item:first').clone();
+
+        // Limpiar valores de los campos en el clon
+        template.find('input, select').val('');
+
+        // Agregar el nuevo item al contenedor
+        container.append(template);
+
+        lesionadoIndex++;
+        updateIndexes();
+
+        // Añadir evento para eliminar lesionado
+        template.find('.remove-lesionado').off('click').on('click', function () {
+            template.remove();
+            updateIndexes();
+        });
+    }
+
+    // Evento para añadir lesionado
+    $('#add-lesionado').off('click').on('click', function () {
+        console.log("Añadiendo lesionado");
+        addLesionado();
+    });
+
+    // Evento para eliminar lesionado existente
+    $('#lesionados-container').on('click', '.remove-lesionado', function () {
+        $(this).closest('.lesionado-item').remove();
+        updateIndexes();
+    });
 
 
     // Configuración del checkbox desconoceHora
