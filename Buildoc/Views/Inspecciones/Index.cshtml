@@ -192,6 +192,7 @@
                     <span class="badge @(item.Estado == EstadoInspeccion.Programada ? "badge-programada" :
                                           item.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
                                           item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
+                                             item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-desaprobada" :
                                           item.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
                         @Html.DisplayFor(modelItem => item.Estado)
                     </span>
