@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Buildoc.Models.Inspecciones;
 
 namespace Buildoc.Models
 {
@@ -49,5 +50,8 @@ namespace Buildoc.Models
         public Guid? RespuestaId { get; set; }
 
         public RespuestaInspeccion? Respuesta { get; set; }
+
+        // Colección de novedades relacionadas
+        public ICollection<NovedadInspeccion> Novedades { get; set; }
     }
 }

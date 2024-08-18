@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using System.Reflection.Emit;
+using Buildoc.Models.Inspecciones;
 
 namespace Buildoc.Data
 {
@@ -100,5 +101,6 @@ namespace Buildoc.Data
         public DbSet<Inspeccion> Inspecciones { get; set; }
 
         public DbSet<RespuestaInspeccion> RespuestaInspecciones { get; set; }
+        public DbSet<Buildoc.Models.Inspecciones.NovedadInspeccion> NovedadInspeccion { get; set; }
     }
 }

@@ -288,6 +288,7 @@ namespace Buildoc.Controllers
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Novedades) 
                     .Include(i => i.Respuesta)
                     .FirstOrDefaultAsync(m => m.Id == id);
 

@@ -51,5 +51,7 @@ namespace Buildoc.Models
 		[Display(Name = "Estado de la Respuesta")]
 	
         public EstadoRespuestaInspeccion EstadoRespuestaInspeccion { get; set; }
+
+      
     }
 }
