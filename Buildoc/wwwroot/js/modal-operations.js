@@ -181,6 +181,14 @@ $(document).ready(function () {
 
 
     // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
+        $.getScript('/js/novedadIncidente.js')
+            .done(function () {
+                console.log('Script novedadincidente.js cargado correctamente.');
+            })
+            .fail(function (jqxhr, settings, exception) {
+                console.error('Error al cargar el script novedadincidente.js:', exception);
+            });
+
         $.getScript('/js/afectados.js')
             .done(function () {
                 console.log('Script afectados.js cargado correctamente.');

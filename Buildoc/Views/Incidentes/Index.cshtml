@@ -41,21 +41,53 @@
         </div>
         <!-- /.info-box -->
     </div>
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-danger">
-                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+    <div class="col-lg-3 col-6">
+        <!-- small card -->
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>@ViewBag.ActivosIncidentes</h3>
+
+                <p>Incidentes Activos</p>
+            </div>
+            <div class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
                     <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                 </svg>
-            </span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">Incidentes activos</span>
-                <span class="info-box-number">@ViewBag.ActivosIncidentes</span>
             </div>
-            <!-- /.info-box-content -->
+            <a asp-action="IncidenteArchivados" class="small-box-footer">
+                Ver <i class="fas fa-arrow-circle-right"></i>
+            </a>
         </div>
-        <!-- /.info-box -->
+    </div>
+    <div class="col-lg-3 col-6">
+        <!-- small card -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@ViewBag.CerradosIncidentes</h3>
+                <p>Incidentes Cerrados</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <a asp-action="IncidenteArchivados" class="small-box-footer">
+                Ver <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
+    </div>
+    <div class="col-lg-3 col-6">
+        <!-- small card -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@ViewBag.VencidosIncidentes</h3>
+                <p>Incidentes Vencidos</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-backspace"></i>
+            </div>
+            <a asp-action="IncidenteArchivados" class="small-box-footer">
+                Ver <i class="fas fa-arrow-circle-right"></i>
+            </a>
+        </div>
     </div>
     <div class="col-lg-3 col-6">
         <!-- small card -->
@@ -111,21 +143,17 @@
                 @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
             </td>
             <td>
-                <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Incidentes", new { id = item.Id })" data-title="Editar incidente" data-action="edit">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                        <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                        <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                    </svg>
-                </a> |
                 <a href="#" class="edit-item" data-url="@Url.Action("Details", "Incidentes", new { id = item.Id })" data-title="Detalles del incidente" data-action="details">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                         <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                     </svg>
                 </a> |
-                <a href="#" class="edit-item" data-url="@Url.Action("LineaTiempo", "Seguimientoes", new { incidenteId = item.Id })" data-title="Línea de Tiempo del Seguimiento" data-action="seguimiento">
+                <a href="#" class="edit-item" data-url="@Url.Action("LineaTiempo", "NovedadesIncidentes", new { incidenteId = item.Id })" data-title="Línea de Tiempo del Seguimiento" data-action="seguimiento">
                     Segimiento
+                </a> |
+                <a href="#" class="edit-item" data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })" data-title="Línea de Tiempo del Seguimiento" data-action="seguimiento">
+                    Añadir novedad
                 </a>
-
             </td>
         </tr>
 }

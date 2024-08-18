@@ -52,25 +52,37 @@ namespace Buildoc.Controllers
                 .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
                 .ToListAsync();
 
-            // Filtrar incidentes activos (estado true)
+            // Filtrar incidentes activos 
             var incidentesActivos = todosIncidentes
                 .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
                 .ToList();
 
-            // Filtrar incidentes archivados (estado false)
+            // Filtrar incidentes solucionados 
             var incidentesArchivados = todosIncidentes
                 .Where(i => i.Estado == EstadoIncidenteEnum.Solucionado)
+                .ToList();
+            // Filtrar incidentes cerrados 
+            var incidentesCerrados = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Cerrado)
+                .ToList();
+            // Filtrar incidentes vencidos 
+            var incidentesVencidos = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Vencido)
                 .ToList();
 
             // Contadores
             var totalesIncidentes = todosIncidentes.Count();
             var activosIncidentes = incidentesActivos.Count();
             var archivadosIncidentes = incidentesArchivados.Count();
+            var cerradosIncidentes = incidentesCerrados.Count();
+            var vencidosIncidentes = incidentesVencidos.Count();
 
             // Pasar contadores a la vista
             ViewBag.TotalesIncidentes = totalesIncidentes;
             ViewBag.ActivosIncidentes = activosIncidentes;
             ViewBag.ArchivadosIncidentes = archivadosIncidentes;
+            ViewBag.CerradosIncidentes = cerradosIncidentes;
+            ViewBag.VencidosIncidentes = vencidosIncidentes;
 
             // Retornar solo los incidentes activos para la vista Index
             return View(incidentesActivos);

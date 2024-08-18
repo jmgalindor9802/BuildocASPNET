@@ -12,20 +12,20 @@ using System.Security.Claims;
 
 namespace Buildoc.Controllers
 {
-    public class SeguimientoesController : Controller
+    public class NovedadesIncidentesController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly IEmailSender _emailSender;
 
-        public SeguimientoesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender)
+        public NovedadesIncidentesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender)
         {
             _context = context;
             _userManager = userManager;
             _emailSender = emailSender;
         }
 
-        // GET: Seguimientoes
+        // GET: novedadesIncidentees
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.NovedadesIncidentes.Include(s => s.Incidente).Include(s => s.Usuario);
@@ -33,15 +33,15 @@ namespace Buildoc.Controllers
         }
         public async Task<IActionResult> LineaTiempo(Guid incidenteId)
         {
-			var seguimientos = await _context.NovedadesIncidentes
+			var novedadesIncidentes = await _context.NovedadesIncidentes
                 .Where(s => s.IncidenteId == incidenteId)
 		        .Include(s => s.Usuario)
 		        .ToListAsync();
 			ViewBag.IncidenteId = incidenteId;
-			return PartialView(seguimientos);
+			return PartialView(novedadesIncidentes);
 		}
 
-        // GET: Seguimientoes/Details/5
+        // GET: novedadesIncidentees/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
@@ -49,19 +49,19 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.NovedadesIncidentes
+            var novedadesIncidente = await _context.NovedadesIncidentes
                 .Include(s => s.Incidente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (seguimiento == null)
+            if (novedadesIncidente == null)
             {
                 return NotFound();
             }
 
-            return View(seguimiento);
+            return View(novedadesIncidente);
         }
 
-        // GET: Seguimientoes/Create
+        // GET: novedadesIncidentees/Create
         [HttpGet]
         public async Task<IActionResult> Create(Guid? incidenteId)
         {
@@ -80,35 +80,58 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = new NovedadesIncidente
+            // Crear una instancia de NovedadesIncidente con el incidente actual
+            var novedadesIncidente = new NovedadesIncidente
             {
                 IncidenteId = incidenteId.Value,
                 Incidente = incidente // Pasar la información del incidente
             };
-            return PartialView(seguimiento);
+
+            // Pasar los estados posibles a la vista
+            ViewBag.Estados = new SelectList(Enum.GetValues(typeof(EstadoIncidenteEnum)));
+            return PartialView(novedadesIncidente);
         }
 
-        // POST: Seguimientoes/Create
+        // POST: novedadesIncidentees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] NovedadesIncidente seguimiento)
+        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] NovedadesIncidente novedadesIncidente, string EstadoIncidenteNovedad)
         {
             if (ModelState.IsValid)
             {
-                seguimiento.Id = Guid.NewGuid();
+                novedadesIncidente.Id = Guid.NewGuid();
                 // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                seguimiento.UsuarioId = userId;
-                _context.Add(seguimiento);
+                novedadesIncidente.UsuarioId = userId;
+
+                // Buscar el incidente en la base de datos
+                var incidente = await _context.Incidentes.FindAsync(novedadesIncidente.IncidenteId);
+                if (incidente != null)
+                {
+                    // Convertir el string recibido a enum y actualizar el estado del incidente
+                    if (Enum.TryParse(typeof(EstadoIncidenteEnum), EstadoIncidenteNovedad, out var estado))
+                    {
+                        incidente.Estado = (EstadoIncidenteEnum)estado;
+                        _context.Update(incidente);
+                    }
+                }
+
+
+                // Agregar la novedad
+                _context.Add(novedadesIncidente);
                 await _context.SaveChangesAsync();
-				TempData["SuccessMessage"] = "¡El seguimiento se ha creado exitosamente!";
-				return Json(new { success = true });
-			}
-            return View(seguimiento);
+
+                TempData["SuccessMessage"] = "¡La novedad del incidente se ha creado exitosamente!";
+                return Json(new { success = true });
+            }
+
+            // Pasar los estados posibles a la vista si la validación falla
+            ViewBag.Estados = new SelectList(Enum.GetValues(typeof(EstadoIncidenteEnum)));
+            return PartialView(novedadesIncidente);
         }
 
 
-        // GET: Seguimientoes/Edit/5
+        // GET: novedadesIncidentees/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
@@ -116,24 +139,24 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.NovedadesIncidentes.FindAsync(id);
-            if (seguimiento == null)
+            var novedadesIncidente = await _context.NovedadesIncidentes.FindAsync(id);
+            if (novedadesIncidente == null)
             {
                 return NotFound();
             }
-            ViewData["IncidenteId"] = new SelectList(_context.Incidentes, "Id", "Id", seguimiento.IncidenteId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", seguimiento.UsuarioId);
-            return View(seguimiento);
+            ViewData["IncidenteId"] = new SelectList(_context.Incidentes, "Id", "Id", novedadesIncidente.IncidenteId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", novedadesIncidente.UsuarioId);
+            return View(novedadesIncidente);
         }
 
-        // POST: Seguimientoes/Edit/5
+        // POST: novedadesIncidentees/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,Descripcion,FechaCreacion,IncidenteId,UsuarioId")] NovedadesIncidente seguimiento)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,Descripcion,FechaCreacion,IncidenteId,UsuarioId")] NovedadesIncidente novedadesIncidente)
         {
-            if (id != seguimiento.Id)
+            if (id != novedadesIncidente.Id)
             {
                 return NotFound();
             }
@@ -142,12 +165,12 @@ namespace Buildoc.Controllers
             {
                 try
                 {
-                    _context.Update(seguimiento);
+                    _context.Update(novedadesIncidente);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SeguimientoExists(seguimiento.Id))
+                    if (!novedadesIncidenteExists(novedadesIncidente.Id))
                     {
                         return NotFound();
                     }
@@ -158,12 +181,12 @@ namespace Buildoc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["IncidenteId"] = new SelectList(_context.Incidentes, "Id", "Id", seguimiento.IncidenteId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", seguimiento.UsuarioId);
-            return View(seguimiento);
+            ViewData["IncidenteId"] = new SelectList(_context.Incidentes, "Id", "Id", novedadesIncidente.IncidenteId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", novedadesIncidente.UsuarioId);
+            return View(novedadesIncidente);
         }
 
-        // GET: Seguimientoes/Delete/5
+        // GET: novedadesIncidentees/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null)
@@ -171,34 +194,34 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.NovedadesIncidentes
+            var novedadesIncidente = await _context.NovedadesIncidentes
                 .Include(s => s.Incidente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (seguimiento == null)
+            if (novedadesIncidente == null)
             {
                 return NotFound();
             }
 
-            return View(seguimiento);
+            return View(novedadesIncidente);
         }
 
-        // POST: Seguimientoes/Delete/5
+        // POST: novedadesIncidentees/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var seguimiento = await _context.NovedadesIncidentes.FindAsync(id);
-            if (seguimiento != null)
+            var novedadesIncidente = await _context.NovedadesIncidentes.FindAsync(id);
+            if (novedadesIncidente != null)
             {
-                _context.NovedadesIncidentes.Remove(seguimiento);
+                _context.NovedadesIncidentes.Remove(novedadesIncidente);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SeguimientoExists(Guid id)
+        private bool novedadesIncidenteExists(Guid id)
         {
             return _context.NovedadesIncidentes.Any(e => e.Id == id);
         }

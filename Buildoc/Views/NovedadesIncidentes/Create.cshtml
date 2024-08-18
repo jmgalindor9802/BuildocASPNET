@@ -42,6 +42,18 @@
                                     <input asp-for="Descripcion" class="form-control" />
                                     <span asp-validation-for="Descripcion" class="text-danger"></span>
                                 </div>
+                                <div class="form-group">
+                                    <label class="control-label">¿Desea cambiar el estado del incidente?</label>
+                                    <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
+                                </div>
+                                <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
+                                    <label class="control-label">Estado del Incidente</label>
+                                    <select name="EstadoIncidenteNovedad" class="form-control">
+                                        <option value="">Seleccione un estado</option>
+                                        <option value="Cerrado">Cerrado</option>
+                                        <option value="Solucionado">Solucionado</option>
+                                    </select>
+                                </div>
                             </div>
                             <div class="col-lg-5 order-1 order-md-2">
                                 <div class="card card-default collapsed-card">
@@ -68,8 +80,10 @@
                                         {
                                             <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
                                         }
-                                    </div> *@
+                                         *@
+                                    </div>
                                 </div>
+
                                 <div class="card card-default collapsed-card">
                                     <div class="card-header">
                                         <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
@@ -86,9 +100,9 @@
                                         <p><span style="display: block; font-size: 0.9em;">Dirección:</span> <span class="text-muted">@Model.Incidente.Proyecto.Direccion</span></p>
                                     </div>
                                 </div>
+                                <button type="button" class="btn btn-primary btn-next" id="btnNext">Siguiente</button>
                             </div>
                         </div>
-                        <button type="button" class="btn btn-primary btn-next" id="btnNext">Siguiente</button>
                     </div>
                     <div id="afectadosSeguimiento-part" class="content" role="tabpanel" aria-labelledby="afectadosSeguimiento-part-trigger">
                         <div class="afectado-group" id="afectadoTemplate">
@@ -151,107 +165,27 @@
                                 </div>
                             </div>
                             <div class="row" id="contenedorLesionesAfectado">
-                                <div class="col-12">
-                                    <h4>Descripción de lesiones</h4>
-                                    <p>Naturaleza de la lesión, seleccione todas las que se aplican</p>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="abrasionRasgunosAfectado">
-                                        <label for="abrasionRasgunosAfectado">Abrasión, rasguños</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="amputacionAfectado">
-                                        <label for="amputacionAfectado">Amputación</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="huesoRotoAfectado">
-                                        <label for="huesoRotoAfectado">Hueso roto</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="moretonAfectado">
-                                        <label for="moretonAfectado">Moretón</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="quemaduraCalorAfectado">
-                                        <label for="quemaduraCalorAfectado">Quemadura (calor)</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="quemadurasQuímicaAfectado">
-                                        <label for="quemadurasQuímicaAfectado">Quemaduras (química)</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="conmocionCerebralAfectado">
-                                        <label for="conmocionCerebralAfectado">Conmoción cerebral</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="lesionPorAplastamientoAfectado">
-                                        <label for="lesionPorAplastamientoAfectado">Lesión por aplastamiento</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="corteLaceracionPerforacionAfectado">
-                                        <label for="corteLaceracionPerforacionAfectado">Corte, laceración, perforación</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="herniaAfectado">
-                                        <label for="herniaAfectado">Hernia</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="esguinceTensionAfectado">
-                                        <label for="esguinceTensionAfectado">Esguince, tensión</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="lesionDeLaMedulaEspinalAfectado">
-                                        <label for="lesionDeLaMedulaEspinalAfectado">Lesión de la médula espinal</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="lesionOcularAfectado">
-                                        <label for="lesionOcularAfectado">Lesión ocular</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="traumatismoCraneoencefalicoAfectado">
-                                        <label for="traumatismoCraneoencefalicoAfectado">Traumatismo craneoencefálico</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label class="control-label">Actividad realizada</label>
-                                    <textarea class="form-control" rows="3"></textarea>
-                                    <span class="text-danger"></span>
-                                </div>
-                            </div>
                                 <button type="button" class="btn btn-primary btn-previous">Anterior</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <script>
+                $(document).ready(function () {
+                    // Maneja el cambio en el checkbox
+                    $('#MostrarEstadoCheck').on('change', function () {
+                        if ($(this).is(':checked')) {
+                            $('#SelectEstadoIncidente').show();  // Muestra el select
+                        } else {
+                            $('#SelectEstadoIncidente').hide();  // Oculta el select
+                        }
+                    });
+
+                    // Opcional: Si necesitas inicializar el estado del select basado en el estado del checkbox al cargar la página
+                    $('#MostrarEstadoCheck').trigger('change');
+                });
+            </script>
         </form>
     </div>
 </div>
