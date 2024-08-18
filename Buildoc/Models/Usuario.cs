@@ -21,7 +21,7 @@ namespace Buildoc.Models
         public string NombreCompleto => $"{Nombres} {Apellidos}";
         public ICollection<Proyecto> Proyectos { get; set; }
         public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
-        public virtual ICollection<Seguimiento> Seguimientos { get; set; } = new List<Seguimiento>();
+        public virtual ICollection<NovedadesIncidente> NovedadesIncidentes { get; set; } = new List<NovedadesIncidente>();
 
         public Usuario()
         {

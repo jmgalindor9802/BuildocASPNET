@@ -2,7 +2,7 @@
 
 namespace Buildoc.Models
 {
-    public class Seguimiento
+    public class NovedadesIncidente
     {
         [Key]
         public Guid Id { get; set; }
@@ -20,7 +20,7 @@ namespace Buildoc.Models
         // Navigation property for Usuario
         public virtual Usuario? Usuario { get; set; }
         // Constructor para establecer la fecha de creación
-        public Seguimiento()
+        public NovedadesIncidente()
         {
             FechaCreacion = DateTime.Now;
         }

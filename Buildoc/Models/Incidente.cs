@@ -20,7 +20,7 @@ namespace Buildoc.Models
         public DateOnly FechaIncidente { get; set; }
         [Display(Name = "Hora")]
         public TimeOnly? HoraIncidente { get; set; }
-        public bool Estado { get; set; }
+        public EstadoIncidenteEnum Estado { get; set; }
         [Display(Name = "Sugerencia")]
         public string? Sugerencia { get; set; }
         [Required]
@@ -38,13 +38,20 @@ namespace Buildoc.Models
         public virtual TipoIncidente? TipoIncidente { get; set; }
         // Collection de muchos a muchos
         public virtual ICollection<IncidenteLesionado> IncidenteLesionados { get; set; } = new List<IncidenteLesionado>();
-        // Collection of Seguimientos
-        public virtual ICollection<Seguimiento> Seguimientos { get; set; } = new List<Seguimiento>();
+        // Collection of NovedadesIncidente
+        public virtual ICollection<NovedadesIncidente> NovedadesIncidentes { get; set; } = new List<NovedadesIncidente>();
 
         // Constructor para establecer la fecha de creación
         public Incidente()
         {
             FechaCreacion = DateTime.Now;
         }
+    }
+    public enum EstadoIncidenteEnum
+    {
+        Activo,
+        Cerrado,
+        Vencido,
+        Solucionado,
     }
 }

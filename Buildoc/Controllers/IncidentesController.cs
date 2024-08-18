@@ -54,12 +54,12 @@ namespace Buildoc.Controllers
 
             // Filtrar incidentes activos (estado true)
             var incidentesActivos = todosIncidentes
-                .Where(i => i.Estado == true)
+                .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
                 .ToList();
 
             // Filtrar incidentes archivados (estado false)
             var incidentesArchivados = todosIncidentes
-                .Where(i => i.Estado == false)
+                .Where(i => i.Estado == EstadoIncidenteEnum.Solucionado)
                 .ToList();
 
             // Contadores
@@ -101,7 +101,7 @@ namespace Buildoc.Controllers
 
             // Filtrar incidentes archivados (estado false)
             var incidentesArchivados = todosIncidentes
-                .Where(i => i.Estado == false)
+                .Where(i => i.Estado == EstadoIncidenteEnum.Solucionado)
                 .ToList();
 
             // Retornar solo los incidentes activos para la vista Index
@@ -239,7 +239,7 @@ namespace Buildoc.Controllers
             {
                 model.Incidente.Id = Guid.NewGuid();
                 model.Incidente.UsuarioId = userId;
-                model.Incidente.Estado = true;
+                model.Incidente.Estado = EstadoIncidenteEnum.Activo;
 
                 // Agregar el incidente a la base de datos
                 _context.Add(model.Incidente);
@@ -461,7 +461,7 @@ namespace Buildoc.Controllers
             if (incidente != null)
             {
                 // Cambiar el estado del incidente a true (archivado)
-                incidente.Estado = true;
+                incidente.Estado = EstadoIncidenteEnum.Activo;
 
                 // Actualizar el incidente en el contexto
                 _context.Update(incidente);

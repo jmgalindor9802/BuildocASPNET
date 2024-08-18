@@ -28,13 +28,13 @@ namespace Buildoc.Controllers
         // GET: Seguimientoes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Seguimientos.Include(s => s.Incidente).Include(s => s.Usuario);
+            var applicationDbContext = _context.NovedadesIncidentes.Include(s => s.Incidente).Include(s => s.Usuario);
             return View(await applicationDbContext.ToListAsync());
         }
         public async Task<IActionResult> LineaTiempo(Guid incidenteId)
         {
-			var seguimientos = await _context.Seguimientos
-		        .Where(s => s.IncidenteId == incidenteId)
+			var seguimientos = await _context.NovedadesIncidentes
+                .Where(s => s.IncidenteId == incidenteId)
 		        .Include(s => s.Usuario)
 		        .ToListAsync();
 			ViewBag.IncidenteId = incidenteId;
@@ -49,7 +49,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.Seguimientos
+            var seguimiento = await _context.NovedadesIncidentes
                 .Include(s => s.Incidente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -80,7 +80,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = new Seguimiento
+            var seguimiento = new NovedadesIncidente
             {
                 IncidenteId = incidenteId.Value,
                 Incidente = incidente // Pasar la información del incidente
@@ -91,7 +91,7 @@ namespace Buildoc.Controllers
         // POST: Seguimientoes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] Seguimiento seguimiento)
+        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] NovedadesIncidente seguimiento)
         {
             if (ModelState.IsValid)
             {
@@ -116,7 +116,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.Seguimientos.FindAsync(id);
+            var seguimiento = await _context.NovedadesIncidentes.FindAsync(id);
             if (seguimiento == null)
             {
                 return NotFound();
@@ -131,7 +131,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,Descripcion,FechaCreacion,IncidenteId,UsuarioId")] Seguimiento seguimiento)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Titulo,Descripcion,FechaCreacion,IncidenteId,UsuarioId")] NovedadesIncidente seguimiento)
         {
             if (id != seguimiento.Id)
             {
@@ -171,7 +171,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var seguimiento = await _context.Seguimientos
+            var seguimiento = await _context.NovedadesIncidentes
                 .Include(s => s.Incidente)
                 .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -188,10 +188,10 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var seguimiento = await _context.Seguimientos.FindAsync(id);
+            var seguimiento = await _context.NovedadesIncidentes.FindAsync(id);
             if (seguimiento != null)
             {
-                _context.Seguimientos.Remove(seguimiento);
+                _context.NovedadesIncidentes.Remove(seguimiento);
             }
 
             await _context.SaveChangesAsync();
@@ -200,7 +200,7 @@ namespace Buildoc.Controllers
 
         private bool SeguimientoExists(Guid id)
         {
-            return _context.Seguimientos.Any(e => e.Id == id);
+            return _context.NovedadesIncidentes.Any(e => e.Id == id);
         }
     }
 }

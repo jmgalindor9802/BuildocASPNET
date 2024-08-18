@@ -56,16 +56,16 @@ namespace Buildoc.Data
                 .WithMany(l => l.IncidenteLesionados)
                 .HasForeignKey(il => il.LesionadoId);
 
-            // Configurar la relación entre Incidente y Seguimientos
+            // Configurar la relación entre Incidente y NovedadesIncidentes
             builder.Entity<Incidente>()
-                .HasMany(i => i.Seguimientos)
+                .HasMany(i => i.NovedadesIncidentes)
                 .WithOne(s => s.Incidente)
                 .HasForeignKey(s => s.IncidenteId)
                 .OnDelete(DeleteBehavior.Restrict); // Cambiado a Restrict
 
-            // Configurar la relación entre Usuario y Seguimientos
+            // Configurar la relación entre Usuario y NovedadesIncidentes
             builder.Entity<Usuario>()
-                .HasMany(u => u.Seguimientos)
+                .HasMany(u => u.NovedadesIncidentes)
                 .WithOne(s => s.Usuario)
                 .HasForeignKey(s => s.UsuarioId)
                 .OnDelete(DeleteBehavior.Restrict); // Cambiado a Restrict
@@ -82,7 +82,7 @@ namespace Buildoc.Data
                 .Property(i => i.FechaCreacion)
                 .HasDefaultValueSql("GETDATE()");
 
-            builder.Entity<Seguimiento>()
+            builder.Entity<NovedadesIncidente>()
                 .Property(s => s.FechaCreacion)
                 .HasDefaultValueSql("GETDATE()");
         }
@@ -92,7 +92,7 @@ namespace Buildoc.Data
         public DbSet<Buildoc.Models.Inspeccion> Inspeccion { get; set; }
         public DbSet<Incidente> Incidentes { get; set; }
         public DbSet<Usuario> Usuarios { get; set; }
-        public DbSet<Seguimiento> Seguimientos { get; set; }
+        public DbSet<NovedadesIncidente> NovedadesIncidentes { get; set; }
         public DbSet<TipoIncidente> TipoIncidentes { get; set; }
         public DbSet<Lesionado> Lesionados { get; set; }
         public DbSet<IncidenteLesionado> IncidenteLesionados { get; set; }
