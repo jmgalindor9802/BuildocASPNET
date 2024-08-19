@@ -148,7 +148,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 iconColor = '#28a745'; // Aprobada
                                 break;
                             case 6:
-                                iconColor = '#dc3545'; // Desaprobada
+                                iconColor = '#6610f2'; // Desaprobada
                                 break;
                             default:
                                 iconColor = '#6c757d'; // Gris personalizado

@@ -550,7 +550,7 @@ h6,
     }
 
 .badge-desaprobada {
-    background-color: #6c757d; /* gray color */
+    background-color: #6610f2; /* gray color */
     color: white;
 }
 
@@ -655,9 +655,9 @@ h6,
         color: green;
     }
 
-    .inspeccionDesaprobadaPoint {
-        color: green;
-    }
+.inspeccionDesaprobadaPoint {
+    color: #6610f2;
+}
 
     .inspeccionSinResponderPoint {
         color: green;

@@ -52,7 +52,7 @@
                                     <small>(@Html.DisplayFor(model => model.Inspector.Email))</small>
                                 </p>
                                 <p>
-                                    <strong>Estado:</strong>
+                                    <strong>Estado actual:</strong>
                                     <span class="badge @(Model.Estado == EstadoInspeccion.Programada ? "badge-programada" :
                                           Model.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
                                           Model.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
@@ -94,8 +94,7 @@
                     <!-- Novedades -->
                     @if (Model.Novedades != null && Model.Novedades.Any())
                     {
-                        // Variable para almacenar el estado previo
-                        EstadoInspeccion? estadoPrevio = null;
+              
 
                         @foreach (var novedad in Model.Novedades.OrderBy(n => n.FechaCreacion))
                         {
@@ -105,22 +104,16 @@
                                     <span class="time"><i class="fas fa-clock"></i> @novedad.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
                                     <h3 class="timeline-header">Novedad</h3>
                                     <div class="timeline-body">
+                                         <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>  
                                         <p>@novedad.Comentario</p>
 
-                                        <!-- Verifica si el estado actual es diferente al estado previo -->
-                                        @if (estadoPrevio != Model.Estado)
-                                        {
-                                            <span class="badge @(Model.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" :
-                              Model.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
-                              Model.Estado == EstadoInspeccion.Programada ? "badge-programada" :
-                              Model.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
-                              Model.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" : "")">
-                                                @Html.DisplayFor(model => model.Estado)
-                                            </span>
-
-                                            <!-- Actualiza el estado previo -->
-                                            estadoPrevio = Model.Estado;
-                                        }
+                                        <span class="badge @(novedad.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" :
+                                  novedad.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
+                                  novedad.Estado == EstadoInspeccion.Programada ? "badge-programada" :
+                                  novedad.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
+                                  novedad.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" : "")">
+                                            @novedad.Estado
+                                        </span>
                                     </div>
                                 </div>
                             </div>

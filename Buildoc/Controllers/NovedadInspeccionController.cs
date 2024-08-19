@@ -78,7 +78,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string action)
+        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string actionAprobacion)
         {
             if (!_context.Inspeccion.Any(i => i.Id == idInspeccion))
             {
@@ -96,24 +96,26 @@ namespace Buildoc.Controllers
                 novedadInspeccion.Id = Guid.NewGuid();
                 novedadInspeccion.FechaCreacion=DateTime.Now;
                 novedadInspeccion.InspeccionId = idInspeccion;
-                novedadInspeccion.UsuarioId = _userManager.GetUserId(User); // Usuario autenticado
+                novedadInspeccion.UsuarioId = _userManager.GetUserId(User); // Usuario autenticado      
 
                 // Obtener la inspección para actualizar su estado
                 var inspeccion = await _context.Inspeccion.FindAsync(idInspeccion);
-
+               
                 if (inspeccion == null)
                 {
                     return NotFound();
                 }
 
                 // Manejar la acción seleccionada
-                if (action == "Aprobar")
+                if (actionAprobacion == "Aprobar")
                 {
                     inspeccion.Estado = EstadoInspeccion.Aprobada;
+                    novedadInspeccion.Estado = EstadoInspeccion.Aprobada;
                 }
-                else if (action == "Desaprobar")
+                else if (actionAprobacion == "Desaprobar")
                 {
                     inspeccion.Estado = EstadoInspeccion.Desaprobada;
+                    novedadInspeccion.Estado = EstadoInspeccion.Desaprobada;
                 }
 
 

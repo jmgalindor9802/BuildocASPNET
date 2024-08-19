@@ -1,124 +1,137 @@
-﻿@model Buildoc.Models.Inspecciones.NovedadInspeccion
+﻿    @model Buildoc.Models.Inspecciones.NovedadInspeccion
 
-@{
-    Layout = null;
-    var esCoordinador = User.IsInRole("Coordinador");
-    var estadoInspeccion = ViewData["EstadoInspeccion"]?.ToString();
-    var inspeccion = ViewData["Inspeccion"] as Buildoc.Models.Inspeccion;
-    var respuestaInspeccion = ViewData["RespuestaInspeccion"] as Buildoc.Models.RespuestaInspeccion;
+    @{
+        Layout = null;
+        var esCoordinador = User.IsInRole("Coordinador");
+        var estadoInspeccion = ViewData["EstadoInspeccion"]?.ToString();
+        var inspeccion = ViewData["Inspeccion"] as Buildoc.Models.Inspeccion;
+        var respuestaInspeccion = ViewData["RespuestaInspeccion"] as Buildoc.Models.RespuestaInspeccion;
 
-}
+    }
 
-<!DOCTYPE html>
+    <!DOCTYPE html>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
-    <style>
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem; /* Ajusta el espacio entre las tarjetas según sea necesario */
-        }
+    <html>
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Create</title>
+        <style>
+            .card-container {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem; /* Ajusta el espacio entre las tarjetas según sea necesario */
+            }
 
-        .card {
-            display: flex;
-            flex-direction: column;
-        }
+            .card {
+                display: flex;
+                flex-direction: column;
+            }
 
-        .card-body {
-            flex: 1; /* Permite que el contenido dentro de la tarjeta se expanda para igualar la altura */
-        }
-    </style>
-</head>
-
-
-<body>
-
+            .card-body {
+                flex: 1; /* Permite que el contenido dentro de la tarjeta se expanda para igualar la altura */
+            }
+        </style>
+    
+    
+    </head>
 
 
-<div class="row">
+    <body>
 
-    <div class="col-md-12">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" name="idInspeccion" value="@ViewData["InspeccionId"]" />
 
-                <div class="card-container">
-                    <div class="card">
-                        <!-- Card para Detalles de Inspección -->
-                        <div class="card-body">
-                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles de la Inspección</h6>
-                            <dl class="row mb-0 dl-horizontal">
-                                <dt class="col-sm-4">Objetivo</dt>
-                                <dd class="col-sm-8 text-muted">@inspeccion?.Objetivo</dd>
-                                <dt class="col-sm-4">Descripción</dt>
-                                <dd class="col-sm-8 text-muted">@inspeccion?.Descripcion</dd>
-                                <dt class="col-sm-4">Fecha de Inspección</dt>
-                                <dd class="col-sm-8 text-muted">@inspeccion?.FechaInspeccion.ToString("dd/MM/yyyy")</dd>
-                                <!-- Agrega más campos según sea necesario -->
-                            </dl>
+
+    <div class="row">
+
+        <div class="col-md-12">
+            <form asp-action="Create">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <input type="hidden" name="idInspeccion" value="@ViewData["InspeccionId"]" />
+                <input type="hidden" id="hiddenActionAprobacion" name="actionAprobacion" />
+
+                    <div class="card-container">
+                        <div class="card">
+                            <!-- Card para Detalles de Inspección -->
+                            <div class="card-body">
+                                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles de la Inspección</h6>
+                                <dl class="row mb-0 dl-horizontal">
+                                    <dt class="col-sm-4">Objetivo</dt>
+                                    <dd class="col-sm-8 text-muted">@inspeccion?.Objetivo</dd>
+                                    <dt class="col-sm-4">Descripción</dt>
+                                    <dd class="col-sm-8 text-muted">@inspeccion?.Descripcion</dd>
+                                    <dt class="col-sm-4">Fecha de Inspección</dt>
+                                    <dd class="col-sm-8 text-muted">@inspeccion?.FechaInspeccion.ToString("dd/MM/yyyy")</dd>
+                                    <!-- Agrega más campos según sea necesario -->
+                                </dl>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <!-- Card para Detalles de Respuesta Inspección -->
+                            <div class="card-body">
+                                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles de la Respuesta de Inspección</h6>
+                                <dl class="row mb-0 dl-horizontal">
+                                    <dt class="col-sm-4">Documentación:</dt>
+                                    <dd class="col-sm-8 text-muted">@(respuestaInspeccion?.DocumentacionCompleta == true ? "Completa" : "Incompleta")</dd>
+                                    <dt class="col-sm-12">Acciones correctivas en sitio:</dt>
+                                    <dd class="col-sm-12 text-muted">
+                                        @(string.IsNullOrWhiteSpace(respuestaInspeccion?.AccionesCorrectivasLista) ? "Ninguna" : respuestaInspeccion.AccionesCorrectivasLista)
+                                    </dd>
+                                    <dt class="col-sm-4">Observaciones:</dt>
+                                    <dd class="col-sm-8 text-muted">@respuestaInspeccion?.Observaciones</dd>
+                                    <!-- Agrega más campos según sea necesario -->
+                                </dl>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="card">
-                        <!-- Card para Detalles de Respuesta Inspección -->
-                        <div class="card-body">
-                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles de la Respuesta de Inspección</h6>
-                            <dl class="row mb-0 dl-horizontal">
-                                <dt class="col-sm-4">Documentación:</dt>
-                                <dd class="col-sm-8 text-muted">@(respuestaInspeccion?.DocumentacionCompleta == true ? "Completa" : "Incompleta")</dd>
-                                <dt class="col-sm-12">Acciones correctivas en sitio:</dt>
-                                <dd class="col-sm-12 text-muted">
-                                    @(string.IsNullOrWhiteSpace(respuestaInspeccion?.AccionesCorrectivasLista) ? "Ninguna" : respuestaInspeccion.AccionesCorrectivasLista)
-                                </dd>
-                                <dt class="col-sm-4">Observaciones:</dt>
-                                <dd class="col-sm-8 text-muted">@respuestaInspeccion?.Observaciones</dd>
-                                <!-- Agrega más campos según sea necesario -->
-                            </dl>
-                        </div>
-                    </div>
+                  
+                <div class="form-group">
+                    <label asp-for="Comentario" class="control-label"></label>
+                    <input asp-for="Comentario" class="form-control" />
+                    <span asp-validation-for="Comentario" class="text-danger"></span>
                 </div>
 
                 @if (esCoordinador)
                 {
                     <div class="form-group">
-                        <div class="row align-items-center">
-                            <div class="col-auto">
-                                <input type="checkbox" id="estadoInspeccion" name="action" data-bootstrap-switch data-off-text="Desaprobar" data-on-text="Aprobar" />
-                            </div>
-                            <div class="col">
-                                <label for="estadoInspeccion" class="switch-label">¿Aprueba la respuesta de la inspección?</label>
+                        <label class="switch-label">¿Aprueba la respuesta de la inspección?</label>
+                        <input type="checkbox" id="chkAprobar" />
+                        <div id="approvalButtons" style="display:none;">
+                            <div class="btn-group" role="group">
+                                <button type="button" class="btn btn-success" id="btnAprobar">Aprobar</button>
+                                <button type="button" class="btn btn-danger" id="btnDesaprobar">Desaprobar</button>
                             </div>
                         </div>
                     </div>
                 }
-            <div class="form-group">
-                <label asp-for="Comentario" class="control-label"></label>
-                <input asp-for="Comentario" class="form-control" />
-                <span asp-validation-for="Comentario" class="text-danger"></span>
-            </div>
 
 
-
-        </form>
+            </form>
+        </div>
     </div>
-</div>
 
     <script>
         $(document).ready(function () {
-            $("[data-bootstrap-switch]").bootstrapSwitch();
+            $("#chkAprobar").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#approvalButtons").show();
+                } else {
+                    $("#approvalButtons").hide();
+                    $('#hiddenActionAprobacion').val(''); // Limpia el valor si el checkbox no está marcado
+                }
+            });
 
-            // Opcional: Maneja eventos del switch
-            $("#estadoInspeccion").on('switchChange.bootstrapSwitch', function (event, state) {
-                var action = state ? 'Aprobar' : 'Desaprobar';
-                $(this).val(action);
+            $("#btnAprobar").click(function () {
+                $('#hiddenActionAprobacion').val('Aprobar');
+            });
+
+            $("#btnDesaprobar").click(function () {
+                $('#hiddenActionAprobacion').val('Desaprobar');
             });
         });
     </script>
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
-</body>
-</html>
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
+    </body>
+    </html>

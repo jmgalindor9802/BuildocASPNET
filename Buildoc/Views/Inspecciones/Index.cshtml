@@ -33,7 +33,7 @@
 
         <div class="row">
             <!-- Caja de información para inspecciones programadas -->
-            <div class="col-6 col-md-3 mb-1">
+            <div class="col mb-1">
                 <div class="small-box bg-info">
                     <div class="inner">
                         <h3>@ViewBag.CountProgramadas</h3>
@@ -49,7 +49,7 @@
             </div>
          
             <!-- Caja de información para inspecciones pendientes de revisión -->
-            <div class="col-6 col-md-3 mb-1">
+            <div class="col mb-1">
                 <div class="small-box bg-warning">
                     <div class="inner">
                         <h3>@ViewBag.CountPendienteRevision</h3>
@@ -63,25 +63,41 @@
                     </a>
                 </div>
             </div>
-            
+        <!-- Caja de información para inspecciones sin responder -->
+        <div class="col mb-1">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>@ViewBag.CountSinResponder</h3>
+                    <p>Sin responder</p>
+
+                </div>
+                <div class="icon">
+                    <i class="far fa-flag" style="font-size:55px;"></i>
+                </div>
+                <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
+                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
             <!-- Caja de información para inspecciones sin responder -->
-            <div class="col-6 col-md-3 mb-1">
-                <div class="small-box bg-danger">
+            <div class="col mb-1">
+                <div class="small-box bg-indigo">
                     <div class="inner">
-                        <h3>@ViewBag.CountSinResponder</h3>
-                        <p >Sin responder</p>
+                        <h3>@ViewBag.CountDesaprobadas</h3>
+                        <p >Desaprobadas</p>
+
                     </div>
                     <div class="icon">
-                        <i class="far fa-flag" style="font-size:55px;"></i>
+                    <i class="far fa-thumbs-down" style="font-size:55px;"></i>
                     </div>
-                    <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
+                    <a href="@Url.Action("Desaprobadas", "Inspecciones")" class="small-box-footer">
                         Ver detalles <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>
 
             <!-- Caja de información para inspecciones aprobadas -->
-            <div class="col-6 col-md-3 mb-1">
+            <div class="col mb-1">
                 <div class="small-box bg-success">
                     <div class="inner">
                         <h3>@ViewBag.CountAprobadas</h3>
@@ -192,7 +208,7 @@
                     <span class="badge @(item.Estado == EstadoInspeccion.Programada ? "badge-programada" :
                                           item.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
                                           item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
-                                             item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-desaprobada" :
+                                             item.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
                                           item.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
                         @Html.DisplayFor(modelItem => item.Estado)
                     </span>

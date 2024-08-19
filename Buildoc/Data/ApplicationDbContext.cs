@@ -87,6 +87,12 @@ namespace Buildoc.Data
             builder.Entity<Seguimiento>()
                 .Property(s => s.FechaCreacion)
                 .HasDefaultValueSql("GETDATE()");
+
+
+            builder.Entity<NovedadInspeccion>()
+       .HasOne(n => n.Usuario)
+       .WithMany() 
+       .HasForeignKey(n => n.UsuarioId);
         }
 
         public DbSet<Proyecto> Proyectos { get; set; }
