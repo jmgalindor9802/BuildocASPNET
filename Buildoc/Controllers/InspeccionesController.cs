@@ -415,7 +415,7 @@ namespace Buildoc.Controllers
         // GET: Inspecciones/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto");
+           
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
        
@@ -842,6 +842,17 @@ namespace Buildoc.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetInspectoresByProyecto(Guid proyectoId)
+        {
+            var residentes = await _context.Proyectos
+                .Where(p => p.Id == proyectoId)
+                .SelectMany(p => p.Residentes)
+                .Select(r => new { r.Id, r.NombreCompleto })
+                .ToListAsync();
+
+            return Json(residentes);
+        }
 
 
 
