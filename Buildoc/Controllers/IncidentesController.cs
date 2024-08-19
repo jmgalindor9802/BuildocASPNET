@@ -85,9 +85,104 @@ namespace Buildoc.Controllers
             ViewBag.VencidosIncidentes = vencidosIncidentes;
 
             // Retornar solo los incidentes activos para la vista Index
-            return View(incidentesActivos);
+            return View(todosIncidentes);
         }
-        
+
+        public async Task<IActionResult> IncidenteActivos()
+        {
+            // Obtener el usuario logueado
+            var usuarioLogueado = await _userManager.GetUserAsync(User);
+            if (usuarioLogueado == null)
+            {
+                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
+            }
+
+            // Obtener los proyectos donde el usuario logueado es el coordinador
+            var proyectosDondeEsCoordinador = await _context.Proyectos
+                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            // Obtener todos los incidentes asociados a esos proyectos
+            var todosIncidentes = await _context.Incidentes
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoIncidente)
+                .Include(i => i.Usuario)
+                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            // Filtrar incidentes archivados (estado false)
+            var incidentesArchivados = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
+                .ToList();
+
+            // Retornar solo los incidentes activos para la vista Index
+            return View(incidentesArchivados);
+        }
+
+        public async Task<IActionResult> IncidenteCerrados()
+        {
+            // Obtener el usuario logueado
+            var usuarioLogueado = await _userManager.GetUserAsync(User);
+            if (usuarioLogueado == null)
+            {
+                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
+            }
+
+            // Obtener los proyectos donde el usuario logueado es el coordinador
+            var proyectosDondeEsCoordinador = await _context.Proyectos
+                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            // Obtener todos los incidentes asociados a esos proyectos
+            var todosIncidentes = await _context.Incidentes
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoIncidente)
+                .Include(i => i.Usuario)
+                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            // Filtrar incidentes archivados (estado false)
+            var incidentesArchivados = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Cerrado)
+                .ToList();
+
+            // Retornar solo los incidentes activos para la vista Index
+            return View(incidentesArchivados);
+        }
+
+        public async Task<IActionResult> IncidenteVencidos()
+        {
+            // Obtener el usuario logueado
+            var usuarioLogueado = await _userManager.GetUserAsync(User);
+            if (usuarioLogueado == null)
+            {
+                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
+            }
+
+            // Obtener los proyectos donde el usuario logueado es el coordinador
+            var proyectosDondeEsCoordinador = await _context.Proyectos
+                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                .Select(p => p.Id)
+                .ToListAsync();
+
+            // Obtener todos los incidentes asociados a esos proyectos
+            var todosIncidentes = await _context.Incidentes
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoIncidente)
+                .Include(i => i.Usuario)
+                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                .ToListAsync();
+
+            // Filtrar incidentes archivados (estado false)
+            var incidentesArchivados = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Vencido)
+                .ToList();
+
+            // Retornar solo los incidentes activos para la vista Index
+            return View(incidentesArchivados);
+        }
         public async Task<IActionResult> IncidenteArchivados()
         {
             // Obtener el usuario logueado

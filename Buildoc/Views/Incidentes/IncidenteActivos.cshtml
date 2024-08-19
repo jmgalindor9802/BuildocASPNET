@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Buildoc.Models.Incidente>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<style>
+    /* Estilos para desactivar el color azul y el subrayado en <a> */
+    a {
+        text-decoration: none; /* Elimina el subrayado */
+        cursor: pointer; /* Cambia el cursor al estilo de un botón */
+    }
+</style>
+
+<h1 class="mb-4">Incidentes</h1>
+
+<div class="row mb-3">
+    <a href="#" id="createNewModal" class="create-new btn btn-primary mr-3"
+       data-url="@Url.Action("Create", "Incidentes")"
+       data-title="Crear incidente" data-action="create">
+        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+        </svg> Reportar incidente
+    </a>
+    <a asp-action="index" class="btn btn-primary" role="button">Volver</a>
+</div>
+
+
+<table id="example1" class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Titulo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaIncidente)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Proyecto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TipoIncidente)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Titulo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaIncidente)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Proyecto.Nombre)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
+                </td>
+                <td>
+                    <a href="#" class="edit-item" data-url="@Url.Action("Details", "Incidentes", new { id = item.Id })" data-title="Detalles del incidente" data-action="details">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                            <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                        </svg>
+                    </a> |
+                    <a href="#" class="edit-item" data-url="@Url.Action("LineaTiempo", "NovedadesIncidentes", new { incidenteId = item.Id })" data-title="Línea de Tiempo del Seguimiento" data-action="seguimiento">
+                        Segimiento
+                    </a> |
+                    <a href="#" class="edit-item" data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })" data-title="Línea de Tiempo del Seguimiento" data-action="seguimiento">
+                        Añadir novedad
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
