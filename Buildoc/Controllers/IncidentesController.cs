@@ -373,12 +373,25 @@ namespace Buildoc.Controllers
                             var lesionado = model.Lesionados[i];
                             var incidenteLesionado = model.IncidenteLesionados[i];
 
-                            lesionado.Id = Guid.NewGuid(); // Asigna un nuevo ID al lesionado
-                            _context.Add(lesionado);
-                            await _context.SaveChangesAsync();
+                            // Verificar si el lesionado ya existe en la base de datos por cédula
+                            var existingLesionado = await _context.Lesionados.FirstOrDefaultAsync(l => l.Cedula == lesionado.Cedula);
+
+                            if (existingLesionado != null)
+                            {
+                                // Si existe, usar el ID del lesionado existente
+                                incidenteLesionado.LesionadoId = existingLesionado.Id;
+                            }
+                            else
+                            {
+                                // Si no existe, crear un nuevo lesionado
+                                lesionado.Id = Guid.NewGuid(); // Asigna un nuevo ID al lesionado
+                                _context.Add(lesionado);
+                                await _context.SaveChangesAsync();
+
+                                incidenteLesionado.LesionadoId = lesionado.Id;
+                            }
 
                             incidenteLesionado.IncidenteId = model.Incidente.Id;
-                            incidenteLesionado.LesionadoId = lesionado.Id;
                             _context.Add(incidenteLesionado);
                         }
                         await _context.SaveChangesAsync();
