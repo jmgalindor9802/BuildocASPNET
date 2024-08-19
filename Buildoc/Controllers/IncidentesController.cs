@@ -29,7 +29,7 @@ namespace Buildoc.Controllers
         }
 
         // GET: Incidentes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(Guid? proyectoId)
         {
             // Obtener el usuario logueado
             var usuarioLogueado = await _userManager.GetUserAsync(User);
@@ -44,6 +44,12 @@ namespace Buildoc.Controllers
                 .Select(p => p.Id)
                 .ToListAsync();
 
+            // Guardar los proyectos en ViewBag
+            ViewBag.Proyectos = proyectosDondeEsCoordinador.Any() ?
+                await _context.Proyectos.Where(p => proyectosDondeEsCoordinador.Contains(p.Id)).ToListAsync() :
+                new List<Proyecto>();
+
+
             // Obtener todos los incidentes asociados a esos proyectos
             var todosIncidentes = await _context.Incidentes
                 .Include(i => i.Proyecto)
@@ -51,7 +57,13 @@ namespace Buildoc.Controllers
                 .Include(i => i.Usuario)
                 .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
                 .ToListAsync();
-
+            // Filtrar por proyecto si `proyectoId` tiene valor
+            if (proyectoId.HasValue)
+            {
+                todosIncidentes = todosIncidentes
+                    .Where(i => i.ProyectoId == proyectoId.Value)
+                    .ToList();
+            }
             // Filtrar incidentes activos 
             var incidentesActivos = todosIncidentes
                 .Where(i => i.Estado == EstadoIncidenteEnum.Activo)

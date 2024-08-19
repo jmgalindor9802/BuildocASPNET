@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Index";
+    var proyectos = ViewBag.Proyectos != null && ((List<Buildoc.Models.Proyecto>)ViewBag.Proyectos).Any() ?
+        new SelectList(ViewBag.Proyectos as List<Buildoc.Models.Proyecto>, "Id", "Nombre") :
+        new SelectList(Enumerable.Empty<SelectListItem>());
 }
 
 <style>
@@ -22,6 +25,13 @@
             <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
         </svg> Reportar incidente
     </a>
+    <select id="proyectoFilter" class="form-control">
+        <option value="">Seleccione un proyecto</option>
+        @foreach (var proyecto in proyectos)
+        {
+            <option value="@proyecto.Value">@proyecto.Text</option>
+        }
+    </select>
 </div>
 
 <div class="row">
@@ -129,7 +139,7 @@
     </thead>
     <tbody>
 @foreach (var item in Model) {
-        <tr>
+            <tr data-proyectoid="@item.ProyectoId">
             <td>
                 @Html.DisplayFor(modelItem => item.Titulo)
             </td>
@@ -153,3 +163,41 @@
 }
     </tbody>
 </table>
+<script>
+    $(document).ready(function () {
+        // Inicializa la DataTable con la configuración deseada
+        let table = $('#example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+            ],
+            language: {
+                url: "/espanol.json" // Ruta al archivo JSON para la traducción en español
+            },
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+            paging: true,
+            ordering: true,
+            info: true
+        });
+
+        // Filtro por proyecto
+        $('#proyectoFilter').change(function () {
+            var proyectoId = $(this).val();
+            if (proyectoId) {
+                $('#example1 tbody tr').each(function () {
+                    var rowProyectoId = $(this).data('proyectoid');
+                    if (rowProyectoId == proyectoId) {
+                        $(this).show();
+                    } else {
+                        $(this).hide();
+                    }
+                });
+            } else {
+                $('#example1 tbody tr').show(); // Muestra todas las filas si no hay filtro
+            }
+            table.draw(); // Actualiza la DataTable
+        });
+    });
+</script>
