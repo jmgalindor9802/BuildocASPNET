@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using Buildoc.Services;
+using Buildoc.Services.Incidentes;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,7 +25,7 @@ builder.Services.AddRazorPages();
 // A�adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
-
+builder.Services.AddHostedService<IncidenteEstadoService>();
 
 
 // Add EmailSender service
