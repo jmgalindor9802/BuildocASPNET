@@ -36,7 +36,7 @@ namespace Buildoc.Controllers
         {
             var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return await _context.Proyectos
-                                 .Where(p => p.CoordinadorId == coordinadorId)
+                                 .Where(p => p.CoordinadorId == coordinadorId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
                                  .ToListAsync();
         }
         //Detalles dle tipo de inspeccion para el create

@@ -12,7 +12,7 @@ namespace Buildoc.Models
 		public Guid InspeccionId { get; set; }
 		public Inspeccion Inspeccion { get; set; }
 
-		[Display(Name = "Resultado de la Inspección")]
+        [Display(Name = "Resultado de la Inspección")]
 		[StringLength(500, ErrorMessage = "El resultado no puede exceder los 500 caracteres.")]
 		public string Resultado { get; set; }
 

@@ -17,9 +17,9 @@ namespace Buildoc.Models
 
         [DisplayFormat(DataFormatString = "{0:dd MMM yyyy HH:mm}")]
         public DateTime FechaInspeccion { get; set; }
-
+        [MaxLength(255)]
         public string Objetivo { get; set; }
-
+        [MaxLength(1000)]
         [Display(Name = "Descripción")]
         
         public string? Descripcion { get; set; }
