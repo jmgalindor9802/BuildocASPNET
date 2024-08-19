@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    var esCoordinador = User.IsInRole("Coordinador");
 }
 
 <header>
@@ -11,19 +12,24 @@
 </header>
 <div class="container-page">
 
-    <div class="row mb-4 align-items-center">
-        <!-- Título de Proyectos y Botón Crear Nuevo proyecto -->
+
+    <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <h1 class="mb-0">Proyectos</h1>
-            <p class="mb-0">
-                <a href="#" id="createNewModal" class="create-new btn btn-primary"
-                   data-url="@Url.Action("Create", "Proyectos")"
-                   data-title="Crear nueva inspección" data-action="create">
-                    <i class="fas fa-plus"></i> Crear proyecto
-                </a>
+            <h1 class="mb-0">
+                <i class="fas fa-building"></i> Proyectos
+            </h1><p class="mb-0">
+                @if (esCoordinador)
+                {
+                    <a href="#" id="createNewModal" class="create-new btn btn-light"
+                       data-url="@Url.Action("Create", "Proyectos")"
+                       data-title="Crear proyecto" data-action="create">
+                        <i class="fas fa-plus"></i> Crear proyecto
+                    </a>
+                }
             </p>
         </div>
     </div>
+   
 
 
 
@@ -52,7 +58,7 @@
                 <p>Finalizados</p>
             </div>
             <div class="icon">
-                <i class="far fa-flag" style="font-size:70px;"></i>
+                    <i class="far fa-check-circle" style="font-size:70px;"></i>
             </div>
             <a href="@Url.Action("Finalizados", "Proyectos")" class="small-box-footer">
                 Ver detalles <i class="fas fa-arrow-circle-right"></i>
@@ -81,7 +87,7 @@
 
 
 <table id="example1" class="table table-bordered table-striped">
-    <thead>
+        <thead class="header-bg">
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Nombre)
