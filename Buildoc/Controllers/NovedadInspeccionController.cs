@@ -117,6 +117,12 @@ namespace Buildoc.Controllers
                     inspeccion.Estado = EstadoInspeccion.Desaprobada;
                     novedadInspeccion.Estado = EstadoInspeccion.Desaprobada;
                 }
+                else
+                {
+                    // Si actionAprobacion es null o no coincide con ninguna acción,
+                    // se asigna el estado actual de la inspección a la novedad
+                    novedadInspeccion.Estado = inspeccion.Estado;
+                }
 
 
                 _context.Add(novedadInspeccion);

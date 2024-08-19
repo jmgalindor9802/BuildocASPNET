@@ -134,6 +134,13 @@
                     }
 
                 </div>
+                <button type="button" class="btn btn-primary respond-item"
+                        data-url="@Url.Action("Create", "NovedadInspeccion", new { id = Model.Id })"
+                        data-title="Agregar Novedad"
+                        data-action="respond">
+                    <i class="fas fa-plus-circle"></i> Añadir Novedad
+                </button>
+
             </div>
         </div>
     </div>
@@ -153,28 +160,31 @@
                 // Agregar la nueva novedad a la línea de tiempo
                 var novedadesTimeline = $('.timeline');
                 var novedadHtml = `
-        <div class="timeline-item">
-            <i class="fas fa-info-circle bg-yellow"></i>
-            <div class="timeline-item">
-                <span class="time"><i class="fas fa-clock"></i> ${data.inspeccion.Novedades[data.inspeccion.Novedades.length - 1].FechaCreacion}</span>
-                <h3 class="timeline-header">Novedad</h3>
-                <div class="timeline-body">
-                    <p>${data.inspeccion.Novedades[data.inspeccion.Novedades.length - 1].Comentario}</p>
-                    ${data.inspeccion.Estado === "Aprobada"
+                        <div class="timeline-item">
+                            <i class="fas fa-info-circle bg-yellow"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> ${data.inspeccion.Novedades[data.inspeccion.Novedades.length - 1].FechaCreacion}</span>
+                                <h3 class="timeline-header">Novedad</h3>
+                                <div class="timeline-body">
+                                    <p>${data.inspeccion.Novedades[data.inspeccion.Novedades.length - 1].Comentario}</p>
+                                    ${data.inspeccion.Estado === "Aprobada"
                         ? '<p><strong>Estado Actual:</strong> Aprobado</p>'
                         : data.inspeccion.Estado === "Desaprobada"
                             ? '<p><strong>Estado Actual:</strong> Desaprobado</p>'
                             : ''
                     }
-                </div>
-            </div>
-        </div>
-    `;
+                                </div>
+                            </div>
+                        </div>
+                    `;
 
                 novedadesTimeline.append(novedadHtml);
 
                 // Mostrar el mensaje de éxito
                 toastr.success('@TempData["SuccessMessage"]');
+
+                // Cerrar el modal de detalles
+                $('#modalDetalles').modal('hide');
             } else {
                 toastr.error(data.message);
             }
@@ -191,4 +201,20 @@
         });
     });
 
+    function getBadgeClass(estado) {
+        switch (estado) {
+            case 'Programada':
+                return 'badge-programada';
+            case 'PendientesDeRevision':
+                return 'badge-pendiente-revision';
+            case 'SinResponder':
+                return 'badge-sin-responder';
+            case 'Aprobada':
+                return 'badge-aprobada';
+            case 'Desaprobada':
+                return 'badge-desaprobada';
+            default:
+                return '';
+        }
+    }
 </script>
