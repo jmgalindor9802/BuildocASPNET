@@ -313,6 +313,18 @@ namespace Buildoc.Controllers
                 .FirstOrDefaultAsync();
             return Json(tipo);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetLesionadoByCedula(long cedula)
+        {
+            var lesionado = await _context.Lesionados.FirstOrDefaultAsync(l => l.Cedula == cedula);
+            if (lesionado == null)
+            {
+                return Json(new { success = false, message = "Lesionado no encontrado" });
+            }
+
+            return Json(new { success = true, data = lesionado });
+        }
+
         // POST: Incidentes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.

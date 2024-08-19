@@ -115,6 +115,32 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
         updateIndexes();
     });
 
+    // Autocompletar campos cuando se ingresa una cédula
+    $(document).on('blur', 'input[name$="Cedula"]', function () {
+        var inputCedula = $(this);
+        var cedula = inputCedula.val();
+        if (cedula) {
+            fetch(`/Incidentes/GetLesionadoByCedula?cedula=${cedula}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        var lesionado = data.data;
+                        // Autocompletar los campos
+                        inputCedula.closest('.lesionado-item').find('input[name$="Nombre"]').val(lesionado.nombre);
+                        inputCedula.closest('.lesionado-item').find('input[name$="Apellido"]').val(lesionado.apellido);
+                        inputCedula.closest('.lesionado-item').find('input[name$="CorreoElectronico"]').val(lesionado.correoElectronico);
+                        // Completa otros campos necesarios
+                    } else {
+                        console.log(data.message);
+                        // Opcional: limpiar los campos si no se encuentra un lesionado
+                    }
+                })
+                .catch(error => {
+                    console.error("Error al obtener datos del lesionado", error);
+                });
+        }
+    });
+
 
     // Configuración del checkbox desconoceHora
     $('#desconoceHora').on('change', function () {
