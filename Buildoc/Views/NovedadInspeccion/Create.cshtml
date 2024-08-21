@@ -2,7 +2,9 @@
 
     @{
         Layout = null;
+
         var esCoordinador = User.IsInRole("Coordinador");
+
         var estadoInspeccion = ViewData["EstadoInspeccion"]?.ToString();
         var inspeccion = ViewData["Inspeccion"] as Buildoc.Models.Inspeccion;
         var respuestaInspeccion = ViewData["RespuestaInspeccion"] as Buildoc.Models.RespuestaInspeccion;
@@ -91,19 +93,19 @@
                     <span asp-validation-for="Comentario" class="text-danger"></span>
                 </div>
 
-                @if (esCoordinador)
-                {
-                    <div class="form-group">
-                        <label class="switch-label">¿Aprueba la respuesta de la inspección?</label>
-                        <input type="checkbox" id="chkAprobar" />
-                        <div id="approvalButtons" style="display:none;">
-                            <div class="btn-group" role="group">
-                                <button type="button" class="btn btn-success" id="btnAprobar">Aprobar</button>
-                                <button type="button" class="btn btn-danger" id="btnDesaprobar">Desaprobar</button>
+                @if (esCoordinador && estadoInspeccion != "Programada")
+                    {
+                        <div class="form-group">
+                            <label class="switch-label">¿Aprueba la respuesta de la inspección?</label>
+                            <input type="checkbox" id="chkAprobar" />
+                            <div id="approvalButtons" style="display:none;">
+                                <div class="btn-group" role="group">
+                                    <button type="button" class="btn btn-success" id="btnAprobar">Aprobar</button>
+                                    <button type="button" class="btn btn-danger" id="btnDesaprobar">Desaprobar</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
 
 
             </form>

@@ -66,7 +66,7 @@ namespace Buildoc.Controllers
             // Pasar la inspección y la respuesta de inspección a la vista
             ViewData["Inspeccion"] = inspeccion;
             ViewData["RespuestaInspeccion"] = inspeccion.Respuesta;
-
+            ViewData["EstadoInspeccion"] = inspeccion.Estado;
             ViewData["InspeccionId"] = id;
             return PartialView();
         }
