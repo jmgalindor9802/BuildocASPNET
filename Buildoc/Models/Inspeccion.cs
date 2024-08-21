@@ -9,6 +9,9 @@ namespace Buildoc.Models
 
         [Display(Name = "Fecha y hora")]
         [Required]
+        [DataType(DataType.DateTime)]
+
+        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy HH:mm}")]
         public DateTime FechaInspeccion { get; set; }
 
         public string Objetivo { get; set; }
@@ -40,6 +43,8 @@ namespace Buildoc.Models
 
         [Required]
         public EstadoInspeccion Estado { get; set; }
+        public Guid? RespuestaId { get; set; }
 
+        public RespuestaInspeccion? Respuesta { get; set; }
     }
 }

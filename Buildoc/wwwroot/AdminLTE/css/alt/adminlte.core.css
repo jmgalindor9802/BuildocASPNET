@@ -21563,8 +21563,12 @@ body.text-sm .control-sidebar {
 .overlay-wrapper > .loading-img,
 .info-box > .overlay,
 .info-box > .loading-img,
-.small-box > .overlay,
-.small-box > .loading-img {
+.
+> .overlay,
+.
+
+
+> .loading-img {
   height: 100%;
   left: 0;
   position: absolute;
@@ -21611,7 +21615,9 @@ body.text-sm .control-sidebar {
 .info-box .overlay > .fad,
 .info-box .overlay > .svg-inline--fa,
 .info-box .overlay > .ion,
-.small-box .overlay > .fa,
+.
+
+.overlay > .fa,
 .small-box .overlay > .fas,
 .small-box .overlay > .far,
 .small-box .overlay > .fab,

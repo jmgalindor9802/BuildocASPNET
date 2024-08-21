@@ -11,6 +11,8 @@ using System.Security.Claims;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis;
+using System.Reflection;
+
 
 namespace Buildoc.Controllers
 {
@@ -19,12 +21,14 @@ namespace Buildoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IEmailSender _emailSender;
         private readonly UserManager<Usuario> _userManager;
+        private readonly ILogger<InspeccionesController> _logger;
 
-        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager)
+        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager, ILogger<InspeccionesController> logger)
         {
             _context = context;
             _emailSender = emailSender;
             _userManager = userManager;
+            _logger = logger;
         }
 
 
@@ -90,12 +94,36 @@ namespace Buildoc.Controllers
             // Calcula el número de inspecciones con estado "Aprobadas"
             var countAprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Aprobada);
 
+            // Obtén los municipios asociados a los proyectos con al menos una inspección
+            var municipiosConInspecciones = await _context.Proyectos
+                .Where(p => proyectos.Contains(p.Id) && _context.Inspeccion.Any(i => i.ProyectoId == p.Id))
+                .Select(p => p.Municipio) // Asumiendo que 'Municipio' es un campo en el proyecto
+                .Distinct()
+                .ToListAsync();
+
+            // Obtener los detalles de las inspecciones
+            var detallesInspecciones = await _context.Inspeccion
+                .Include(i => i.Proyecto)
+                .Where(i => proyectos.Contains(i.ProyectoId))
+                .Select(i => new
+                {
+                    i.Id,
+                    i.Estado,
+                    Municipio = i.Proyecto.Municipio
+                })
+                .ToListAsync();
+
+
+
 
             // Pasa los datos a la vista
             ViewBag.CountProgramadas = countProgramadas;
             ViewBag.CountPendienteRevision = countPendienteRevision;
             ViewBag.CountSinResponder = countSinResponder;
             ViewBag.CountAprobadas = countAprobadas;
+            ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
+            ViewBag.DetallesInspecciones = detallesInspecciones;
+
             return View(inspecciones);
         }
 
@@ -227,18 +255,91 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var inspeccion = await _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (inspeccion == null)
+            try
             {
-                return NotFound();
+                var inspeccion = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Respuesta)
+                    .FirstOrDefaultAsync(m => m.Id == id);
+
+                if (inspeccion == null)
+                {
+                    return NotFound();
+                }
+
+                // Verifica si inspeccion.Respuesta está correctamente poblado
+                if (inspeccion.Respuesta != null)
+                {
+                    // Verifica las propiedades de Respuesta
+                    Console.WriteLine($"Respuesta Id: {inspeccion.Respuesta.Id}");
+                }
+
+                return View(inspeccion);
+            }
+            catch (Exception ex)
+            {
+                // Registra la excepción
+                _logger.LogError(ex, "Error al obtener los detalles de la inspección.");
+                return StatusCode(500, "Se produjo un error en el servidor.");
+            }
+        }
+
+        // Método para obtener la descripción de un enum
+        public static string GetEnumDisplayName(Enum value)
+        {
+            var type = value.GetType();
+            var memberInfo = type.GetMember(value.ToString());
+            if (memberInfo.Length > 0)
+            {
+                var attribute = memberInfo[0].GetCustomAttribute<DisplayAttribute>();
+                if (attribute != null)
+                {
+                    return attribute.Name;
+                }
+            }
+            return value.ToString();
+        }
+        //Categorias 
+        [HttpGet]
+        public async Task<IActionResult> GetCategoriasConTipoInspeccion()
+        {
+            var categoriasConTipos = await _context.TipoInspeccion
+                .GroupBy(t => t.Categoria)
+                .Where(g => g.Any())
+                .Select(g => new SelectListItem
+                {
+                    Value = g.Key.ToString(),
+                    Text = GetEnumDisplayName(g.Key)
+                })
+                .ToListAsync();
+
+            return Json(categoriasConTipos);
+        }
+
+        [HttpGet]
+        public JsonResult GetTipoInspeccionesPorCategoria(string categoria)
+        {
+            // Verificar si la cadena de categoría puede ser convertida a un valor del enum
+            if (!Enum.TryParse(categoria, out CategoriaInspeccion categoriaEnum))
+            {
+                // Si no se puede convertir, retornar una lista vacía
+                return Json(new List<object>());
             }
 
-            return View(inspeccion);
+            // Filtrar los tipos de inspección según la categoría
+            var tiposInspeccion = _context.TipoInspeccion
+                .Where(t => t.Categoria == categoriaEnum)
+                .Select(t => new {
+                    id = t.Id,
+                    nombre = t.Nombre
+                })
+                .ToList();
+
+            return Json(tiposInspeccion);
         }
+
 
         // GET: Inspecciones/Create
         public async Task<IActionResult> Create()
@@ -246,7 +347,8 @@ namespace Buildoc.Controllers
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto");
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
-            return View();
+       
+            return PartialView();
         }
 
         // POST: Inspecciones/Create
@@ -254,7 +356,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 			
 
@@ -271,7 +373,38 @@ namespace Buildoc.Controllers
 				// Enviar mensaje de error como JSON
 				return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
 			}
-			if (ModelState.IsValid)
+
+            // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
+            var inspeccionesExistentes = await _context.Inspeccion
+                .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada)
+                .ToListAsync();
+
+            foreach (var i in inspeccionesExistentes)
+            {
+                // Verificar si las fechas se superponen
+                if (inspeccion.FechaInspeccion.Date == i.FechaInspeccion.Date)
+                {
+                    if (inspeccion.EsTodoElDia || i.EsTodoElDia)
+                    {
+                        // Si la nueva inspección o la existente es todo el día, hay conflicto
+                        return Json(new { success = false, message = "El inspector ya tiene una inspección programada para todo el día en esta fecha." });
+                    }
+                    else
+                    {
+                        // Verificar si las duraciones se superponen
+                        var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
+                        var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
+
+                        if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
+                        {
+                            return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
+                        }
+                    }
+                }
+            }
+
+
+            if (ModelState.IsValid)
             {
                 inspeccion.Id = Guid.NewGuid();
                 inspeccion.Estado = EstadoInspeccion.Programada;
@@ -358,7 +491,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Resultado,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
 
             if (!ModelState.IsValid)
@@ -393,12 +526,113 @@ namespace Buildoc.Controllers
             // No modificar el estado, solo actualizar los campos permitidos
             inspeccion.Estado = inspeccionOriginal.Estado;
 
+
+            // Verificar si el inspector tiene una inspección programada en la misma fecha y hora, excluyendo la inspección que se está editando
+            var inspeccionesExistentes = await _context.Inspeccion
+                .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada && i.Id != id)
+                .ToListAsync();
+
+            foreach (var i in inspeccionesExistentes)
+            {
+                // Verificar si las fechas se superponen
+                if (inspeccion.FechaInspeccion.Date == i.FechaInspeccion.Date)
+                {
+                    if (inspeccion.EsTodoElDia || i.EsTodoElDia)
+                    {
+                        // Si la nueva inspección o la existente es todo el día, hay conflicto
+                        return Json(new { success = false, message = "El inspector ya tiene una inspección programada para todo el día en esta fecha." });
+                    }
+                    else
+                    {
+                        // Verificar si las duraciones se superponen
+                        var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
+                        var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
+
+
+                        if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
+                        {
+                            return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
+                        }
+                    }
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
                     _context.Update(inspeccion);
                     await _context.SaveChangesAsync();
+
+                    // Obtener el inspector original y el nuevo inspector
+                    var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
+                    var inspectorNuevo = await _userManager.FindByIdAsync(inspeccion.InspectorId);
+                    var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+
+                    // Preparar y enviar el correo si hay cambios
+                    if (inspeccionOriginal.FechaInspeccion != inspeccion.FechaInspeccion ||
+                        inspeccionOriginal.Objetivo != inspeccion.Objetivo ||
+                        inspeccionOriginal.Descripcion != inspeccion.Descripcion ||
+                        inspeccionOriginal.TipoInspeccionId != inspeccion.TipoInspeccionId ||
+                        inspeccionOriginal.ProyectoId != inspeccion.ProyectoId ||
+                        inspeccionOriginal.InspectorId != inspeccion.InspectorId ||
+                        inspeccionOriginal.DuracionHoras != inspeccion.DuracionHoras ||
+                        inspeccionOriginal.EsTodoElDia != inspeccion.EsTodoElDia)
+                    {
+                        if (inspeccionOriginal.InspectorId != inspeccion.InspectorId)
+                        {
+                            var subjectOriginal = "Inspección Reasignada";
+                            var htmlMessageOriginal = $@"
+<p>Hola {inspectorOriginal.Nombres},</p>
+<p>La inspección para el proyecto '<strong>{proyecto.Nombre}</strong>' programada para el {inspeccion.FechaInspeccion} ha sido reasignada a otro inspector.</p>
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorOriginal.Email, subjectOriginal, htmlMessageOriginal);
+
+                            var subjectNuevo = "Nueva Inspección Asignada";
+                            var htmlMessageNuevo = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se le ha asignado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {inspeccion.Objetivo}</p>
+<p>Descripción: {inspeccion.Descripcion}</p>";
+                            if (inspeccion.EsTodoElDia)
+                            {
+                                htmlMessageNuevo += "<p>Duración: Todo el día</p>";
+                            }
+                            else if (inspeccion.DuracionHoras.HasValue)
+                            {
+                                htmlMessageNuevo += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+                            }
+                            htmlMessageNuevo += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subjectNuevo, htmlMessageNuevo);
+                        }
+                        else
+                        {
+                            // Notificar al inspector nuevo si no ha cambiado
+                            var subject = "Inspección Actualizada";
+                            var htmlMessage = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se han actualizado los detalles de la inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {inspeccion.Objetivo}</p>
+<p>Descripción: {inspeccion.Descripcion}</p>";
+                            if (inspeccion.EsTodoElDia)
+                            {
+                                htmlMessage += "<p>Duración: Todo el día</p>";
+                            }
+                            else if (inspeccion.DuracionHoras.HasValue)
+                            {
+                                htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+                            }
+                            htmlMessage += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subject, htmlMessage);
+                        }
+                    }
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -431,6 +665,7 @@ namespace Buildoc.Controllers
             }
 
             var inspeccion = await _context.Inspeccion
+                 .Include(i => i.Inspector) // Incluir el inspector
                 .Include(i => i.Inspector)
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoInspeccion)
@@ -440,7 +675,7 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            return View(inspeccion);
+            return PartialView("Delete",inspeccion);
         }
 
         // POST: Inspecciones/Delete/5
@@ -448,15 +683,51 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var inspeccion = await _context.Inspeccion.FindAsync(id);
-            if (inspeccion != null)
+            var inspeccion = await _context.Inspeccion
+                                  .Include(i => i.Inspector)
+                                  .Include(i => i.Proyecto)  // Incluye el proyecto si es necesario
+                                  .FirstOrDefaultAsync(i => i.Id == id);
+            if (inspeccion == null)
             {
-                _context.Inspeccion.Remove(inspeccion);
+                return Json(new { success = false, message = "Inspección no encontrada." });
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Verificar si el estado de la inspección es 'Programada'
+            if (inspeccion.Estado != EstadoInspeccion.Programada)
+            {
+                return Json(new { success = false, message = "Solo se pueden eliminar inspecciones en estado 'Programada'." });
+            }
+
+            try
+            {
+                // Verificar si el inspector está disponible
+                if (inspeccion.Inspector == null)
+                {
+                    return Json(new { success = false, message = "No se encontró información del inspector." });
+                }
+                _context.Inspeccion.Remove(inspeccion);
+                await _context.SaveChangesAsync();
+
+                // Enviar correo al inspector
+                var inspector = inspeccion.Inspector;
+                var subject = "Inspección Eliminada";
+                var htmlMessage = $@"
+            <p>Hola {inspector.Nombres},</p>
+            <p>La inspección programada para el proyecto '<strong>{inspeccion.Proyecto?.Nombre ?? "Desconocido"}</strong>' el {inspeccion.FechaInspeccion} ha sido eliminada.</p>
+            <p>Saludos,</p>
+            <p>El equipo de <strong>Buildoc</strong></p>";
+
+                await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
+
+                TempData["SuccessMessage"] = "¡La inspección se ha eliminado exitosamente!";
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al eliminar la inspección: " + ex.Message });
+            }
         }
+
 
         private bool InspeccionExists(Guid id)
         {
@@ -503,6 +774,10 @@ namespace Buildoc.Controllers
                 return Json(new { success = false, message = "Error al cambiar el estado: " + ex.Message });
             }
         }
+
+
+
+
 
     }
 }

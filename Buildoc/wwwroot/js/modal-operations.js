@@ -6,7 +6,7 @@ function addAlert(message, type) {
 
 $(document).ready(function () {
     // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
-    $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item', function (e) {
+    $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item,.respond-item', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
         var title = $(this).data('title');
@@ -22,7 +22,7 @@ $(document).ready(function () {
             }
      
             // Configurar los botones del modal según la acción
-            if (action === 'create' || action === 'edit') {
+            if (action === 'create' || action === 'edit' || action === 'respond') {
                 $('.btn-save').show();
                 $('.btn-delete').hide();
                 $('.btn-edit').hide();
@@ -60,9 +60,8 @@ $(document).ready(function () {
         }
 
         var formData = form.serialize();
-
         // Mostrar el spinner
-        $("#spinner").show();
+        $('#spin').addClass('show');
 
         $.ajax({
             url: form.attr('action'),
@@ -70,7 +69,7 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 // Ocultar el spinner
-                $("#spinner").hide();
+                $('#spin').removeClass('show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
@@ -80,8 +79,6 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                // Ocultar el spinner
-                $("#spinner").hide();
 
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
@@ -100,9 +97,8 @@ $(document).ready(function () {
         }
 
         var formData = form.serialize();
-
         // Mostrar el spinner
-        $("#spinner").show();
+        $('#spin').addClass('show');
 
         $.ajax({
             url: form.attr('action'),
@@ -110,7 +106,7 @@ $(document).ready(function () {
             data: formData,
             success: function (response) {
                 // Ocultar el spinner
-                $("#spinner").hide();
+                $('#spin').removeClass('show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
@@ -121,8 +117,7 @@ $(document).ready(function () {
             },
             error: function () {
                 // Ocultar el spinner
-                $("#spinner").hide();
-
+                $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
@@ -179,76 +174,6 @@ $(document).ready(function () {
         });
     });
 
-
-    // Manejar el evento personalizado para cargar scripts específicos de vistas parciales
-        $.getScript('/js/novedadIncidente.js')
-            .done(function () {
-                console.log('Script novedadincidente.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script novedadincidente.js:', exception);
-            });
-
-        $.getScript('/js/afectados.js')
-            .done(function () {
-                console.log('Script afectados.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script afectados.js:', exception);
-            });
-        $.getScript('/js/bs-stepper.js')
-            .done(function () {
-                console.log('Script bs-stepper.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script bs-steppers.js:', exception);
-            });
-        $.getScript('/js/ScriptIncidenteCreate.js')
-            .done(function () {
-                console.log('Script IncidenteCreate.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script IncidenteCreate.js:', exception);
-            });
-
-        $.getScript('/js/detalleTipoInspeccion.js')
-            .done(function () {
-                console.log('Script detalleTipoInspeccion.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script detalleTipoInspeccion.js:', exception);
-            });
-
-        $.getScript('/js/toggleDuracionHoras.js')
-            .done(function () {
-                console.log('Script toggleDuracionHoras.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script toggleDuracionHoras.js:', exception);
-            });
-
-        $.getScript('/js/otroScript.js')
-            .done(function () {
-                console.log('Script otroScript.js cargado correctamente.');
-            })
-            .fail(function (jqxhr, settings, exception) {
-                console.error('Error al cargar el script otroScript.js:', exception);
-            });
-
-    $.getScript('/AdminLTE/plugins/jquery-validation/jquery.validate.min.js')
-        .done(function () {
-            console.log('Script jquery.validate.min.js cargado correctamente.');
-        })
-        .fail(function (jqxhr, settings, exception) {
-            console.error('Error al cargar jquery.validate.min.js:', exception);
-        });
-    $.getScript('/adminlte/plugins/bs-stepper/js/bs-stepper.min.js')
-        .done(function () {
-            console.log('Script bs-stepper.min.js cargado correctamente.');
-        })
-        .fail(function (jqxhr, settings, exception) {
-            console.error('Error al cargar bs-stepper.min.js:', exception);
-        });
 
   
 });

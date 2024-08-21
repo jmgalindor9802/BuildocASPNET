@@ -9,7 +9,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Buildoc</title>
-
+	<link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
 	<!-- Google Font: Source Sans Pro -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
 	<!-- Font Awesome -->
@@ -37,6 +37,11 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<!-- Toastr Setup -->
 	<script src="/js/toastr-setup.js"></script>
+	<!-- Bootstrap Switch -->
+	<script src="/AdminLTE/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+	<!-- D3.js and TopoJSON -->
+	<script src="https://d3js.org/d3.v6.min.js"></script>
+	<script src="https://d3js.org/topojson.v3.min.js"></script>
 
 	<!-- AdminLTE App -->
 	<script src="/AdminLTE/js/adminlte.min.js"></script>
@@ -50,6 +55,19 @@
 			background-color: #001f3f; /* Color de fondo personalizado */
 			border-color: #001f3f; /* Color de borde personalizado */
 			color: #ffffff; /* Color de texto personalizado */
+		}
+		.dl-horizontal dt
+
+		{
+			font-weight: normal; /* Quita la negrita del texto */
+			font-size: 0.9em; /* Reduce el tamaño de la fuente */
+		}
+
+		.dl-horizontal dd {
+			font-size: 0.9em; /* Reduce el tamaño de la fuente */
+			color: #6c757d; /* Aplica la clase text-muted */
+		}
+
 		}
 	</style>
 </head>
@@ -66,10 +84,11 @@
 					<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
 				</li>
 				<li class="nav-item">
-
-					<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image  " style="opacity: .8; width: 100px; height: auto;">
-
+					<a href="@Url.Action("Index", "Home")">
+						<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style="opacity: .8; width: 100px; height: auto;">
+					</a>
 				</li>
+
 
 			</ul>
 
@@ -208,11 +227,14 @@
 			<div class="sidebar">
 				<!-- Sidebar user (optional) -->
 				<div class="user-panel mt-3 pb-3 mb-3 d-flex">
-					<div class="image">
-						<img src="/user.png" class="img-circle elevation-2" alt="User Image">
-					</div>
+					
 					<div class="info">
-						<a href="#" class="d-block"> @UserManager.GetUserName(User)!</a>
+						@{
+							var usuario = await UserManager.GetUserAsync(User);
+							var roles = await UserManager.GetRolesAsync(usuario);
+							var rolPrincipal = roles.FirstOrDefault(); // Obtener el primer rol asignado al usuario
+						}
+						<a href="#" class="d-block">@rolPrincipal</a>
 					</div>
 				</div>
 
@@ -349,17 +371,18 @@
 
 		<!-- Content Wrapper. Contains page content -->
 		<div class="content-wrapper">
-			<section class="content m-4 p-3">
+		
 				<div class="container-fluid">
 					@RenderBody()
 				</div>
-			</section>
+		
 			<!-- /.modal -->
 
 			<div class="modal fade" id="modal-lg">
 				<div class="modal-dialog modal-lg">
+					
 					<div class="modal-content">
-						<div class="overlay" style="display:none;" id="spinner" role="status">
+						<div class="overlay" id="spin">
 							<i class="fas fa-2x fa-sync fa-spin"></i>
 						</div>
 						<div class="modal-header">
@@ -467,6 +490,9 @@
 			});
 		</script>
 
+
 		@RenderSection("Scripts", required: false)
+		
+
 </body>
 </html>

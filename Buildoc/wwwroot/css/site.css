@@ -48,14 +48,14 @@
     }
 }
 
-#spinner {
+#spin {
     opacity: 0;
     visibility: hidden;
     transition: opacity .5s ease-out, visibility 0s linear .5s;
     z-index: 99999;
 }
 
-    #spinner.show {
+    #spin.show {
         transition: opacity .5s ease-out, visibility 0s linear 0s;
         visibility: visible;
         opacity: 1;
@@ -164,6 +164,7 @@ h6,
         position: relative;
         background: #FFFFFF;
     }
+
 
         .navbar-dark .navbar-nav .nav-link,
         .navbar-dark .navbar-nav .nav-link.show,
@@ -527,3 +528,195 @@ h6,
         margin-bottom: -75px;
     }
 }
+
+    .badge-programada {
+        background-color: #007bff; /* primary color */
+        color: white;
+    }
+
+    .badge-pendiente-revision {
+        background-color: #ffc006; /* orange color */
+        color: #1e2d3c;
+    }
+
+    .badge-sin-responder {
+        background-color: #dc3545; /* red color */
+        color: white;
+    }
+
+    .badge-aprobada {
+        background-color: #28a745; /* green color */
+        color: white;
+    }
+
+    .dl-horizontal dt {
+        font-weight: normal; /* Quita la negrita del texto */
+        font-size: 0.9em; /* Reduce el tamaño de la fuente */
+    }
+
+    .dl-horizontal dd {
+        font-size: 0.9em; /* Reduce el tamaño de la fuente */
+        color: #6c757d; /* Aplica la clase text-muted */
+    }
+
+
+
+    .full-height {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    #map-filter {
+        top: 10px; /* Ajusta la posición desde el borde superior */
+        right: 10px; /* Ajusta la posición desde el borde derecho */
+        z-index: 1000; /* Asegura que el filtro esté por encima del mapa */
+        width: 200px; /* Ajusta el ancho del filtro según sea necesario */
+    }
+
+    #map {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Asegúrate de que el contenedor del mapa también sea responsive */
+    .map-container {
+        position: relative;
+        width: 100%;
+        height: 500px; /* Ajusta esta altura según sea necesario */
+    }
+
+    @media (max-width: 768px) {
+        .map-container {
+            height: 300px; /* Ajusta la altura para pantallas más pequeñas */
+        }
+    }
+
+
+    /* Estilos para el borde del municipio seleccionado */
+    .municipio-selected {
+        stroke-width: 0.5px; /* Grosor aumentado para el municipio seleccionado */
+        stroke: #001f3f; /* Color del borde del municipio seleccionado */
+    }
+
+    /* Estilo para la sombra */
+    .filter-shadow {
+        filter: url(#shadow);
+    }
+
+
+    /*Inspecciones points*/
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .inspection-point {
+        animation: blink 1s infinite;
+    }
+
+    .icon {
+        width: 24px;
+        height: 24px;
+    }
+
+    .inspeccionProgramadaPoint {
+        color: blue;
+    }
+
+    .inspeccionPendienteRevisionPoint {
+        color: orange;
+    }
+
+    .inspeccionEnProcesoPoint {
+        color: red;
+    }
+
+    .inspeccionFinalizadaPoint {
+        color: green;
+    }
+
+    .inspeccionAprobadaPoint {
+        color: green;
+    }
+
+    .inspeccionDesaprobadaPoint {
+        color: green;
+    }
+
+    .inspeccionSinResponderPoint {
+        color: green;
+    }
+
+    .gray {
+        color: gray;
+    }
+
+    #map-controls {
+        display: flex;
+        flex-direction: column;
+    }
+
+        #map-controls button {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            #map-controls button:hover {
+                background-color: #f0f0f0;
+            }
+
+        #map-controls i {
+            font-size: 20px; /* Tamaño de los íconos */
+        }
+
+    .container-page {
+        padding-top: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+        padding-left: 15px;
+    }
+
+    .small-box .inner {
+        display: flex;
+        align-items: center; /* Alinea verticalmente al centro */
+        justify-content: center; /* Alinea horizontalmente al centro */
+        flex-direction: row; /* Alinea los elementos en una fila */
+    }
+
+        .small-box .inner h3 {
+            margin: 0;
+            margin-right: 10px; /* Espacio entre el número y el texto */
+            font-size: 36px; /* Ajusta el tamaño del número */
+        }
+
+        .small-box .inner p {
+            margin: 0;
+            font-size: 24px; /* Ajusta el tamaño del texto */
+        }
+
+    .small-box .icon {
+        display: flex;
+        align-items: center; /* Alinea el ícono verticalmente al centro */
+        justify-content: center; /* Alinea el ícono horizontalmente al centro */
+    }
+
+        .small-box .icon i {
+            font-size: 20px; /* Ajusta el tamaño del ícono */
+            margin-left: 10px; /* Espacio entre el número/texto y el ícono */
+        }

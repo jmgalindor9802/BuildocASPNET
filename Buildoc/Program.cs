@@ -3,9 +3,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using Buildoc.Services;
+using System.Globalization;
 using Buildoc.Services.Incidentes;
 
 var builder = WebApplication.CreateBuilder(args);
+var cultureInfo = new CultureInfo("es-CO");
+
+CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
