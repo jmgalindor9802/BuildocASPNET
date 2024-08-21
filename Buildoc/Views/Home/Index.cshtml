@@ -2,6 +2,46 @@
     ViewData["Title"] = "Home Page";
 }
 @* Carrucel *@
+
+<style>
+    .team-item {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .team-img {
+        position: relative;
+        width: 100%;
+        padding-top: 100%; /* Esto hace que el contenedor sea cuadrado */
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .team-img img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+        }
+
+    .team-social {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+    }
+</style>
+
+</style>
 <div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
     <div class="carousel-inner">
         <div class="carousel-item active">
@@ -449,59 +489,46 @@
             <h5 class="fw-bold text-primary text-uppercase">Equipo de desarrollo</h5>
             <h1 class="mb-0">Un equipo sumergido en la locura</h1>
         </div>
-        <div class="row g-5">
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
+        <div class="row g-4">
+            <!-- Juan Manuel Galindo Rojas -->
+            <div class="col-lg-6 col-md-6">
                 <div class="team-item bg-light rounded overflow-hidden">
-                    <div class="team-img position-relative overflow-hidden">
-						<img class="img-fluid w-100" src="~/teamjuanmanuel.jpg" alt="">
+                    <div class="team-img">
+                        <img src="~/TeamJuanManuel.jpg" alt="Juan Manuel Galindo Rojas">
                         <div class="team-social">
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-instagram fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
                         </div>
                     </div>
                     <div class="text-center py-4">
                         <h4 class="text-primary">Juan Manuel Galindo Rojas</h4>
-                        <p class="text-uppercase m-0">Un viejito, el eterno estudiante y material de memes</p>
+                        <p class="text-uppercase m-0">Un profesional comprometido con el aprendizaje continuo, experto en múltiples disciplinas y siempre en busca de nuevos desafíos.</p>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
+
+            <!-- Luis Nicolas Arevalo Chiquiza -->
+            <div class="col-lg-6 col-md-6">
                 <div class="team-item bg-light rounded overflow-hidden">
-                    <div class="team-img position-relative overflow-hidden">
-						<img class="img-fluid w-100" src="~/teamluisnicolas.jpg" alt="">
+                    <div class="team-img">
+                        <img src="~/TeamLuisNicolas.jpg" alt="Luis Nicolas Arevalo Chiquiza">
                         <div class="team-social">
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-instagram fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
                         </div>
                     </div>
                     <div class="text-center py-4">
                         <h4 class="text-primary">Luis Nicolas Arevalo Chiquiza</h4>
-                        <p class="text-uppercase m-0">Un serio amante del anime y de la literatura del magnifico genero del mangas, sin mencionar ser la encarnacion de la ley de murphy</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
-                <div class="team-item bg-light rounded overflow-hidden">
-                    <div class="team-img position-relative overflow-hidden">
-                        <img class="img-fluid w-100" src="https://miro.medium.com/v2/resize:fit:1200/1*3Xb43WwoeYwQIAKYsCQg6g.png" alt="">
-                        <div class="team-social">
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-instagram fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center py-4">
-                        <h4 class="text-primary">ChatGPT</h4>
-                        <p class="text-uppercase m-0">Es chat literal no nesecitas saber mas</p>
+                        <p class="text-uppercase m-0">Apasionado por la literatura y el arte, combinando su amor por el anime con una aguda comprensión de la tecnología y la ingeniería.</p>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 <!-- Team End -->
@@ -512,7 +539,7 @@
             <h5 class="fw-bold text-primary text-uppercase">Latest Blog</h5>
             <h1 class="mb-0">Read The Latest Articles from Our Blog Post</h1>
         </div>
-        <div class="row g-5">
+        <div class="row g-5 col-12" >
             <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
                 <div class="blog-item bg-light rounded overflow-hidden">
                     <div class="blog-img position-relative overflow-hidden">
