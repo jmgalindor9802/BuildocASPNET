@@ -57,6 +57,7 @@ namespace Buildoc.Controllers
                 .Include(i => i.Usuario)
                 .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
                 .ToListAsync();
+
             // Filtrar por proyecto si `proyectoId` tiene valor
             if (proyectoId.HasValue)
             {
@@ -64,6 +65,12 @@ namespace Buildoc.Controllers
                     .Where(i => i.ProyectoId == proyectoId.Value)
                     .ToList();
             }
+
+            // Obtener la cantidad total de lesionados asociados a esos incidentes
+            var totalLesionados = await _context.IncidenteLesionados
+                .Where(il => todosIncidentes.Select(i => i.Id).Contains(il.IncidenteId))
+                .CountAsync();
+
             // Filtrar incidentes activos 
             var incidentesActivos = todosIncidentes
                 .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
@@ -95,6 +102,7 @@ namespace Buildoc.Controllers
             ViewBag.ArchivadosIncidentes = archivadosIncidentes;
             ViewBag.CerradosIncidentes = cerradosIncidentes;
             ViewBag.VencidosIncidentes = vencidosIncidentes;
+            ViewBag.TotalLesionados = totalLesionados;
 
             // Retornar solo los incidentes activos para la vista Index
             return View(todosIncidentes);
