@@ -80,6 +80,12 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
                     $(this).attr('name', newName);
                 }
             });
+            // Mostrar u ocultar el botón de eliminar según el índice
+            if (index === 0) {
+                $(this).find('.remove-lesionado').hide();
+            } else {
+                $(this).find('.remove-lesionado').show();
+            }
         });
     }
 
@@ -111,7 +117,15 @@ $(document).on('shown.bs.modal', '#modal-lg', function () {
 
     // Evento para eliminar lesionado existente
     $('#lesionados-container').on('click', '.remove-lesionado', function () {
-        $(this).closest('.lesionado-item').remove();
+        // Evitar eliminar el primer lesionado
+        if ($(this).closest('.lesionado-item').index() !== 0) {
+            $(this).closest('.lesionado-item').remove();
+            updateIndexes();
+        }
+    });
+
+    // Ocultar el botón de eliminar en el primer lesionado al cargar la página
+    $(document).ready(function () {
         updateIndexes();
     });
 

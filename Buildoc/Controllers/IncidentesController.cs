@@ -330,7 +330,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(IncidenteViewModel model, /*List<Afectado> afectados*/ bool switchAfectados, string CategoriaTipoIncidente)
+        public async Task<IActionResult> Create(IncidenteViewModel model, bool switchAfectados, string CategoriaTipoIncidente)
         {
             if (!switchAfectados)
             {
@@ -349,6 +349,26 @@ namespace Buildoc.Controllers
                 if (model.Lesionados == null || model.IncidenteLesionados == null)
                 {
                     return Json(new { success = false, message = "Los datos del lesionado estan incompletos o mal diligenciados" });
+                }
+                foreach (var lesionado in model.Lesionados)
+                {
+                    // Validar que la cédula esté completa (no sea null)
+                    if (lesionado.Cedula == null)
+                    {
+                        return Json(new { success = false, message = "La cédula del lesionado no está completa." });
+                    }
+
+                    // Validar que la cédula tenga entre 7 y 10 dígitos
+                    if (lesionado.Cedula.Value.ToString().Length < 7 || lesionado.Cedula.Value.ToString().Length > 10)
+                    {
+                        return Json(new { success = false, message = "La cédula debe tener entre 7 y 10 dígitos." });
+                    }
+
+                    // Validar que la cédula no sea un número negativo
+                    if (lesionado.Cedula < 0)
+                    {
+                        return Json(new { success = false, message = "La cédula no puede contener números negativos." });
+                    }
                 }
             }
             // Validar que la fecha del incidente no sea mayor a la fecha actual
@@ -413,6 +433,8 @@ namespace Buildoc.Controllers
                 // Obtener el incidente con su TipoIncidente
                 var incidenteConTipo = await _context.Incidentes
                     .Include(i => i.TipoIncidente)
+                    .Include(i => i.IncidenteLesionados) // Incluye la relación con IncidenteLesionados
+                        .ThenInclude(il => il.Lesionado)  // Incluye también los datos del lesionado
                     .FirstOrDefaultAsync(i => i.Id == model.Incidente.Id);
 
                 if (incidenteConTipo != null && incidenteConTipo.TipoIncidente != null)
@@ -433,9 +455,10 @@ namespace Buildoc.Controllers
                                 ? incidenteConTipo.HoraIncidente.Value.ToString("HH:mm")
                                 : "Hora desconocida";
 
-                            //var cantidadAfectados = incidenteConTipo.Afectados != null && incidenteConTipo.Afectados.Any()
-                            //    ? $"{incidenteConTipo.Afectados.Count} afectado(s) reportado(s)"
-                            //    : "No se han reportado afectados";
+                            // Cuenta la cantidad de lesionados
+                            var cantidadAfectados = incidenteConTipo.IncidenteLesionados != null && incidenteConTipo.IncidenteLesionados.Any()
+                                ? $"{incidenteConTipo.IncidenteLesionados.Count} lesionado(s) reportado(s)"
+                                : null; // Si no hay lesionados, no se mostrará nada
 
                             var subjectCoordinador = "Reporte de Incidente - Acción Requerida";
                             var htmlMessageCoordinador = $@"
@@ -446,13 +469,20 @@ namespace Buildoc.Controllers
                                     <li><strong>Hora del Incidente:</strong> {horaIncidente}</li>
                                     <li><strong>Categoría:</strong> {incidenteConTipo.TipoIncidente.CategoriaDescripcion}</li>
                                     <li><strong>Título:</strong> {incidenteConTipo.Titulo}</li>
-                                    <li><strong>Gravedad:</strong> {incidenteConTipo.TipoIncidente.Gravedad}</li>
-                                    
-                                </ul>
-                                <p><strong>Descripción del Incidente:</strong> {incidenteConTipo.Descripcion}</p>
-                                <p>Le solicitamos que revise el incidente a la mayor brevedad y tome las medidas necesarias para mitigar cualquier riesgo adicional.</p>
-                                <p>Saludos cordiales,</p>
-                                <p>El equipo de <strong>Buildoc</strong></p>";
+                                    <li><strong>Gravedad:</strong> {incidenteConTipo.TipoIncidente.Gravedad}</li>";
+
+                                    // Solo añadimos la línea de lesionados si hay lesionados reportados
+                                    if (!string.IsNullOrEmpty(cantidadAfectados))
+                                    {
+                                        htmlMessageCoordinador += $"<li><strong>Cantidad de Lesionados:</strong> {cantidadAfectados}</li>";
+                                    }
+
+                                 htmlMessageCoordinador += $@"
+                                    </ul>
+                                    <p><strong>Descripción del Incidente:</strong> {incidenteConTipo.Descripcion}</p>
+                                    <p>Le solicitamos que revise el incidente a la mayor brevedad y tome las medidas necesarias para mitigar cualquier riesgo adicional.</p>
+                                    <p>Saludos cordiales,</p>
+                                    <p>El equipo de <strong>Buildoc</strong></p>";
 
                             await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
                         }
