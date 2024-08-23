@@ -549,6 +549,11 @@ h6,
         color: white;
     }
 
+.badge-desaprobada {
+    background-color: #6610f2; /* gray color */
+    color: white;
+}
+
     .dl-horizontal dt {
         font-weight: normal; /* Quita la negrita del texto */
         font-size: 0.9em; /* Reduce el tamaño de la fuente */
@@ -650,9 +655,9 @@ h6,
         color: green;
     }
 
-    .inspeccionDesaprobadaPoint {
-        color: green;
-    }
+.inspeccionDesaprobadaPoint {
+    color: #6610f2;
+}
 
     .inspeccionSinResponderPoint {
         color: green;
@@ -720,3 +725,91 @@ h6,
             font-size: 20px; /* Ajusta el tamaño del ícono */
             margin-left: 10px; /* Espacio entre el número/texto y el ícono */
         }
+
+
+.badge-proyecto {
+    padding: 0.5em 1em;
+    border-radius: 0.25em;
+    font-size: 0.875em;
+    color: white;
+}
+
+.badge-proyecto-en-curso {
+    background-color: #007bff; /* Azul */
+    color: white; /* Texto blanco para contraste */
+}
+
+.badge-proyecto-finalizado {
+    background-color: #28a745; /* Verde */
+    color: white; /* Texto blanco para contraste */
+}
+
+.badge-proyecto-archivado {
+    background-color: #6c757d; /* Gris */
+    color: white; /* Texto blanco para contraste */
+}
+.timeline {
+    list-style: none;
+    padding: 0;
+    position: relative;
+}
+
+    .timeline:before {
+        content: ' ';
+        display: block;
+        width: 4px;
+        background: #ddd;
+        position: absolute;
+        left: 50%;
+        top: 0;
+        bottom: 0;
+        margin-left: -2px;
+    }
+
+.timeline-item {
+    position: relative;
+    padding: 20px 0;
+    text-align: left;
+}
+
+ 
+
+.timeline-panel {
+    margin-left: 20px;
+    padding: 10px;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    position: relative;
+    width: 45%;
+    left: 5%;
+}
+
+.timeline-heading h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+.timeline-body p {
+    margin-bottom: 0;
+}
+
+.timeline-badge {
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: #3498db;
+    position: absolute;
+    left: 50%;
+    margin-left: -15px;
+    text-align: center;
+}
+
+    
+.btn-primary {
+    background-color: #001f3f; /* Color de fondo personalizado */
+    border-color: #001f3f; /* Color de borde personalizado */
+    color: #ffffff; /* Color de texto personalizado */
+}

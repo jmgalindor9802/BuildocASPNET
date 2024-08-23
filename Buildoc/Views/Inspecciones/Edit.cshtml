@@ -110,6 +110,43 @@
        
     </form>
 </div>
+    <script>
+        $(document).ready(function () {
+            $('#ProyectoId').change(function () {
+                var proyectoId = $(this).val();
+                var $inspectorSelect = $('#InspectorId');
+                $inspectorSelect.empty(); // Limpia el select antes de llenarlo
+
+                if (proyectoId) {
+                    $.getJSON('@Url.Action("GetInspectoresByProyecto")', { proyectoId: proyectoId }, function (data) {
+                        if (data.length > 0) {
+                            $.each(data, function (index, item) {
+                                $inspectorSelect.append($('<option>', {
+                                    value: item.id,
+                                    text: item.nombreCompleto
+                                }));
+                            });
+                        } else {
+                            // Añadir una opción indicando que no hay residentes asignados
+                            $inspectorSelect.append($('<option>', {
+                                value: '',
+                                text: 'No hay residentes asignados a este proyecto',
+                                disabled: true
+                            }));
+                        }
+                    });
+                } else {
+                    // Opción predeterminada si no se ha seleccionado ningún proyecto
+                    $inspectorSelect.append($('<option>', {
+                        value: '',
+                        text: 'Selecciona un proyecto primero',
+                        disabled: true
+                    }));
+                }
+            });
+        });
+
+    </script>
 
     <script src="/js/detalleTipoInspeccion.js"></script>
     <script src="/js/toggleDuracionHoras.js"></script>

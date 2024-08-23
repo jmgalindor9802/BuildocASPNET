@@ -6,7 +6,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
+	<meta charset="UTF-8">
+
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Buildoc</title>
 	<link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
@@ -42,7 +43,10 @@
 	<!-- D3.js and TopoJSON -->
 	<script src="https://d3js.org/d3.v6.min.js"></script>
 	<script src="https://d3js.org/topojson.v3.min.js"></script>
-
+	<!-- Incluye jQuery y Bootstrap Switch -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
 	<!-- AdminLTE App -->
 	<script src="/AdminLTE/js/adminlte.min.js"></script>
 
@@ -56,7 +60,7 @@
 			border-color: #001f3f; /* Color de borde personalizado */
 			color: #ffffff; /* Color de texto personalizado */
 		}
-		.dl-horizontal dt
+			.dl-horizontal dt
 
 		{
 			font-weight: normal; /* Quita la negrita del texto */
@@ -68,7 +72,12 @@
 			color: #6c757d; /* Aplica la clase text-muted */
 		}
 
-		}
+		.header-bg {
+		background-color: #001f3f; /* Color info de Bootstrap */color: white; /* Color del texto en el encabezado */
+	}
+
+
+
 	</style>
 </head>
 <body class="hold-transition sidebar-mini">
@@ -85,7 +94,7 @@
 				</li>
 				<li class="nav-item">
 					<a href="@Url.Action("Index", "Home")">
-						<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style="opacity: .8; width: 100px; height: auto;">
+						<img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style=" width: 120px; height: auto;">
 					</a>
 				</li>
 
@@ -341,8 +350,8 @@
 							{
 
 								<li class="nav-item">
-									<a href="@Url.Action("Index", "Proyectos")" class="nav-link">
-										<i class="nav-icon fas fa-magnifying-glass"></i>
+									<a href="@Url.Action("Index", "Inspecciones")" class="nav-link">
+										<i class="nav-icon fas fa-paste"></i>
 										<p>
 											Inspecciones
 

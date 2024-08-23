@@ -8,16 +8,18 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
 using Buildoc.Models.Inspecciones;
+using Microsoft.AspNetCore.Identity;
 
 namespace Buildoc.Controllers
 {
     public class RespuestaInspeccionController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public RespuestaInspeccionController(ApplicationDbContext context)
+        private readonly UserManager<Usuario> _userManager;
+        public RespuestaInspeccionController(ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: RespuestaInspeccion
@@ -117,8 +119,23 @@ namespace Buildoc.Controllers
                     inspeccion.RespuestaId = respuestaInspeccion.Id; // Asignar el Id de la respuesta a la inspección
                     inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
 
+
+                    // Crear una nueva novedad
+                    var novedadInspeccion = new NovedadInspeccion
+                    {
+                        Id = Guid.NewGuid(),
+                        InspeccionId = inspeccion.Id,
+                        FechaCreacion = DateTime.Now,
+                        UsuarioId = _userManager.GetUserId(User), 
+                        Comentario = "Inspección respondida:",
+                        Estado = EstadoInspeccion.PendientesDeRevision
+                    };
+
                     // Añadir la respuesta al contexto
                     _context.Add(respuestaInspeccion);
+
+                    // Añadir la novedad al contexto
+                    _context.Add(novedadInspeccion);
 
                     // Actualizar la inspección en la base de datos
                     _context.Update(inspeccion);

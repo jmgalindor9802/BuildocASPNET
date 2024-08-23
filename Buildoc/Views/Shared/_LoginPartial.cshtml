@@ -45,9 +45,14 @@
 }
 else
 {
-    <li>
-       <a class="btn btn-primary py-4 px-lg-5 d-none d-lg-block" asp-area="Identity" asp-page="/Account/Login">Ingresar<i class="fa fa-arrow-right ms-3"></i></a>
-    </li>
+        <li class="nav-item ml-auto">
+            <form id="loginForm" class="form-inline" asp-area="Identity" asp-page="/Account/Login">
+                <button id="login" type="submit" class="btn btn-primary py-2 px-lg-3 my-3 mx-2 d-none d-lg-block">
+                    Ingresar<i class="fa fa-arrow-right ms-3"></i>
+                </button>
+            </form>
+        </li>
+
     @* <li class="nav-item">
         <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
     </li> *@

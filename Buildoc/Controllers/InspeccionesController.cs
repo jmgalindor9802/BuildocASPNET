@@ -36,7 +36,7 @@ namespace Buildoc.Controllers
         {
             var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             return await _context.Proyectos
-                                 .Where(p => p.CoordinadorId == coordinadorId)
+                                 .Where(p => p.CoordinadorId == coordinadorId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
                                  .ToListAsync();
         }
         //Detalles dle tipo de inspeccion para el create
@@ -64,128 +64,196 @@ namespace Buildoc.Controllers
         // GET: Inspecciones
         public async Task<IActionResult> Index()
         {
-            // Obtén el ID del coordinador logueado
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén los proyectos asociados al coordinador logueado
-            var proyectos = await _context.Proyectos
-                                          .Where(p => p.CoordinadorId == coordinadorId)
-                                          .Select(p => p.Id)
-                                          .ToListAsync();
 
-          
+            // Obtén el ID del usuario logueado
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-            var inspecciones = await _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .Where(i => proyectos.Contains(i.ProyectoId))
-                .ToListAsync();
+            // Obtén el rol del usuario logueado (asumiendo que solo tiene un rol)
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioId));
+            var rolUsuario = roles.FirstOrDefault();
 
-            // Calcula el número de inspecciones con estado "Programada"
+            List<Inspeccion> inspecciones = new List<Inspeccion>();
+
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtén los proyectos asociados al coordinador logueado
+                var proyectos = await _context.Proyectos
+                                              .Where(p => p.CoordinadorId == usuarioId)
+                                              .Select(p => p.Id)
+                                              .ToListAsync();
+
+                // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+                inspecciones = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => proyectos.Contains(i.ProyectoId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Filtra las inspecciones en las que el usuario es el inspector
+                inspecciones = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => i.InspectorId == usuarioId)
+                    .ToListAsync();
+            }
+
+            // Calcula el número de inspecciones por estado
             var countProgramadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Programada);
-
-            // Calcula el número de inspecciones con estado "En revision"
             var countPendienteRevision = inspecciones.Count(i => i.Estado == EstadoInspeccion.PendientesDeRevision);
-
-            // Calcula el número de inspecciones con estado "Vencidas o sin responder"
             var countSinResponder = inspecciones.Count(i => i.Estado == EstadoInspeccion.SinResponder);
-            // Calcula el número de inspecciones con estado "Aprobadas"
             var countAprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Aprobada);
+            var countDesaprobadas = inspecciones.Count(i => i.Estado == EstadoInspeccion.Desaprobada);
 
-            // Obtén los municipios asociados a los proyectos con al menos una inspección
-            var municipiosConInspecciones = await _context.Proyectos
-                .Where(p => proyectos.Contains(p.Id) && _context.Inspeccion.Any(i => i.ProyectoId == p.Id))
-                .Select(p => p.Municipio) // Asumiendo que 'Municipio' es un campo en el proyecto
+            // Obtén los municipios asociados a las inspecciones del usuario (sin duplicados)
+            var municipiosConInspecciones = inspecciones
+                .Select(i => i.Proyecto.Municipio)
                 .Distinct()
-                .ToListAsync();
+                .ToList();
 
             // Obtener los detalles de las inspecciones
-            var detallesInspecciones = await _context.Inspeccion
-                .Include(i => i.Proyecto)
-                .Where(i => proyectos.Contains(i.ProyectoId))
+            var detallesInspecciones = inspecciones
                 .Select(i => new
                 {
                     i.Id,
                     i.Estado,
                     Municipio = i.Proyecto.Municipio
                 })
-                .ToListAsync();
-
-
-
+                .ToList();
 
             // Pasa los datos a la vista
+            ViewBag.UsuarioId = usuarioId;
             ViewBag.CountProgramadas = countProgramadas;
             ViewBag.CountPendienteRevision = countPendienteRevision;
             ViewBag.CountSinResponder = countSinResponder;
             ViewBag.CountAprobadas = countAprobadas;
             ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
             ViewBag.DetallesInspecciones = detallesInspecciones;
-
+            ViewBag.CountDesaprobadas = countDesaprobadas;
             return View(inspecciones);
         }
+
+
 
         // GET: Inpsecciones Aprobadas
         public async Task<IActionResult> Aprobadas()
         {
+            // Obtén el ID del usuario logueado
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén el ID del coordinador logueado
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Verifica si el usuario es Coordinador
+            var esCoordinador = User.IsInRole("Coordinador");
 
-            // Obtén los proyectos asociados al coordinador logueado
-            var proyectos = await _context.Proyectos
-                                          .Where(p => p.CoordinadorId == coordinadorId)
-                                          .Select(p => p.Id)
-                                          .ToListAsync();
-
-
-
-            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-            var inspecciones = await _context.Inspeccion
+            // Inicializa la consulta base de inspecciones
+            IQueryable<Inspeccion> query = _context.Inspeccion
                 .Include(i => i.Inspector)
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoInspeccion)
-                .Where(i => proyectos.Contains(i.ProyectoId))
-                .ToListAsync();
+                .Where(p => p.Estado == EstadoInspeccion.Aprobada);
 
-            var inspeccionesAprobadas = await _context.Inspeccion
-                .Where(p => p.Estado == EstadoInspeccion.Aprobada)
-                .ToListAsync();
+            if (esCoordinador)
+            {
+                // Si es Coordinador, filtra por los proyectos en los que es Coordinador
+                var proyectos = await _context.Proyectos
+                                              .Where(p => p.CoordinadorId == usuarioId)
+                                              .Select(p => p.Id)
+                                              .ToListAsync();
+                query = query.Where(i => proyectos.Contains(i.ProyectoId));
+            }
+            else
+            {
+                // Si es Residente, filtra solo las inspecciones en las que es el Inspector asignado
+                query = query.Where(i => i.InspectorId == usuarioId);
+            }
 
+            var inspeccionesAprobadas = await query.ToListAsync();
             return View(inspeccionesAprobadas);
         }
+
+        // GET: Inpsecciones Desaprobadas
+        public async Task<IActionResult> Desaprobadas()
+        {
+            // Obtén el ID del usuario logueado
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Verifica si el usuario es Coordinador
+            var esCoordinador = User.IsInRole("Coordinador");
+
+            // Inicializa la consulta base de inspecciones
+            IQueryable<Inspeccion> query = _context.Inspeccion
+                .Include(i => i.Inspector)
+                .Include(i => i.Proyecto)
+                .Include(i => i.TipoInspeccion)
+                .Where(p => p.Estado == EstadoInspeccion.Desaprobada);
+
+            if (esCoordinador)
+            {
+                // Si es Coordinador, filtra por los proyectos en los que es Coordinador
+                var proyectos = await _context.Proyectos
+                                              .Where(p => p.CoordinadorId == usuarioId)
+                                              .Select(p => p.Id)
+                                              .ToListAsync();
+                query = query.Where(i => proyectos.Contains(i.ProyectoId));
+            }
+            else
+            {
+                // Si es Residente, filtra solo las inspecciones en las que es el Inspector asignado
+                query = query.Where(i => i.InspectorId == usuarioId);
+            }
+
+            var inspeccionesDesaprobadas = await query.ToListAsync();
+            return View(inspeccionesDesaprobadas);
+        }
+
 
         // GET: Inpsecciones Pendientes de Revision
         public async Task<IActionResult> PendientesRevision()
         {
+            // Obtén el ID del usuario logueado
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén el ID del coordinador logueado
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Obtén el rol del usuario logueado (asumiendo que solo tiene un rol)
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioId));
+            var rolUsuario = roles.FirstOrDefault();
 
-            // Obtén los proyectos asociados al coordinador logueado
-            var proyectos = await _context.Proyectos
-                                          .Where(p => p.CoordinadorId == coordinadorId)
-                                          .Select(p => p.Id)
-                                          .ToListAsync();
+            List<Inspeccion> inspeccionesPendientesRevision = new List<Inspeccion>();
 
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtén los proyectos asociados al coordinador logueado
+                var proyectos = await _context.Proyectos
+                                              .Where(p => p.CoordinadorId == usuarioId)
+                                              .Select(p => p.Id)
+                                              .ToListAsync();
 
-
-            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-            var inspecciones = await _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .Where(i => proyectos.Contains(i.ProyectoId))
-                .ToListAsync();
-
-            var inspeccionesPendientesRevision = await _context.Inspeccion
-                .Where(p => p.Estado == EstadoInspeccion.PendientesDeRevision)
-                .ToListAsync();
+                // Filtra las inspecciones basadas en los proyectos asociados al coordinador
+                inspeccionesPendientesRevision = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Respuesta)
+                    .Where(i => proyectos.Contains(i.ProyectoId) && i.Estado == EstadoInspeccion.PendientesDeRevision)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Filtra las inspecciones en las que el usuario es el inspector y están pendientes de revisión
+                inspeccionesPendientesRevision = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Respuesta)
+                    .Where(i => i.InspectorId == usuarioId && i.Estado == EstadoInspeccion.PendientesDeRevision)
+                    .ToListAsync();
+            }
 
             return View(inspeccionesPendientesRevision);
         }
+
 
         // GET: Inpsecciones sin responder
         public async Task<IActionResult> SinResponder()
@@ -217,34 +285,35 @@ namespace Buildoc.Controllers
             return View(inspeccionesSinResponder);
         }
 
-
-        // GET: Inpsecciones Programadas
+        // GET Inspecciones programadas
         public async Task<IActionResult> Programadas()
         {
+            // Obtén el ID del usuario logueado
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén el ID del coordinador logueado
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            // Obtén los proyectos asociados al coordinador logueado
-            var proyectos = await _context.Proyectos
-                                          .Where(p => p.CoordinadorId == coordinadorId)
-                                          .Select(p => p.Id)
-                                          .ToListAsync();
-
-            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-            var inspecciones = await _context.Inspeccion
+            IQueryable<Inspeccion> query = _context.Inspeccion
                 .Include(i => i.Inspector)
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoInspeccion)
-                .Where(i => proyectos.Contains(i.ProyectoId))
-                .ToListAsync();
+                .Include(i => i.Respuesta)
+                .Where(i => i.Estado == EstadoInspeccion.Programada);
 
-            var inspeccionesProgramadas = await _context.Inspeccion
-                .Where(p => p.Estado == EstadoInspeccion.Programada)
-                .ToListAsync();
+            if (User.IsInRole("Coordinador"))
+            {
+                // Si el usuario es un Coordinador, filtra las inspecciones basadas en los proyectos asociados al coordinador
+                query = query.Where(i => i.Proyecto.CoordinadorId == userId);
+            }
+            else if (User.IsInRole("Residente"))
+            {
+                // Si el usuario es un Residente, filtra las inspecciones en las que el usuario es el Inspector
+                query = query.Where(i => i.InspectorId == userId);
+            }
 
+            var inspeccionesProgramadas = await query.ToListAsync();
+            ViewBag.UsuarioId = userId;
             return View(inspeccionesProgramadas);
         }
+
 
 
         // GET: Inspecciones/Details/5
@@ -261,6 +330,8 @@ namespace Buildoc.Controllers
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Novedades)
+                     .ThenInclude(n => n.Usuario)
                     .Include(i => i.Respuesta)
                     .FirstOrDefaultAsync(m => m.Id == id);
 
@@ -344,7 +415,7 @@ namespace Buildoc.Controllers
         // GET: Inspecciones/Create
         public async Task<IActionResult> Create()
         {
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto");
+           
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
        
@@ -358,21 +429,20 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
         {
-			
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
 
-			if (!ModelState.IsValid)
-			{
-				// Obtener errores de validación
-				var errors = ModelState.Values.SelectMany(v => v.Errors)
-											  .Select(e => e.ErrorMessage)
-											  .ToList();
-				return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
-			}
-			if (inspeccion.FechaInspeccion < DateTime.Now.Date)
-			{
-				// Enviar mensaje de error como JSON
-				return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
-			}
+            if (inspeccion.FechaInspeccion < DateTime.Now.Date)
+            {
+                // Enviar mensaje de error como JSON
+                return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
+            }
 
             // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
             var inspeccionesExistentes = await _context.Inspeccion
@@ -386,69 +456,66 @@ namespace Buildoc.Controllers
                 {
                     if (inspeccion.EsTodoElDia || i.EsTodoElDia)
                     {
-                        // Si la nueva inspección o la existente es todo el día, hay conflicto
                         return Json(new { success = false, message = "El inspector ya tiene una inspección programada para todo el día en esta fecha." });
                     }
-                    else
-                    {
-                        // Verificar si las duraciones se superponen
-                        var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
-                        var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
 
-                        if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
-                        {
-                            return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
-                        }
+                    // Verificar si las duraciones se superponen
+                    var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
+                    var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
+
+                    if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
+                    {
+                        return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
                     }
                 }
             }
 
+            // Si el modelo es válido, procede a crear la inspección
+            inspeccion.Id = Guid.NewGuid();
+            inspeccion.Estado = EstadoInspeccion.Programada;
+            inspeccion.FechaProgramacion = DateTime.Now;
+            _context.Add(inspeccion);
+            await _context.SaveChangesAsync();
 
-            if (ModelState.IsValid)
+            // Obtener el inspector y proyecto asignados
+            var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
+            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+
+            // Preparar el mensaje de correo electrónico en formato HTML para el inspector
+            var subject = "Nueva Inspección Asignada";
+            var htmlMessage = $@"
+<p>Hola {inspector.Nombres},</p>
+<p>Se ha creado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {inspeccion.FechaInspeccion.ToShortDateString()}</p>
+<p>Objetivo: {inspeccion.Objetivo}</p>
+<p>Descripción: {inspeccion.Descripcion}</p>";
+
+            if (inspeccion.EsTodoElDia)
             {
-                inspeccion.Id = Guid.NewGuid();
-                inspeccion.Estado = EstadoInspeccion.Programada;
-                _context.Add(inspeccion);
-                await _context.SaveChangesAsync();
-
-                // Obtener el inspector asignado
-                var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-                var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
-
-                // Preparar el mensaje de correo electrónico en formato HTML para el inspector
-                var subject = "Nueva Inspección Asignada";
-                var htmlMessage = $@"
-    <p>Hola {inspector.Nombres},</p>
-    <p>Se ha creado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
-    <p>Fecha de Inspección: {inspeccion.FechaInspeccion.ToShortDateString()}</p>
-    <p>Objetivo: {inspeccion.Objetivo}</p>
-    <p>Descripción: {inspeccion.Descripcion}</p>";
-
-                if (inspeccion.EsTodoElDia)
-                {
-                    htmlMessage += "<p>Duración: Todo el día</p>";
-                }
-                else if (inspeccion.DuracionHoras.HasValue)
-                {
-                    htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
-                }
-
-                htmlMessage += @"
-                <p>Saludos,</p>
-                <p>El equipo de <strong>Buildoc</strong></p>";
-
-                // Enviar el correo electrónico al inspector
-                await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
-
-
-                TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
-                return Json(new { success = true });
+                htmlMessage += "<p>Duración: Todo el día</p>";
             }
+            else if (inspeccion.DuracionHoras.HasValue)
+            {
+                htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
+            }
+
+            htmlMessage += @"
+    <p>Saludos,</p>
+    <p>El equipo de <strong>Buildoc</strong></p>";
+
+            // Enviar el correo electrónico al inspector
+            await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
+
+            TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
+            return Json(new { success = true });
+
+            // Si el modelo no es válido, retornar la vista parcial con los datos existentes
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
-            return PartialView("Create",inspeccion);
+            return PartialView("Create", inspeccion);
         }
+
 
         // GET: Inspecciones/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
@@ -775,6 +842,17 @@ namespace Buildoc.Controllers
             }
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetInspectoresByProyecto(Guid proyectoId)
+        {
+            var residentes = await _context.Proyectos
+                .Where(p => p.Id == proyectoId)
+                .SelectMany(p => p.Residentes)
+                .Select(r => new { r.Id, r.NombreCompleto })
+                .ToListAsync();
+
+            return Json(residentes);
+        }
 
 
 

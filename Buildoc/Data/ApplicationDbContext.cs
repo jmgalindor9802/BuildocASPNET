@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using System.Reflection.Emit;
+using Buildoc.Models.Inspecciones;
 
 namespace Buildoc.Data
 {
@@ -91,6 +92,12 @@ namespace Buildoc.Data
             builder.Entity<NovedadesIncidente>()
                 .Property(s => s.FechaCreacion)
                 .HasDefaultValueSql("GETDATE()");
+
+
+            builder.Entity<NovedadInspeccion>()
+       .HasOne(n => n.Usuario)
+       .WithMany() 
+       .HasForeignKey(n => n.UsuarioId);
         }
 
         public DbSet<Proyecto> Proyectos { get; set; }

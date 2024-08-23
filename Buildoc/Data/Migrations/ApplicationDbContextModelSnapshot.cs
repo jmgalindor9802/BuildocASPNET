@@ -118,8 +118,9 @@ namespace Buildoc.Data.Migrations
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("Descripcion")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
                 b.Property<int?>("DuracionHoras")
                     .HasColumnType("int");
@@ -133,11 +134,15 @@ namespace Buildoc.Data.Migrations
                 b.Property<DateTime>("FechaInspeccion")
                     .HasColumnType("datetime2");
 
-                b.Property<string>("InspectorId")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<DateTime>("FechaProgramacion")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Objetivo")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("InspectorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Objetivo")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                 b.Property<Guid>("ProyectoId")
                     .HasColumnType("uniqueidentifier");
@@ -222,35 +227,47 @@ namespace Buildoc.Data.Migrations
                     .ValueGeneratedOnAdd()
                     .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("Cliente")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Cliente")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                 b.Property<string>("CoordinadorId")
                     .HasColumnType("nvarchar(450)");
 
-                b.Property<string>("Departamento")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Departamento")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<string>("Direccion")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
                 b.Property<int>("Estado")
                     .HasColumnType("int");
 
-                b.Property<string>("Municipio")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Nombre")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("FechaFinalizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Municipio")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                 b.HasKey("Id");
 
@@ -353,13 +370,15 @@ namespace Buildoc.Data.Migrations
                 b.Property<int>("Categoria")
                     .HasColumnType("int");
 
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<string>("Nombre")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                 b.HasKey("Id");
 
@@ -688,6 +707,23 @@ namespace Buildoc.Data.Migrations
                 b.Navigation("TipoInspeccion");
             });
 
+            modelBuilder.Entity("Buildoc.Models.Inspecciones.NovedadInspeccion", b =>
+                {
+                    b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
+                        .WithMany("Novedades")
+                        .HasForeignKey("InspeccionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Buildoc.Models.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId");
+
+                    b.Navigation("Inspeccion");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("Buildoc.Models.NovedadesIncidente", b =>
                 {
                     b.HasOne("Buildoc.Models.Incidente", "Incidente")
@@ -807,9 +843,11 @@ namespace Buildoc.Data.Migrations
                 });
 
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-            {
-                b.Navigation("Respuesta");
-            });
+                {
+                    b.Navigation("Novedades");
+
+                    b.Navigation("Respuesta");
+                });
 
 
             modelBuilder.Entity("Buildoc.Models.Lesionado", b =>
