@@ -113,5 +113,7 @@ namespace Buildoc.Data
         public DbSet<RespuestaInspeccion> RespuestaInspecciones { get; set; }
         public DbSet<Lesionado> Lesionados { get; set; }
         public DbSet<IncidenteLesionado> IncidenteLesionados { get; set; }
+        public DbSet<NovedadInspeccion> NovedadInspeccion { get; set; }
+
     }
 }
