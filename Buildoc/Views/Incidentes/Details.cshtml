@@ -33,80 +33,92 @@
 <div class="row mt-3">
     <div class="col-md-12">
         <div class="card">
-            <h6 class="text-primary"><i class="fas fa-history"></i> Línea de Tiempo</h6>
-            <div class="timeline">
-                <!-- Evento de incidente -->
-                <div class="timeline-item">
-                    <i class="fas fa-exclamation-triangle bg-danger"></i>
+            <div class="card-body">
+                <h6 class="text-primary"><i class="fas fa-history"></i> Línea de Tiempo</h6>
+                <div class="timeline">
+                    <!-- Evento de incidente -->
                     <div class="timeline-item">
-                        <span class="time"><i class="fas fa-clock"></i> @Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
-                        <h3 class="timeline-header">Incidente reportado</h3>
-                        <div class="timeline-body">
-                            <p><strong>Tipo de incidente:</strong> @Model.TipoIncidente.Titulo</p>
-                            <p><strong>Incidente:</strong> @Model.Titulo</p>
-                            <p><strong>Descripcion:</strong> @Model.Descripcion</p>
-                            <p><strong>Sugerencia:</strong> @(string.IsNullOrEmpty(Model.Sugerencia) ? "No hay sugerencia" : Model.Sugerencia)</p>
-                            <p><strong>Autor del reporte:</strong> @Model.Usuario.NombreCompleto
-                                <small>(@Html.DisplayFor(model => model.Usuario.Email))</small>
-                            </p>
-                            <p>
-                                <strong>Estado actual:</strong>
-                                <span class="badge @(Model.Estado == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                        <i class="fas fa-exclamation-triangle bg-danger"></i>
+                        <div class="timeline-item">
+                            <span class="time"><i class="fas fa-clock"></i> @Model.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
+                            <h3 class="timeline-header">Incidente reportado</h3>
+                            <div class="timeline-body">
+                                <p><strong>Tipo de incidente:</strong> @Model.TipoIncidente.Titulo</p>
+                                <p><strong>Incidente:</strong> @Model.Titulo</p>
+                                <p><strong>Descripcion:</strong> @Model.Descripcion</p>
+                                <p><strong>Sugerencia:</strong> @(string.IsNullOrEmpty(Model.Sugerencia) ? "No hay sugerencia" : Model.Sugerencia)</p>
+                                <p>
+                                    <strong>Autor del reporte:</strong> @Model.Usuario.NombreCompleto
+                                    <small>(@Html.DisplayFor(model => model.Usuario.Email))</small>
+                                </p>
+                                <p>
+                                    <strong>Estado actual:</strong>
+                                    <span class="badge @(Model.Estado == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
                                               Model.Estado == EstadoIncidenteEnum.Vencido ? "badge-programada" :
                                               Model.Estado == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
                                               Model.Estado == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
-                                    @Html.DisplayFor(model => model.Estado)
-                                </span>
-                            </p>
+                                        @Html.DisplayFor(model => model.Estado)
+                                    </span>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Novedades -->
-                @if (Model.NovedadesIncidentes != null && Model.NovedadesIncidentes.Any())
-                {
-                    @foreach (var novedad in Model.NovedadesIncidentes.OrderBy(n => n.FechaCreacion))
+                    <!-- Novedades -->
+                    @if (Model.NovedadesIncidentes != null && Model.NovedadesIncidentes.Any())
                     {
-                        <div class="timeline-item">
-                            <i class="fas fa-info-circle bg-yellow"></i>
+                        @foreach (var novedad in Model.NovedadesIncidentes.OrderBy(n => n.FechaCreacion))
+                        {
                             <div class="timeline-item">
-                                <span class="time"><i class="fas fa-clock"></i> @novedad.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
-                                <h3 class="timeline-header">Novedad</h3>
-                                <div class="timeline-body">
-                                    <p>@novedad.Titulo</p>
-                                    <p>@novedad.Descripcion</p>
-                                    <span class="badge @(novedad.EstadoNovedad == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                                <i class="fas fa-info-circle bg-yellow"></i>
+                                <div class="timeline-item">
+                                    <span class="time"><i class="fas fa-clock"></i> @novedad.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
+                                    <h3 class="timeline-header">Novedad</h3>
+                                    <div class="timeline-body">
+                                        <p>@novedad.Titulo</p>
+                                        <p>@novedad.Descripcion</p>
+                                        <span class="badge @(novedad.EstadoNovedad == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
                                               novedad.EstadoNovedad == EstadoIncidenteEnum.Vencido ? "badge-programada" :
                                               novedad.EstadoNovedad == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
                                               novedad.EstadoNovedad == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
-                                        @novedad.EstadoNovedad
-                                    </span>
-                                    <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>
+                                            @novedad.EstadoNovedad
+                                        </span>
+                                        <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="timeline-item">
+                            <i class="fas fa-info-circle bg-gray"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> No disponible</span>
+                                <h3 class="timeline-header">Novedades</h3>
+                                <div class="timeline-body">
+                                    <p>No hay novedades relacionadas con esta inspección.</p>
                                 </div>
                             </div>
                         </div>
                     }
-                }
-                else
+                </div>
+                @if (Model.Estado == EstadoIncidenteEnum.Activo)
                 {
-                    <div class="timeline-item">
-                        <i class="fas fa-info-circle bg-gray"></i>
-                        <div class="timeline-item">
-                            <span class="time"><i class="fas fa-clock"></i> No disponible</span>
-                            <h3 class="timeline-header">Novedades</h3>
-                            <div class="timeline-body">
-                                <p>No hay novedades relacionadas con esta inspección.</p>
-                            </div>
-                        </div>
-                    </div>
+                    <button type="button" class="btn btn-primary respond-item"
+                            data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = Model.Id })"
+                            data-title="Agregar Novedad"
+                            data-action="respond">
+                        <i class="fas fa-plus-circle"></i> Añadir Novedad
+                    </button>
+                    <button type="button" class="btn btn-primary respond-item"
+                            data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = Model.Id })"
+                            data-title="Agregar Novedad"
+                            data-action="respond">
+                        <i class="fas fa-plus-circle"></i> Añadir Lesionados
+                    </button>
                 }
             </div>
-            <button type="button" class="btn btn-primary respond-item"
-                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = Model.Id })"
-                    data-title="Agregar Novedad"
-                    data-action="respond">
-                <i class="fas fa-plus-circle"></i> Añadir Novedad
-            </button>
         </div>
     </div>
 </div>

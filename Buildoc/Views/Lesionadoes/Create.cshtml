@@ -1,0 +1,115 @@
+﻿@model LesionadoViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+<div class="row justify-content-center mb-4">
+    <div class="col-md-12">
+        <form asp-action="Create" class="ml-3 mr-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IncidenteId"/>
+            <div id="lesionados-container">
+                <div class="lesionado-item">
+                    <h5>Lesionados</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Lesionados[0].Cedula" class="control-label"></label>
+                                <input asp-for="Lesionados[0].Cedula" type="number" class="form-control" />
+                                <span asp-validation-for="Lesionados[0].Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Lesionados[0].CorreoElectronico" class="control-label"></label>
+                                <input asp-for="Lesionados[0].CorreoElectronico" type="email" class="form-control" />
+                                <span asp-validation-for="Lesionados[0].CorreoElectronico" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Lesionados[0].Nombre" class="control-label"></label>
+                                <input asp-for="Lesionados[0].Nombre" class="form-control" />
+                                <span asp-validation-for="Lesionados[0].Nombre" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label asp-for="Lesionados[0].Apellido" class="control-label"></label>
+                                <input asp-for="Lesionados[0].Apellido" class="form-control" />
+                                <span asp-validation-for="Lesionados[0].Apellido" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label asp-for="IncidenteLesionados[0].GeneroAfectado" class="control-label"></label>
+                                <select asp-for="IncidenteLesionados[0].GeneroAfectado" class="form-control">
+                                    <option value="Hombre">Hombre</option>
+                                    <option value="Mujer">Mujer</option>
+                                </select>
+                                <span asp-validation-for="IncidenteLesionados[0].GeneroAfectado" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿El afectado esta muerto?</label>
+                                <select asp-for="IncidenteLesionados[0].Defuncion" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="IncidenteLesionados[0].Defuncion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿El afectado es un trabajador?</label>
+                                <select asp-for="IncidenteLesionados[0].AsociadaProyecto" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="IncidenteLesionados[0].AsociadaProyecto" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿Se brindaron primeros auxilios?</label>
+                                <select asp-for="IncidenteLesionados[0].PrimerosAuxilios" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="IncidenteLesionados[0].PrimerosAuxilios" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label class="control-label">¿Tuvieron que hospitalizar al lesionado?</label>
+                                <select asp-for="IncidenteLesionados[0].Hospitalizado" class="form-control">
+                                    <option value="false">No</option>
+                                    <option value="true">Sí</option>
+                                </select>
+                                <span asp-validation-for="IncidenteLesionados[0].Hospitalizado" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label">Descripción de la actividad realizada durante el incidente</label>
+                                <textarea asp-for="IncidenteLesionados[0].ActividadRealizada" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-danger remove-lesionado">Eliminar lesionado</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex mt-3">
+                <button type="button" id="add-lesionado" class="btn btn-success mr-4"><i class="fas fa-plus-circle"></i> Añadir lesionado</button>
+                <button type="button" class="btn btn-primary btn-previous">Anterior</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

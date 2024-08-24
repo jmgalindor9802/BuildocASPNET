@@ -1,9 +1,8 @@
-﻿@model IEnumerable<Buildoc.Models.Incidente>
+﻿@model IEnumerable<Buildoc.Models.Lesionado>
 
 @{
-    ViewData["Title"] = "Incidentes archivados";
+    ViewData["Title"] = "Index";
 }
-
 <style>
     /* Estilos para desactivar el color azul y el subrayado en <a> */
     a {
@@ -12,12 +11,13 @@
     }
 </style>
 
+
 <div class="container-page">
     <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
         <div class="col-12 d-flex justify-content-between align-items-center">
-            <h1 class="mb-0"><i class="fas fa-lock"></i> Incidentes cerrados</h1>
+            <h1 class="mb-0"><i class="fas fa-medkit"></i> Lesionados</h1>
             <p class="mb-0">
-                <a asp-action="index" class="btn btn-light" role="button"><i class="fas fa-arrow-left"></i> Volver</a>
+                <a asp-controller="Incidentes" asp-action="index" class="btn btn-light" role="button"><i class="fas fa-arrow-left"></i> Volver</a>
             </p>
         </div>
     </div>
@@ -26,16 +26,16 @@
         <thead class="header-bg">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Titulo)
+                    @Html.DisplayNameFor(model => model.Nombre)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FechaIncidente)
+                    @Html.DisplayNameFor(model => model.Apellido)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Proyecto)
+                    @Html.DisplayNameFor(model => model.CorreoElectronico)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.TipoIncidente)
+                    @Html.DisplayNameFor(model => model.Cedula)
                 </th>
                 <th></th>
             </tr>
@@ -45,19 +45,21 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Titulo)
+                        @Html.DisplayFor(modelItem => item.Nombre)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FechaIncidente)
+                        @Html.DisplayFor(modelItem => item.Apellido)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Proyecto.Nombre)
+                        @Html.DisplayFor(modelItem => item.CorreoElectronico)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
+                        @Html.DisplayFor(modelItem => item.Cedula)
                     </td>
                     <td>
-                        <a asp-action="Delete" asp-route-id="@item.Id">Restaurar</a>
+                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                     </td>
                 </tr>
             }
