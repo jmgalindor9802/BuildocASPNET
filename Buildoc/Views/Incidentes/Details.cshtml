@@ -63,7 +63,43 @@
                             </div>
                         </div>
                     </div>
-
+                    <!-- Lesionados relacionados al incidente -->
+                    @if (Model.IncidenteLesionados != null && Model.IncidenteLesionados.Any())
+                    {
+                        @foreach (var incidenteLesionado in Model.IncidenteLesionados)
+                        {
+                            <div class="timeline-item">
+                                <i class="fas fa-user-injured bg-warning"></i>
+                                <div class="timeline-item">
+                                    <span class="time"><i class="fas fa-clock"></i> @incidenteLesionado.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
+                                    <h3 class="timeline-header">Lesionado reportado</h3>
+                                    <div class="timeline-body">
+                                        <p><strong>Nombre:</strong> @incidenteLesionado.Lesionado.Nombre @incidenteLesionado.Lesionado.Apellido</p>
+                                        <p><strong>Cédula:</strong> @incidenteLesionado.Lesionado.Cedula</p>
+                                        <p><strong>Correo electrónico:</strong> @(string.IsNullOrEmpty(incidenteLesionado.Lesionado.CorreoElectronico) ? "No disponible" : incidenteLesionado.Lesionado.CorreoElectronico)</p>
+                                        <p><strong>Defunción:</strong> @(incidenteLesionado.Defuncion ? "Sí" : "No")</p>
+                                        <p><strong>Actividad realizada:</strong> @(string.IsNullOrEmpty(incidenteLesionado.ActividadRealizada) ? "No especificada" : incidenteLesionado.ActividadRealizada)</p>
+                                        <p><strong>Género:</strong> @incidenteLesionado.GeneroAfectado</p>
+                                        <p><strong>Hospitalización:</strong> @(incidenteLesionado.Hospitalizado ? "Sí" : "No")</p>
+                                        <p><strong>Primeros Auxilios:</strong> @(incidenteLesionado.PrimerosAuxilios ? "Sí" : "No")</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="timeline-item">
+                            <i class="fas fa-user-injured bg-gray"></i>
+                            <div class="timeline-item">
+                                <span class="time"><i class="fas fa-clock"></i> No disponible</span>
+                                <h3 class="timeline-header">Lesionados</h3>
+                                <div class="timeline-body">
+                                    <p>No hay lesionados relacionados con este incidente.</p>
+                                </div>
+                            </div>
+                        </div>
+                    }
                     <!-- Novedades -->
                     @if (Model.NovedadesIncidentes != null && Model.NovedadesIncidentes.Any())
                     {

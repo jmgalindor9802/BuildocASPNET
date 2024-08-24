@@ -40,5 +40,11 @@ namespace Buildoc.Models
 
         [Display(Name = "Se brindó primeros auxilios")]
         public bool PrimerosAuxilios { get; set; }
+        [Display(Name = "Fecha de creación")]
+        public DateTime FechaCreacion { get; set; }
+        public IncidenteLesionado()
+        {
+            FechaCreacion = DateTime.Now;
+        }
     }
 }

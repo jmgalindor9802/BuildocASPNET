@@ -249,6 +249,7 @@ namespace Buildoc.Controllers
                 .Include(i => i.TipoIncidente)
                 .Include(i => i.Usuario)
                 .Include(i => i.IncidenteLesionados)
+                    .ThenInclude(il => il.Lesionado) // Incluye la entidad Lesionado
                 .Include(i => i.NovedadesIncidentes)
                     .ThenInclude(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
