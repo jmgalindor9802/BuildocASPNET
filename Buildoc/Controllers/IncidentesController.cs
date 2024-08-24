@@ -33,37 +33,45 @@ namespace Buildoc.Controllers
         {
             // Obtener el usuario logueado
             var usuarioLogueado = await _userManager.GetUserAsync(User);
+
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
             if (usuarioLogueado == null)
             {
                 return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
             }
-
-            // Obtener los proyectos donde el usuario logueado es el coordinador
-            var proyectosDondeEsCoordinador = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            // Guardar los proyectos en ViewBag
-            ViewBag.Proyectos = proyectosDondeEsCoordinador.Any() ?
-                await _context.Proyectos.Where(p => proyectosDondeEsCoordinador.Contains(p.Id)).ToListAsync() :
-                new List<Proyecto>();
-
-
-            // Obtener todos los incidentes asociados a esos proyectos
-            var todosIncidentes = await _context.Incidentes
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoIncidente)
-                .Include(i => i.Usuario)
-                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
-                .ToListAsync();
-
-            // Filtrar por proyecto si `proyectoId` tiene valor
-            if (proyectoId.HasValue)
+            List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
+            if (rolUsuario == "Coordinador")
             {
-                todosIncidentes = todosIncidentes
-                    .Where(i => i.ProyectoId == proyectoId.Value)
-                    .ToList();
+                // Obtener los proyectos donde el usuario logueado es el coordinador
+                var proyectosDondeEsCoordinador = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                // Obtener todos los incidentes asociados a esos proyectos
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Obtener los incidentes y lesionados reportados por el usuario logueado
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Include(i => i.IncidenteLesionados)
+                    .Where(i => i.UsuarioId == usuarioLogueado.Id)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
+                todosIncidentes = new List<Incidente>(); // O maneja esto de acuerdo a tus necesidades
             }
 
             // Obtener la cantidad total de lesionados asociados a esos incidentes
@@ -116,20 +124,42 @@ namespace Buildoc.Controllers
             {
                 return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
             }
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
 
-            // Obtener los proyectos donde el usuario logueado es el coordinador
-            var proyectosDondeEsCoordinador = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            // Obtener todos los incidentes asociados a esos proyectos
-            var todosIncidentes = await _context.Incidentes
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoIncidente)
-                .Include(i => i.Usuario)
-                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
-                .ToListAsync();
+            List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtener los proyectos donde el usuario logueado es el coordinador
+                var proyectosDondeEsCoordinador = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                // Obtener todos los incidentes asociados a esos proyectos
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Obtener los incidentes y lesionados reportados por el usuario logueado
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Include(i => i.IncidenteLesionados)
+                    .Where(i => i.UsuarioId == usuarioLogueado.Id)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
+                todosIncidentes = new List<Incidente>(); // O maneja esto de acuerdo a tus necesidades
+            }
 
             // Filtrar incidentes archivados (estado false)
             var incidentesArchivados = todosIncidentes
@@ -148,20 +178,42 @@ namespace Buildoc.Controllers
             {
                 return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
             }
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
 
-            // Obtener los proyectos donde el usuario logueado es el coordinador
-            var proyectosDondeEsCoordinador = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            // Obtener todos los incidentes asociados a esos proyectos
-            var todosIncidentes = await _context.Incidentes
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoIncidente)
-                .Include(i => i.Usuario)
-                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
-                .ToListAsync();
+            List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtener los proyectos donde el usuario logueado es el coordinador
+                var proyectosDondeEsCoordinador = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                // Obtener todos los incidentes asociados a esos proyectos
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Obtener los incidentes y lesionados reportados por el usuario logueado
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Include(i => i.IncidenteLesionados)
+                    .Where(i => i.UsuarioId == usuarioLogueado.Id)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
+                todosIncidentes = new List<Incidente>(); // O maneja esto de acuerdo a tus necesidades
+            }
 
             // Filtrar incidentes archivados (estado false)
             var incidentesArchivados = todosIncidentes
@@ -211,20 +263,42 @@ namespace Buildoc.Controllers
             {
                 return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
             }
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
 
-            // Obtener los proyectos donde el usuario logueado es el coordinador
-            var proyectosDondeEsCoordinador = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            // Obtener todos los incidentes asociados a esos proyectos
-            var todosIncidentes = await _context.Incidentes
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoIncidente)
-                .Include(i => i.Usuario)
-                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
-                .ToListAsync();
+            List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtener los proyectos donde el usuario logueado es el coordinador
+                var proyectosDondeEsCoordinador = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                // Obtener todos los incidentes asociados a esos proyectos
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Obtener los incidentes y lesionados reportados por el usuario logueado
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .Include(i => i.IncidenteLesionados)
+                    .Where(i => i.UsuarioId == usuarioLogueado.Id)
+                    .ToListAsync();
+            }
+            else
+            {
+                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
+                todosIncidentes = new List<Incidente>(); // O maneja esto de acuerdo a tus necesidades
+            }
 
             // Filtrar incidentes archivados (estado false)
             var incidentesArchivados = todosIncidentes
@@ -264,15 +338,34 @@ namespace Buildoc.Controllers
 
 
         // GET: Incidentes/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             // Obtener el ID del usuario actual
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(userId));
+            var rolUsuario = roles.FirstOrDefault();
+            List<Proyecto> proyectos = new List<Proyecto>();
 
-            // Obtener los proyectos creados por el coordinador logeado y que estén en estado "EnCurso"
-            var proyectos = _context.Proyectos
-                .Where(p => p.CoordinadorId == userId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
-                .ToList();
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtener los proyectos creados por el coordinador logeado y que estén en estado "EnCurso"
+                proyectos = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == userId && p.Estado == Proyecto.EstadoProyecto.EnCurso)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+                // Obtener los proyectos en los que el residente logueado está asignado y que estén en estado "EnCurso"
+                proyectos = await _context.Proyectos
+                    .Where(p => p.Residentes.Any(r => r.Id == userId) && p.Estado == Proyecto.EstadoProyecto.EnCurso)
+                    .ToListAsync();
+            }
+            else
+            {
+                proyectos = new List<Proyecto>();
+            }
+
             ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
             ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
             // Obtener todas las categorías del enum con sus descripciones

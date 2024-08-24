@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    var esCoordinador = User.IsInRole("Coordinador");
     var proyectos = ViewBag.Proyectos != null && ((List<Buildoc.Models.Proyecto>)ViewBag.Proyectos).Any() ?
         new SelectList(ViewBag.Proyectos as List<Buildoc.Models.Proyecto>, "Id", "Nombre") :
         new SelectList(Enumerable.Empty<SelectListItem>());
@@ -60,21 +61,24 @@
                 </a>
             </div>
         </div>
-        <div class="col mb-1">
-            <!-- small card -->
-            <div class="small-box bg-info">
-                <div class="inner">
-                    <h3>@ViewBag.VencidosIncidentes</h3>
-                    <p>Vencidos</p>
+        @if (esCoordinador)
+        {
+            <div class="col mb-1">
+                <!-- small card -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.VencidosIncidentes</h3>
+                        <p>Vencidos</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-backspace" style="font-size:55px;"></i>
+                    </div>
+                    <a asp-action="IncidenteVencidos" class="small-box-footer">
+                        Ver <i class="fas fa-arrow-circle-right"></i>
+                    </a>
                 </div>
-                <div class="icon">
-                    <i class="fas fa-backspace" style="font-size:55px;"></i>
-                </div>
-                <a asp-action="IncidenteVencidos" class="small-box-footer">
-                    Ver <i class="fas fa-arrow-circle-right"></i>
-                </a>
             </div>
-        </div>
+        }
         <div class="col mb-1">
             <!-- small card -->
             <div class="small-box bg-success">
@@ -168,7 +172,22 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                             </svg>
-                        </a>
+                        </a> |
+                        @if (item.Estado == EstadoIncidenteEnum.Activo)
+                        {
+                            <a href="#" type="button" class="respond-item"
+                                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
+                                    data-title="Agregar Novedad"
+                                    data-action="respond">
+                                <i class="fas fa-info-circle"></i> |
+                            </a>
+                            <a href="#" type="button" class="respond-item"
+                                    data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = item.Id })"
+                                    data-title="Agregar Novedad"
+                                    data-action="respond">
+                                <i class="fas fa-user-injured"></i>
+                            </a>
+                        }
                     </td>
                 </tr>
             }

@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    var esCoordinador = User.IsInRole("Coordinador");
 }
 
 <div class="row justify-content-center mb-4">
@@ -21,18 +22,21 @@
                         <input asp-for="Descripcion" class="form-control" />
                         <span asp-validation-for="Descripcion" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <label class="control-label">¿Desea cambiar el estado del incidente?</label>
-                        <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
-                    </div>
-                    <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
-                        <label class="control-label">Estado del Incidente</label>
-                        <select name="EstadoIncidenteNovedad" class="form-control">
-                            <option value="">Seleccione un estado</option>
-                            <option value="Cerrado">Cerrado</option>
-                            <option value="Solucionado">Solucionado</option>
-                        </select>
-                    </div>
+                    @if (esCoordinador)
+                    {
+                        <div class="form-group">
+                            <label class="control-label">¿Desea cambiar el estado del incidente?</label>
+                            <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
+                        </div>
+                        <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
+                            <label class="control-label">Estado del Incidente</label>
+                            <select name="EstadoIncidenteNovedad" class="form-control">
+                                <option value="">Seleccione un estado</option>
+                                <option value="Cerrado">Cerrado</option>
+                                <option value="Solucionado">Solucionado</option>
+                            </select>
+                        </div>
+                    }
                 </div>
                 <div class="col-lg-5 order-1 order-md-2">
                     <div class="card card-default collapsed-card">
