@@ -21,8 +21,11 @@
     <div class="login-box">
         <div class="card card-outline card-primary">
             <div class="card-header text-center">
-                <a asp-controller="Home" asp-action="Index" class="h1"><b>Buil</b>Doc</a>
+                <a asp-controller="Home" asp-action="Index">
+                    <img src="/logo_buildoc_color.png" alt="Buildoc Logo" style="max-height: 50px;">
+                </a>
             </div>
+
             <div class="card-body">
                 <p>Inicio de sesión</p>
                 <hr />
@@ -50,9 +53,9 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="icheck-primary">
-                                <label asp-for="Input.RememberMe">
+                                <label>
                                     <input asp-for="Input.RememberMe" />
-                                    @Html.DisplayNameFor(m => m.Input.RememberMe)
+                                    Recuérdame
                                 </label>
                             </div>
                         </div>

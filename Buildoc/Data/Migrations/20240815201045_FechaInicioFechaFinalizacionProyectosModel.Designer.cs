@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240815201045_FechaInicioFechaFinalizacionProyectosModel")]
+    partial class FechaInicioFechaFinalizacionProyectosModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,6 +25,85 @@ namespace Buildoc.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("Buildoc.Models.Afectado", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AbrasionRasgunos")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("ActividadRealizada")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Amputacion")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Apellido")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("AsociadaProyecto")
+                        .HasColumnType("bit");
+
+                    b.Property<long?>("Cedula")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("ConmocionCerebral")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("CorreoElectronico")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("CorteLaceracionPerforacion")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Defuncion")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EsguinceTension")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("GeneroAfectado")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Hernia")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Hospitalizado")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HuesosRotos")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid>("IncidenteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("LesionAplastamiento")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("Moreton")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PrimerosAuxilios")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("QuemaduraCalor")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("QuemadurasQuimicas")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IncidenteId");
+
+                    b.ToTable("Afectados");
+                });
+
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
                 {
                     b.Property<Guid>("Id")
@@ -29,12 +111,10 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<bool>("Estado")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()
@@ -51,16 +131,13 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Sugerencia")
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("TipoIncidenteId")
+                    b.Property<Guid?>("TipoIncidenteId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsuarioId")
                         .HasColumnType("nvarchar(450)");
@@ -76,140 +153,166 @@ namespace Buildoc.Data.Migrations
                     b.ToTable("Incidentes");
                 });
 
-            modelBuilder.Entity("Buildoc.Models.IncidenteLesionado", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ActividadRealizada")
-                        .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("AsociadaProyecto")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Defuncion")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("GeneroAfectado")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Hospitalizado")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid>("IncidenteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("LesionadoId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("PrimerosAuxilios")
-                        .HasColumnType("bit");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("IncidenteId");
-
-                    b.HasIndex("LesionadoId");
-
-                    b.ToTable("IncidenteLesionados");
-                });
-
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<string>("Descripcion")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
-
-                b.Property<int?>("DuracionHoras")
-                    .HasColumnType("int");
-
-                b.Property<bool>("EsTodoElDia")
-                    .HasColumnType("bit");
-
-                b.Property<int>("Estado")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("FechaInspeccion")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("FechaProgramacion")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("InspectorId")
-                    .HasColumnType("nvarchar(450)");
-
-                b.Property<string>("Objetivo")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
-
-                b.Property<Guid>("ProyectoId")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<Guid?>("RespuestaId")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<int>("TipoInspeccionId")
-                    .HasColumnType("int");
-
-                b.HasKey("Id");
-
-                b.HasIndex("InspectorId");
-
-                b.HasIndex("ProyectoId");
-
-                b.HasIndex("TipoInspeccionId");
-
-                b.ToTable("Inspeccion");
-            });
-
-            modelBuilder.Entity("Buildoc.Models.Lesionado", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<long?>("Cedula")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("CorreoElectronico")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Lesionados");
-                });
-
-            modelBuilder.Entity("Buildoc.Models.NovedadesIncidente", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EstadoNovedad")
+                    b.Property<int?>("DuracionHoras")
                         .HasColumnType("int");
+
+                    b.Property<bool>("EsTodoElDia")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaInspeccion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("InspectorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Objetivo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ProyectoId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("RespuestaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("TipoInspeccionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspectorId");
+
+                    b.HasIndex("ProyectoId");
+
+                    b.HasIndex("TipoInspeccionId");
+
+                    b.ToTable("Inspeccion");
+                });
+
+            modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Cliente")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CoordinadorId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Departamento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Direccion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaFinalizacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Municipio")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CoordinadorId");
+
+                    b.ToTable("Proyectos");
+                });
+
+            modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("AccionesCorrectivas")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("AccionesCorrectivasLista")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("DocumentacionCompleta")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("EsNecesariaInspeccionAdicional")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("EstadoRespuestaInspeccion")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaRespuesta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("InspeccionAdicionalId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InspeccionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<bool>("RecomendacionesFuturas")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RecomendacionesFuturasList")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<string>("Resultado")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InspeccionAdicionalId");
+
+                    b.HasIndex("InspeccionId")
+                        .IsUnique();
+
+                    b.ToTable("RespuestaInspeccion");
+                });
+
+            modelBuilder.Entity("Buildoc.Models.Seguimiento", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()
@@ -220,9 +323,7 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsuarioId")
                         .HasColumnType("nvarchar(450)");
@@ -233,119 +334,8 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("NovedadesIncidentes");
+                    b.ToTable("Seguimientos");
                 });
-
-            modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<string>("Cliente")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
-
-                b.Property<string>("CoordinadorId")
-                    .HasColumnType("nvarchar(450)");
-
-                b.Property<string>("Departamento")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
-
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
-
-                b.Property<string>("Direccion")
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar(200)");
-
-                b.Property<int>("Estado")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("FechaCreacion")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("FechaFinalizacion")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("Municipio")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
-
-                b.Property<string>("Nombre")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
-
-                b.HasKey("Id");
-
-                b.HasIndex("CoordinadorId");
-
-                b.ToTable("Proyectos");
-            });
-
-            modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
-            {
-                b.Property<Guid>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<bool>("AccionesCorrectivas")
-                    .HasColumnType("bit");
-
-                b.Property<string>("AccionesCorrectivasLista")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
-
-                b.Property<bool>("DocumentacionCompleta")
-                    .HasColumnType("bit");
-
-                b.Property<bool>("EsNecesariaInspeccionAdicional")
-                    .HasColumnType("bit");
-
-                b.Property<int>("EstadoRespuestaInspeccion")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("FechaRespuesta")
-                    .HasColumnType("datetime2");
-
-                b.Property<Guid?>("InspeccionAdicionalId")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<Guid>("InspeccionId")
-                    .HasColumnType("uniqueidentifier");
-
-                b.Property<string>("Observaciones")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
-
-                b.Property<bool>("RecomendacionesFuturas")
-                    .HasColumnType("bit");
-
-                b.Property<string>("RecomendacionesFuturasList")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
-
-                b.Property<string>("Resultado")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
-
-                b.HasKey("Id");
-
-                b.HasIndex("InspeccionAdicionalId");
-
-                b.HasIndex("InspeccionId")
-                    .IsUnique();
-
-                b.ToTable("RespuestaInspeccion");
-            });
 
             modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
                 {
@@ -357,21 +347,16 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
 
                     b.Property<string>("Gravedad")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -379,30 +364,28 @@ namespace Buildoc.Data.Migrations
                 });
 
             modelBuilder.Entity("Buildoc.Models.TipoInspeccion", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("Categoria")
-                    .HasColumnType("int");
+                    b.Property<int>("Categoria")
+                        .HasColumnType("int");
 
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Nombre")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("TipoInspeccion");
-            });
+                    b.ToTable("TipoInspeccion");
+                });
 
             modelBuilder.Entity("Buildoc.Models.Usuario", b =>
                 {
@@ -643,19 +626,30 @@ namespace Buildoc.Data.Migrations
                 });
 
             modelBuilder.Entity("ProyectoUsuario", b =>
-            {
-                b.Property<Guid>("ProyectosId")
-                    .HasColumnType("uniqueidentifier");
+                {
+                    b.Property<Guid>("ProyectosId")
+                        .HasColumnType("uniqueidentifier");
 
-                b.Property<string>("ResidentesId")
-                    .HasColumnType("nvarchar(450)");
+                    b.Property<string>("ResidentesId")
+                        .HasColumnType("nvarchar(450)");
 
-                b.HasKey("ProyectosId", "ResidentesId");
+                    b.HasKey("ProyectosId", "ResidentesId");
 
-                b.HasIndex("ResidentesId");
+                    b.HasIndex("ResidentesId");
 
-                b.ToTable("ProyectoResidentes", (string)null);
-            });
+                    b.ToTable("ProyectoResidentes", (string)null);
+                });
+
+            modelBuilder.Entity("Buildoc.Models.Afectado", b =>
+                {
+                    b.HasOne("Buildoc.Models.Incidente", "Incidente")
+                        .WithMany("Afectados")
+                        .HasForeignKey("IncidenteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Incidente");
+                });
 
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
                 {
@@ -668,8 +662,7 @@ namespace Buildoc.Data.Migrations
                     b.HasOne("Buildoc.Models.TipoIncidente", "TipoIncidente")
                         .WithMany("Incidentes")
                         .HasForeignKey("TipoIncidenteId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Buildoc.Models.Usuario", "Usuario")
                         .WithMany("Incidentes")
@@ -682,77 +675,68 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Buildoc.Models.IncidenteLesionado", b =>
+            modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
                 {
-                    b.HasOne("Buildoc.Models.Incidente", "Incidente")
-                        .WithMany("IncidenteLesionados")
-                        .HasForeignKey("IncidenteId")
+                    b.HasOne("Buildoc.Models.Usuario", "Inspector")
+                        .WithMany()
+                        .HasForeignKey("InspectorId");
+
+                    b.HasOne("Buildoc.Models.Proyecto", "Proyecto")
+                        .WithMany()
+                        .HasForeignKey("ProyectoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Buildoc.Models.Lesionado", "Lesionado")
-                        .WithMany("IncidenteLesionados")
-                        .HasForeignKey("LesionadoId")
+                    b.HasOne("Buildoc.Models.TipoInspeccion", "TipoInspeccion")
+                        .WithMany()
+                        .HasForeignKey("TipoInspeccionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Incidente");
+                    b.Navigation("Inspector");
 
-                    b.Navigation("Lesionado");
+                    b.Navigation("Proyecto");
+
+                    b.Navigation("TipoInspeccion");
                 });
 
-            modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-            {
-                b.HasOne("Buildoc.Models.Usuario", "Inspector")
-                    .WithMany()
-                    .HasForeignKey("InspectorId");
+            modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
+                {
+                    b.HasOne("Buildoc.Models.Usuario", "Coordinador")
+                        .WithMany()
+                        .HasForeignKey("CoordinadorId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("Buildoc.Models.Proyecto", "Proyecto")
-                    .WithMany()
-                    .HasForeignKey("ProyectoId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.Navigation("Coordinador");
+                });
 
-                b.HasOne("Buildoc.Models.TipoInspeccion", "TipoInspeccion")
-                    .WithMany()
-                    .HasForeignKey("TipoInspeccionId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+            modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
+                {
+                    b.HasOne("Buildoc.Models.Inspeccion", "InspeccionAdicional")
+                        .WithMany()
+                        .HasForeignKey("InspeccionAdicionalId");
 
-                b.Navigation("Inspector");
+                    b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
+                        .WithOne("Respuesta")
+                        .HasForeignKey("Buildoc.Models.RespuestaInspeccion", "InspeccionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Proyecto");
+                    b.Navigation("Inspeccion");
 
-                b.Navigation("TipoInspeccion");
-            });
+                    b.Navigation("InspeccionAdicional");
+                });
 
-            modelBuilder.Entity("Buildoc.Models.Inspecciones.NovedadInspeccion", b =>
-            {
-                b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
-                    .WithMany("Novedades")
-                    .HasForeignKey("InspeccionId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.HasOne("Buildoc.Models.Usuario", "Usuario")
-                    .WithMany()
-                    .HasForeignKey("UsuarioId");
-
-                b.Navigation("Inspeccion");
-
-                b.Navigation("Usuario");
-            });
-
-            modelBuilder.Entity("Buildoc.Models.NovedadesIncidente", b =>
+            modelBuilder.Entity("Buildoc.Models.Seguimiento", b =>
                 {
                     b.HasOne("Buildoc.Models.Incidente", "Incidente")
-                        .WithMany("NovedadesIncidentes")
+                        .WithMany("Seguimientos")
                         .HasForeignKey("IncidenteId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Buildoc.Models.Usuario", "Usuario")
-                        .WithMany("NovedadesIncidentes")
+                        .WithMany("Seguimientos")
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Restrict);
 
@@ -760,33 +744,6 @@ namespace Buildoc.Data.Migrations
 
                     b.Navigation("Usuario");
                 });
-
-            modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
-            {
-                b.HasOne("Buildoc.Models.Usuario", "Coordinador")
-                    .WithMany()
-                    .HasForeignKey("CoordinadorId")
-                    .OnDelete(DeleteBehavior.Restrict);
-
-                b.Navigation("Coordinador");
-            });
-
-            modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
-            {
-                b.HasOne("Buildoc.Models.Inspeccion", "InspeccionAdicional")
-                    .WithMany()
-                    .HasForeignKey("InspeccionAdicionalId");
-
-                b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
-                    .WithOne("Respuesta")
-                    .HasForeignKey("Buildoc.Models.RespuestaInspeccion", "InspeccionId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Inspeccion");
-
-                b.Navigation("InspeccionAdicional");
-            });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
@@ -840,38 +797,30 @@ namespace Buildoc.Data.Migrations
                 });
 
             modelBuilder.Entity("ProyectoUsuario", b =>
-            {
-                b.HasOne("Buildoc.Models.Proyecto", null)
-                    .WithMany()
-                    .HasForeignKey("ProyectosId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("Buildoc.Models.Proyecto", null)
+                        .WithMany()
+                        .HasForeignKey("ProyectosId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("Buildoc.Models.Usuario", null)
-                    .WithMany()
-                    .HasForeignKey("ResidentesId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
-
+                    b.HasOne("Buildoc.Models.Usuario", null)
+                        .WithMany()
+                        .HasForeignKey("ResidentesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
                 {
-                    b.Navigation("IncidenteLesionados");
+                    b.Navigation("Afectados");
 
-                    b.Navigation("NovedadesIncidentes");
+                    b.Navigation("Seguimientos");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
-            {
-                b.Navigation("Novedades");
-
-                b.Navigation("Respuesta");
-            });
-
-            modelBuilder.Entity("Buildoc.Models.Lesionado", b =>
                 {
-                    b.Navigation("IncidenteLesionados");
+                    b.Navigation("Respuesta");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
@@ -888,7 +837,7 @@ namespace Buildoc.Data.Migrations
                 {
                     b.Navigation("Incidentes");
 
-                    b.Navigation("NovedadesIncidentes");
+                    b.Navigation("Seguimientos");
                 });
 #pragma warning restore 612, 618
         }

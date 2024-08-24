@@ -51,8 +51,11 @@
 
                 <div class="form-group">
                     <label asp-for="InspectorId" class="control-label"></label>
-                    <select asp-for="InspectorId" class="form-control" asp-items="ViewBag.InspectorId"></select>
+                    <select asp-for="InspectorId" class="form-control">
+                        <option value="">Selecciona un proyecto primero</option>
+                    </select>
                 </div>
+
             </div>
             <div class="col-lg-4 order-1 order-md-2">
 
@@ -85,6 +88,55 @@
 
 <script src="/js/toggleDuracionHoras.js"></script>
 <script src="/js/detalleTipoInspeccion.js"></script>
+<script>
+    $(document).ready(function () {
+        // Función para cargar los inspectores según el proyecto seleccionado
+        function cargarInspectores(proyectoId) {
+            var $inspectorSelect = $('#InspectorId');
+            $inspectorSelect.empty(); // Limpia el select antes de llenarlo
+
+            if (proyectoId) {
+                $.getJSON('@Url.Action("GetInspectoresByProyecto")', { proyectoId: proyectoId }, function (data) {
+                    if (data.length > 0) {
+                        $.each(data, function (index, item) {
+                            $inspectorSelect.append($('<option>', {
+                                value: item.id,
+                                text: item.nombreCompleto
+                            }));
+                        });
+                    } else {
+                        $inspectorSelect.append($('<option>', {
+                            value: '',
+                            text: 'No hay residentes asignados a este proyecto',
+                            disabled: true
+                        }));
+                    }
+                });
+            } else {
+                $inspectorSelect.append($('<option>', {
+                    value: '',
+                    text: 'Selecciona un proyecto primero',
+                    disabled: true
+                }));
+            }
+        }
+
+        // Llama a la función cuando cambia el proyecto
+        $('#ProyectoId').change(function () {
+            var proyectoId = $(this).val();
+            cargarInspectores(proyectoId);
+        });
+
+        // Cargar inspectores al iniciar la página si ya hay un proyecto seleccionado
+        var proyectoInicial = $('#ProyectoId').val();
+        if (proyectoInicial) {
+            cargarInspectores(proyectoInicial);
+        }
+    });
+</script>
+
+
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

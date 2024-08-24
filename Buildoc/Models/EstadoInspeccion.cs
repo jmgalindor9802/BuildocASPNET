@@ -18,7 +18,7 @@ namespace Buildoc.Models
        [Display(Name = "Aprobada")]
        Aprobada,
 
-             [Display(Name = "Desaprobada")]
+       [Display(Name = "Desaprobada")]
        Desaprobada
     }
 }

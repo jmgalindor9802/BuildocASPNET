@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Models;
 using Buildoc.Services;
 using System.Globalization;
+using Buildoc.Services.Proyectos;
 using Buildoc.Services.Incidentes;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +32,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
 builder.Services.AddHostedService<IncidenteEstadoService>();
+builder.Services.AddHostedService<ProyectoEstadoService>();
 
 
 // Add EmailSender service

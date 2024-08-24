@@ -1,21 +1,25 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Buildoc.Models.Inspecciones;
 
 namespace Buildoc.Models
 {
     public class Inspeccion
     {
         public Guid Id { get; set; }
+        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy HH:mm}")]
+        [Display(Name = "Creada")]
+        public DateTime FechaProgramacion {  get; set; }
 
-        [Display(Name = "Fecha y hora")]
+        [Display(Name = "Responder")]
         [Required]
         [DataType(DataType.DateTime)]
 
         [DisplayFormat(DataFormatString = "{0:dd MMM yyyy HH:mm}")]
         public DateTime FechaInspeccion { get; set; }
-
+        [MaxLength(255)]
         public string Objetivo { get; set; }
-
+        [MaxLength(1000)]
         [Display(Name = "Descripción")]
         
         public string? Descripcion { get; set; }
@@ -46,5 +50,8 @@ namespace Buildoc.Models
         public Guid? RespuestaId { get; set; }
 
         public RespuestaInspeccion? Respuesta { get; set; }
+
+        // Colección de novedades relacionadas
+        public ICollection<NovedadInspeccion> Novedades { get; set; }
     }
 }

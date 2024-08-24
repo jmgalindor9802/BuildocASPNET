@@ -9,11 +9,22 @@
         <div class="col-md-12">
             <form asp-action="Create">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+            <div class="col-md-8 col-12">
                 <div class="form-group">
                     <label asp-for="Nombre" class="control-label"></label>
-                    <input asp-for="Nombre" class="form-control" required/>
+                    <input asp-for="Nombre" class="form-control" required />
                     <span asp-validation-for="Nombre" class="text-danger"></span>
                 </div>
+            </div>
+            <div class="col-md-4 col-12">
+                <div class="form-group">
+                    <label asp-for="FechaFinalizacion" class="control-label"></label>
+                    <input asp-for="FechaFinalizacion" class="form-control" type="date" />
+                    <span asp-validation-for="FechaFinalizacion" class="text-danger"></span>
+                </div>
+            </div>
+            </div>
                 <div class="form-group">
                     <label asp-for="Descripcion" class="control-label"></label>
                     <input asp-for="Descripcion" class="form-control" required />
@@ -38,7 +49,7 @@
                     </div>
                 </div>
             </div>
-
+          
             <div class="form-group row">
                 <div class="col-md-6">
                     <label asp-for="Direccion" class="control-label"></label>

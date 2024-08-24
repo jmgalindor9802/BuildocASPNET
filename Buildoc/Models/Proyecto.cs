@@ -8,19 +8,24 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         [Required]
+        [MaxLength(100)]
         public string Nombre { get; set; }
         [Display(Name = "Descripción")]
+        [MaxLength(500)]
         [Required]
         public string Descripcion { get; set; }
         [Required]
-
+        [MaxLength(50)]
         public string Departamento { get; set; }
         [Required]
+        [MaxLength(50)]
         public string Municipio { get; set; }
         [Required]
+        [MaxLength(100)]
         public string Cliente { get; set; }
         [Display(Name = "Dirección")]
         [Required]
+        [MaxLength(200)]
         public string Direccion { get; set; }
 
         public EstadoProyecto Estado { get; set; }
@@ -45,5 +50,11 @@ namespace Buildoc.Models
             Archivado,
   
         }
+
+		[Display(Name = "Fecha de creación")]
+		public DateTime FechaCreacion { get; set; }
+		[Display(Name = "Fecha de finalización")]
+        [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
+        public DateTime FechaFinalizacion {  get; set; }
     }
 }
