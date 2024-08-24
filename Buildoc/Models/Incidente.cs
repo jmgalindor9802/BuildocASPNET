@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable enable
+
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Buildoc.Models
@@ -8,11 +10,13 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         [Required]
+        [MaxLength(150, ErrorMessage = "El cambo debe tener un maximo de 150 caracteres")]
         [Display(Name = "Incidente")]
         public string Titulo { get; set; }
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
         [Required]
+        [MaxLength(5000, ErrorMessage = "El cambo debe tener un maximo de 5000 caracteres")]
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
         [Required]
@@ -21,6 +25,7 @@ namespace Buildoc.Models
         [Display(Name = "Hora")]
         public TimeOnly? HoraIncidente { get; set; }
         public EstadoIncidenteEnum Estado { get; set; }
+        [MaxLength(5000, ErrorMessage = "El cambo debe tener un maximo de 5000 caracteres")]
         [Display(Name = "Sugerencia")]
         public string? Sugerencia { get; set; }
         [Required]

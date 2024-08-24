@@ -51,10 +51,10 @@
                             </p>
                             <p>
                                 <strong>Estado actual:</strong>
-                                <span class="badge @(Model.Estado == EstadoIncidenteEnum.Activo ? "badge-programada" :
-                                              Model.Estado == EstadoIncidenteEnum.Vencido ? "badge-pendiente-revision" :
-                                              Model.Estado == EstadoIncidenteEnum.Solucionado ? "badge-sin-responder" :
-                                              Model.Estado == EstadoIncidenteEnum.Cerrado ? "badge-aprobada" : "")">
+                                <span class="badge @(Model.Estado == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                                              Model.Estado == EstadoIncidenteEnum.Vencido ? "badge-programada" :
+                                              Model.Estado == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
+                                              Model.Estado == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
                                     @Html.DisplayFor(model => model.Estado)
                                 </span>
                             </p>
@@ -65,8 +65,6 @@
                 <!-- Novedades -->
                 @if (Model.NovedadesIncidentes != null && Model.NovedadesIncidentes.Any())
                 {
-
-
                     @foreach (var novedad in Model.NovedadesIncidentes.OrderBy(n => n.FechaCreacion))
                     {
                         <div class="timeline-item">
@@ -77,6 +75,12 @@
                                 <div class="timeline-body">
                                     <p>@novedad.Titulo</p>
                                     <p>@novedad.Descripcion</p>
+                                    <span class="badge @(novedad.EstadoNovedad == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                                              novedad.EstadoNovedad == EstadoIncidenteEnum.Vencido ? "badge-programada" :
+                                              novedad.EstadoNovedad == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
+                                              novedad.EstadoNovedad == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
+                                        @novedad.EstadoNovedad
+                                    </span>
                                     <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>
                                 </div>
                             </div>
@@ -96,8 +100,13 @@
                         </div>
                     </div>
                 }
-
             </div>
+            <button type="button" class="btn btn-primary respond-item"
+                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = Model.Id })"
+                    data-title="Agregar Novedad"
+                    data-action="respond">
+                <i class="fas fa-plus-circle"></i> Añadir Novedad
+            </button>
         </div>
     </div>
 </div>

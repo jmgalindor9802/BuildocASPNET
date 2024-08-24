@@ -549,6 +549,11 @@ h6,
         color: white;
     }
 
+    .badge-cerrado {
+        background-color: #adb5bd; /* gray color */
+        color: black;
+    }
+
     .dl-horizontal dt {
         font-weight: normal; /* Quita la negrita del texto */
         font-size: 0.9em; /* Reduce el tamaño de la fuente */

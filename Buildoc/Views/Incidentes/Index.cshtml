@@ -161,10 +161,10 @@
                         @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
                     </td>
                     <td>
-                        <span class="badge @(item.Estado == EstadoIncidenteEnum.Activo ? "badge-programada" :
-                                              item.Estado == EstadoIncidenteEnum.Vencido ? "badge-pendiente-revision" :
-                                              item.Estado == EstadoIncidenteEnum.Solucionado ? "badge-sin-responder" :
-                                              item.Estado == EstadoIncidenteEnum.Cerrado ? "badge-aprobada" : "")">
+                        <span class="badge @(item.Estado == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                                              item.Estado == EstadoIncidenteEnum.Vencido ? "badge-programada" :
+                                              item.Estado == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
+                                              item.Estado == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
                             @Html.DisplayFor(modelItem => item.Estado)
                         </span>
                     </td>

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable enable
+using System.ComponentModel.DataAnnotations;
 
 namespace Buildoc.Models
 {
@@ -6,8 +7,17 @@ namespace Buildoc.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
+        [Required]
+        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 150")]
+        [Display(Name = "Título")]
+        public string Titulo { get; set; } = string.Empty;
+        [Required]
+        [MaxLength(5000, ErrorMessage = "El campo debe terner un maximo de 150")]
+        [Display(Name = "Descripción")]
+        public string Descripcion { get; set; } = string.Empty;
+        [Display(Name = "Estado")]
+        public EstadoIncidenteEnum EstadoNovedad { get; set; }
+        [Display(Name = "Fecha creación")]
         public DateTime FechaCreacion { get; set; }
 
         // Foreign key for Incidente

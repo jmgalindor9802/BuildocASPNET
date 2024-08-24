@@ -248,7 +248,9 @@ namespace Buildoc.Controllers
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoIncidente)
                 .Include(i => i.Usuario)
-                /*.Include(i => i.Afectados)*/  // Incluir los afectados
+                .Include(i => i.IncidenteLesionados)
+                .Include(i => i.NovedadesIncidentes)
+                    .ThenInclude(s => s.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
             if (incidente == null)

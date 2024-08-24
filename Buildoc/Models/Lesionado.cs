@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿#nullable enable
+using System.ComponentModel.DataAnnotations;
 
 namespace Buildoc.Models
 {
@@ -8,11 +9,14 @@ namespace Buildoc.Models
         public Guid Id { get; set; }
         //Datos de informacion general
         [Required]
+        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Nombres")]
         public string Nombre { get; set; }
         [Required]
+        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Apellidos")]
         public string Apellido { get; set; }
+        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Correo electrónico")]
         public string? CorreoElectronico { get; set; }
         [Display(Name = "Cédula")]
