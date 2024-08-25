@@ -264,7 +264,7 @@ namespace Buildoc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente,Estado,CoordinadorId")] Proyecto proyecto, List<string> ResidentesIds)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Descripcion,Departamento,Municipio,Direccion,Cliente,Estado,CoordinadorId, FechaFinalizacion")] Proyecto proyecto, List<string> ResidentesIds)
         {
 
             // Verificar si ya existe un proyecto con el mismo nombre, excluyendo el proyecto actual
