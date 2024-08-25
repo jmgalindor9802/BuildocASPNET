@@ -114,13 +114,22 @@
     </div>
 
     <tr>
-        <select id="proyectoFilter" class="form-control">
-            <option value="">Seleccione un proyecto</option>
-            @foreach (var proyecto in proyectos)
-            {
-                <option value="@proyecto.Value">@proyecto.Text</option>
-            }
-        </select>
+        <div class="row mt-3">
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por proyecto</label>
+                <select id="proyecto-filter" class="form-control">
+                    <option value="">Todos los proyectos</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por tipo de incidente</label>
+                <select id="tipo-incidente-filter" class="form-control">
+                    <option value="">Todos los tipos de incidentes</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+        </div>
     </tr>
     <table id="example1" class="table table-bordered table-striped">
         <thead class="header-bg">
@@ -146,7 +155,7 @@
         <tbody>
             @foreach (var item in Model)
             {
-                <tr data-proyectoid="@item.ProyectoId">
+                <tr data-proyecto="@item.Proyecto.Id" data-tipo-incidente="@item.TipoIncidente.Id">
                     <td>
                         @Html.DisplayFor(modelItem => item.Titulo)
                     </td>
@@ -212,23 +221,69 @@
             ordering: true,
             info: true
         });
+        // Función para obtener proyectos únicos del DataTable
+        function getProyectos() {
+            const proyectos = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                if (!proyectos.includes(proyecto)) {
+                    proyectos.push(proyecto);
+                }
+            });
+            return proyectos;
+        }
 
-        // Filtro por proyecto
-        $('#proyectoFilter').change(function () {
-            var proyectoId = $(this).val();
-            if (proyectoId) {
-                $('#example1 tbody tr').each(function () {
-                    var rowProyectoId = $(this).data('proyectoid');
-                    if (rowProyectoId == proyectoId) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            } else {
-                $('#example1 tbody tr').show(); // Muestra todas las filas si no hay filtro
-            }
-            table.draw(); // Actualiza la DataTable
+        // Función para obtener tipos de incidentes únicos del DataTable
+        function getTiposIncidentes() {
+            const tiposIncidentes = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const tipoIncidente = data[3]; // Asume que la columna de tipo de incidente es la 4ta (índice 3)
+                if (!tiposIncidentes.includes(tipoIncidente)) {
+                    tiposIncidentes.push(tipoIncidente);
+                }
+            });
+            return tiposIncidentes;
+        }
+
+        // Llenar el select con las opciones de proyecto
+        function fillProyectoSelect() {
+            const proyectoFilterEl = $('#proyecto-filter');
+            proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
+            proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
+            const proyectos = getProyectos();
+            proyectos.forEach(proyecto => {
+                const option = $('<option></option>').val(proyecto).text(proyecto);
+                proyectoFilterEl.append(option);
+            });
+        }
+
+        // Llenar el select con las opciones de tipo de incidente
+        function fillTipoIncidenteSelect() {
+            const tipoIncidenteFilterEl = $('#tipo-incidente-filter');
+            tipoIncidenteFilterEl.empty(); // Limpiar el select antes de llenarlo
+            tipoIncidenteFilterEl.append('<option value="">Todos los tipos de incidentes</option>'); // Opción predeterminada
+            const tiposIncidentes = getTiposIncidentes();
+            tiposIncidentes.forEach(tipoIncidente => {
+                const option = $('<option></option>').val(tipoIncidente).text(tipoIncidente);
+                tipoIncidenteFilterEl.append(option);
+            });
+        }
+
+        // Inicializa los selects
+        fillProyectoSelect();
+        fillTipoIncidenteSelect();
+
+        // Agregar evento de cambio al select para filtrar la tabla
+        $('#proyecto-filter').on('change', function () {
+            const proyectoFilter = $(this).val();
+            table.column(2).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+        });
+
+        $('#tipo-incidente-filter').on('change', function () {
+            const tipoIncidenteFilter = $(this).val();
+            table.column(3).search(tipoIncidenteFilter).draw(); // Filtra la columna de tipo de incidente
         });
     });
 </script>
