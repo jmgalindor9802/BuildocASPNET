@@ -131,9 +131,11 @@ namespace Buildoc.Controllers
                 return Json(new { success = true });
             }
 
-            // Si hay errores de validación, reenvía el InspeccionId a la vista
-            ViewData["InspeccionId"] = idInspeccion;
-            return View("Index","Inspecciones");
+            // Si el modelo no es válido, devolver errores del modelo
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                           .Select(e => e.ErrorMessage)
+                                           .ToList();
+            return Json(new { success = false, message = string.Join(" ", errors) });
         }
 
         // GET: NovedadInspeccion/Edit/5

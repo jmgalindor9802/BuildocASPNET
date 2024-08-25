@@ -174,6 +174,12 @@ $(document).ready(function () {
         });
     });
 
-
+    // Manejar la acción de guardar al presionar Enter
+    $('#modal-lg').on('keypress', 'form', function (e) {
+        if (e.which === 13) { // Código de tecla Enter
+            e.preventDefault(); // Evita el comportamiento por defecto
+            $('#modal-lg .btn-save').click(); // Simula un clic en el botón de guardar
+        }
+    });
   
 });
