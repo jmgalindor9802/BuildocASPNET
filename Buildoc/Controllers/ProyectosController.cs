@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using static Buildoc.Models.Proyecto;
 using System.ComponentModel.DataAnnotations;
+using Buildoc.Models.Proyectos;
 
 namespace Buildoc.Controllers
 {
@@ -64,17 +65,17 @@ namespace Buildoc.Controllers
         }
 
 
-        // GET: Proyectos/Archivados
-        public async Task<IActionResult> Archivados()
-        {
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //// GET: Proyectos/Archivados
+        //public async Task<IActionResult> Archivados()
+        //{
+        //    var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            var proyectosArchivados = await _context.Proyectos
-                .Where(p => p.Estado == Proyecto.EstadoProyecto.Archivado && p.CoordinadorId == coordinadorId)
-                .ToListAsync();
+        //    var proyectosArchivados = await _context.Proyectos
+        //        .Where(p => p.Estado == Proyecto.EstadoProyecto.Archivado && p.CoordinadorId == coordinadorId)
+        //        .ToListAsync();
 
-            return View(proyectosArchivados);
-        }
+        //    return View(proyectosArchivados);
+        //}
 
         // GET: Proyectos/EnCurso
         public async Task<IActionResult> EnCurso()
@@ -417,6 +418,8 @@ namespace Buildoc.Controllers
             return _context.Proyectos.Any(e => e.Id == id);
         }
 
+
+        // GET: Proyectos/Desarchivar/5
         public async Task<IActionResult> Desarchivar(Guid id)
         {
             var proyecto = await _context.Proyectos.FindAsync(id);
@@ -425,13 +428,50 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            proyecto.Estado = Proyecto.EstadoProyecto.EnCurso;
-            _context.Update(proyecto);
+            // Crear un ViewModel con los datos necesarios
+            var viewModel = new DesarchivarViewModel
+            {
+                Id = proyecto.Id,
+                FechaFinalizacion = proyecto.FechaFinalizacion
+            };
+
+            // Devolver la vista parcial con el ViewModel
+            return PartialView("Desarchivar", viewModel);
+        }
+
+        // POST: Proyectos/EditFinalizacion
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditFinalizacion(DesarchivarViewModel model)
+        {
+            // Validar que la fecha de finalización sea mayor que la fecha actual
+            if (model.FechaFinalizacion <= DateTime.Now)
+            {
+                ModelState.AddModelError("FechaFinalizacion", "La fecha de finalización debe ser mayor a la fecha actual.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Si el modelo no es válido, devolver la vista parcial con los datos actuales
+                return PartialView("Desarchivar", model);
+            }
+
+            var proyectoExistente = await _context.Proyectos.FindAsync(model.Id);
+            if (proyectoExistente == null)
+            {
+                return NotFound();
+            }
+
+            // Actualizar la fecha de finalización y cambiar el estado
+            proyectoExistente.FechaFinalizacion = model.FechaFinalizacion;
+            proyectoExistente.Estado = Proyecto.EstadoProyecto.EnCurso;
+            _context.Update(proyectoExistente);
             await _context.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = "¡El proyecto se ha desarchivado exitosamente!";
-            return RedirectToAction(nameof(Archivados));
+            TempData["SuccessMessage"] = "¡La fecha de finalización se ha actualizado y el proyecto se ha desarchivado exitosamente!";
+            return Json(new { success = true });
         }
+
 
     }
 }

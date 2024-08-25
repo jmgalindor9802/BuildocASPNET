@@ -27,7 +27,7 @@ public class ProyectoEstadoService : BackgroundService
 				var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
 				var proyectos = await context.Proyectos
-					.Where(p => p.Estado != Proyecto.EstadoProyecto.Archivado)
+					.Where(p => p.Estado == Proyecto.EstadoProyecto.EnCurso)
 					.ToListAsync();
 
 				foreach (var proyecto in proyectos)
@@ -37,16 +37,16 @@ public class ProyectoEstadoService : BackgroundService
 						proyecto.Estado = Proyecto.EstadoProyecto.Finalizado;
 					}
 
-					if (proyecto.FechaFinalizacion.AddDays(30) <= DateTime.Now && proyecto.Estado == Proyecto.EstadoProyecto.Finalizado)
-					{
-						proyecto.Estado = Proyecto.EstadoProyecto.Archivado;
-					}
+					//if (proyecto.FechaFinalizacion.AddDays(30) <= DateTime.Now && proyecto.Estado == Proyecto.EstadoProyecto.Finalizado)
+					//{
+					//	proyecto.Estado = Proyecto.EstadoProyecto.Archivado;
+					//}
 				}
 
 				await context.SaveChangesAsync();
 			}
 
-			await Task.Delay(TimeSpan.FromHours(24), stoppingToken); // Ejecutar cada 24 horas
+			await Task.Delay(TimeSpan.FromHours(12), stoppingToken); // Ejecutar cada 24 horas
 		}
 	}
 }
