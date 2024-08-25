@@ -1,42 +1,79 @@
-﻿@model Buildoc.Models.Lesionado
+﻿@model Buildoc.Models.IncidenteLesionado
 
 @{
-    ViewData["Title"] = "Details";
+    Layout = null;
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Lesionado</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Apellido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Apellido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CorreoElectronico)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CorreoElectronico)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cedula)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cedula)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
+                <dl class="row mb-0 dl-horizontal">
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Nombre)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Nombre)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Departamento)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Departamento)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Municipio)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Municipio)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Direccion)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Direccion)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Cliente)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Cliente)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Descripcion)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Descripcion)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del Incidente</h6>
+                <dl class="row mb-0 dl-horizontal">
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Titulo)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Titulo)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.FechaIncidente)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.FechaIncidente)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Descripcion)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Descripcion)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del lecionado</h6>
+                <dl class="row mb-0 dl-horizontal">
+                    <dt class="col-sm-4">Nombre completo</dt>
+                    <dd class="col-sm-8 text-muted">@Model.Lesionado.Nombre @Model.Lesionado.Apellido</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Lesionado.Cedula)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Lesionado.Cedula)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ActividadRealizada)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.ActividadRealizada)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Defuncion)</dt>
+                    <dd class="col-sm-8 text-muted">
+                        @(Model.Defuncion ? "Sí" : "No")
+                    </dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.AsociadaProyecto)</dt>
+                    <dd class="col-sm-8 text-muted">
+                        @(Model.AsociadaProyecto ? "Sí" : "No")
+                    </dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GeneroAfectado)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.GeneroAfectado)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Hospitalizado)</dt>
+                    <dd class="col-sm-8 text-muted">
+                        @(Model.Hospitalizado ? "Sí" : "No")
+                    </dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PrimerosAuxilios)</dt>
+                    <dd class="col-sm-8 text-muted">
+                        @(Model.PrimerosAuxilios ? "Sí" : "No")
+                    </dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.FechaCreacion)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
 </div>

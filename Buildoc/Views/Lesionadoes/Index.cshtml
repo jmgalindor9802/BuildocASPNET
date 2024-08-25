@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Buildoc.Models.Lesionado>
+﻿@model IEnumerable<Buildoc.Models.IncidenteLesionado>
 
 @{
     ViewData["Title"] = "Index";
@@ -22,20 +22,46 @@
         </div>
     </div>
 
+    <tr>
+        <!--Seccion de filtros select-->
+        <div class="row mt-3">
+            <div class="form-group mb-3 col">
+                <label class="control-label">Filtrar por cedula de lesionado</label>
+                <select id="cedula-filter" class="form-control">
+                    <option value="">Todos los lecionados</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col">
+                <label class="control-label">Filtrar por incidente</label>
+                <select id="incidente-filter" class="form-control">
+                    <option value="">Todos los incidentes</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col">
+                <label class="control-label">Filtrar por proyecto</label>
+                <select id="proyecto-filter" class="form-control">
+                    <option value="">Todos los proyectos</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+        </div>
+    </tr>
     <table id="example1" class="table table-bordered table-striped">
         <thead class="header-bg">
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Nombre)
+                    Nombre completo
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Apellido)
+                    @Html.DisplayNameFor(model => model.Lesionado.Cedula)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.CorreoElectronico)
+                    Incidente
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Cedula)
+                    Proyecto
                 </th>
                 <th></th>
             </tr>
@@ -45,21 +71,29 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Nombre)
+                        @item.Lesionado.Nombre @item.Lesionado.Apellido
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Apellido)
+                        @Html.DisplayFor(modelItem => item.Lesionado.Cedula)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.CorreoElectronico)
+                        @Html.DisplayFor(modelItem => item.Incidente.Titulo)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Cedula)
+                        @Html.DisplayFor(modelItem => item.Incidente.Proyecto.Nombre)
                     </td>
                     <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                        <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Lesionadoes", new { id = item.Id })" data-title="Editar inspección" data-action="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                            </svg>
+                        </a> |
+                        <a href="#" class="edit-item" data-url="@Url.Action("Details", "Lesionadoes", new { id = item.Id })" data-title="Detalles" data-action="details">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </a>
                     </td>
                 </tr>
             }
@@ -85,5 +119,96 @@
             ordering: true,
             info: true
         });
+        // Función para obtener proyectos únicos del DataTable
+        function getProyectos() {
+            const proyectos = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const proyecto = data[3]; /* indice debugger la columna */
+                if (!proyectos.includes(proyecto)) {
+                    proyectos.push(proyecto);
+                }
+            });
+            return proyectos;
+        }
+        // Función para obtener incidentes únicos del DataTable
+        function getIncidentes() {
+            const incidentes = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const incidente = data[2]; /* indice debugger la columna */
+                if (!incidentes.includes(incidente)) {
+                    incidentes.push(incidente);
+                }
+            });
+            return incidentes;
+        }
+        // Función para obtener cedulas únicos del DataTable
+        function getCedulas() {
+            const cedulas = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const cedula = data[1]; /* indice debugger la columna */
+                if (!cedulas.includes(cedula)) {
+                    cedulas.push(cedula);
+                }
+            });
+            return cedulas;
+        }
+
+        // Llenar el select con las opciones de proyecto
+        function fillProyectoSelect() {
+            const proyectoFilterEl = $('#proyecto-filter');
+            proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
+            proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
+            const proyectos = getProyectos();
+            proyectos.forEach(proyecto => {
+                const option = $('<option></option>').val(proyecto).text(proyecto);
+                proyectoFilterEl.append(option);
+            });
+        }
+        // Llenar el select con las opciones de incidente
+        function fillIncidenteSelect() {
+            const incidenteFilterEl = $('#incidente-filter');
+            incidenteFilterEl.empty(); // Limpiar el select antes de llenarlo
+            incidenteFilterEl.append('<option value="">Todos los incidentes</option>'); // Opción predeterminada
+            const incidentes = getIncidentes();
+            incidentes.forEach(incidente => {
+                const option = $('<option></option>').val(incidente).text(incidente);
+                incidenteFilterEl.append(option);
+            });
+        }
+        // Llenar el select con las opciones de cedula
+        function fillCedulaSelect() {
+            const cedulaFilterEl = $('#cedula-filter');
+            cedulaFilterEl.empty(); // Limpiar el select antes de llenarlo
+            cedulaFilterEl.append('<option value="">Todos los lesionados</option>'); // Opción predeterminada
+            const cedulas = getCedulas();
+            cedulas.forEach(cedula => {
+                const option = $('<option></option>').val(cedula).text(cedula);
+                cedulaFilterEl.append(option);
+            });
+        }
+        // Inicializa los selects
+        fillProyectoSelect();
+        fillIncidenteSelect();
+        fillCedulaSelect();
+
+        // Agregar evento de cambio al select para filtrar la tabla
+        $('#proyecto-filter').on('change', function () {
+            const proyectoFilter = $(this).val();
+            table.column(3).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+        });
+
+        $('#incidente-filter').on('change', function () {
+            const incidenteFilter = $(this).val();
+            table.column(2).search(incidenteFilter).draw(); // Filtra la columna de proyectos
+        });
+
+        $('#cedula-filter').on('change', function () {
+            const cedulaFilter = $(this).val();
+            table.column(1).search(cedulaFilter).draw(); // Filtra la columna de proyectos
+        });
+
     });
 </script>

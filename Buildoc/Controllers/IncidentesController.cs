@@ -33,24 +33,19 @@ namespace Buildoc.Controllers
         {
             // Obtener el usuario logueado
             var usuarioLogueado = await _userManager.GetUserAsync(User);
-            var IdUsuario = usuarioLogueado.Id;
-
-            // Obtén el rol del usuario logueado
-            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
-            var rolUsuario = roles.FirstOrDefault();
             if (usuarioLogueado == null)
             {
                 return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
             }
+            var IdUsuario = usuarioLogueado.Id;
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
+            
             List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
-                                                                     // Lista de proyectos para el select
-            List<Proyecto> proyectosDisponibles = new List<Proyecto>();
+                              
             if (rolUsuario == "Coordinador")
             {
-                // Obtener los proyectos donde el usuario logueado es el coordinador para pasarlo al select del filtro
-                proyectosDisponibles = await _context.Proyectos
-                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                    .ToListAsync();
                 // Obtener los proyectos donde el usuario logueado es el coordinador
                 var proyectosDondeEsCoordinador = await _context.Proyectos
                     .Where(p => p.CoordinadorId == usuarioLogueado.Id)
@@ -66,11 +61,6 @@ namespace Buildoc.Controllers
             }
             else if (rolUsuario == "Residente")
             {
-                // Obtener los proyectos donde esta asignado el residente
-                proyectosDisponibles = await _context.Proyectos
-                    .Where(p => p.Residentes.Any(r => r.Id == IdUsuario))
-                    .ToListAsync();
-
                 // Obtener los incidentes y lesionados reportados por el usuario logueado
                 todosIncidentes = await _context.Incidentes
                     .Include(i => i.Proyecto)

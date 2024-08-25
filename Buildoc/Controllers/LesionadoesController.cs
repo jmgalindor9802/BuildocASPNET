@@ -7,23 +7,76 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Buildoc.Controllers
 {
     public class LesionadoesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<Usuario> _userManager;
 
-        public LesionadoesController(ApplicationDbContext context)
+        public LesionadoesController(ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Lesionadoes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Lesionados.ToListAsync());
+            // Obtener el usuario logueado
+            var usuarioLogueado = await _userManager.GetUserAsync(User);
+            if (usuarioLogueado == null)
+            {
+                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
+            }
+            // Obtén el rol del usuario logueado
+            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
+            var rolUsuario = roles.FirstOrDefault();
+
+            List<IncidenteLesionado> todosIncidenteLesionados = new List<IncidenteLesionado>(); // Declarar la variable fuera del if-else
+            if (rolUsuario == "Coordinador")
+            {
+                // Obtener los proyectos donde el usuario logueado es el coordinador
+                var proyectosDondeEsCoordinador = await _context.Proyectos
+                    .Where(p => p.CoordinadorId == usuarioLogueado.Id)
+                    .Select(p => p.Id)
+                    .ToListAsync();
+                // Obtener todos los incidentes asociados a esos proyectos
+                var todosIncidentes = await _context.Incidentes
+                    .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
+                    .Select(i => i.Id)
+                    .ToListAsync();
+                todosIncidenteLesionados = await _context.IncidenteLesionados
+                    .Include(il => il.Lesionado)
+                    .Include(il => il.Incidente)
+                        .ThenInclude(i => i.Proyecto)
+                    .Where(il => todosIncidentes.Contains(il.IncidenteId))
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Residente")
+            {
+               // Obtener los incidentes y lesionados reportados por el usuario logueado
+               var todosIncidentes = await _context.Incidentes
+                    .Where(i => i.UsuarioId == usuarioLogueado.Id)
+                    .Select(i => i.Id)
+                    .ToListAsync();
+                todosIncidenteLesionados = await _context.IncidenteLesionados
+                    .Include(il => il.Lesionado)
+                    .Include(il => il.Incidente)
+                        .ThenInclude(i => i.Proyecto)
+                    .Where(il => todosIncidentes.Contains(il.IncidenteId))
+                    .ToListAsync();
+            }
+            else
+            {
+                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
+                todosIncidenteLesionados = new List<IncidenteLesionado>(); // O maneja esto de acuerdo a tus necesidades
+            }
+            return View(todosIncidenteLesionados);
         }
+
 
         // GET: Lesionadoes/Details/5
         public async Task<IActionResult> Details(Guid? id)
@@ -33,14 +86,17 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var lesionado = await _context.Lesionados
+            var incidenteslesionado = await _context.IncidenteLesionados
+                .Include(il => il.Lesionado)
+                .Include(il => il.Incidente)
+                    .ThenInclude(i => i.Proyecto)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (lesionado == null)
+            if (incidenteslesionado == null)
             {
                 return NotFound();
             }
 
-            return View(lesionado);
+            return PartialView(incidenteslesionado);
         }
 
         // GET: Lesionadoes/Create
@@ -114,36 +170,65 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var lesionado = await _context.Lesionados.FindAsync(id);
-            if (lesionado == null)
+            // Cargar IncidenteLesionado
+            var incidenteLesionado = await _context.IncidenteLesionados
+                                                   .Include(il => il.Lesionado)
+                                                   .FirstOrDefaultAsync(il => il.Id == id);
+
+            if (incidenteLesionado == null)
             {
                 return NotFound();
             }
-            return View(lesionado);
+
+            return PartialView(incidenteLesionado);
         }
+
 
         // POST: Lesionadoes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,Nombre,Apellido,CorreoElectronico,Cedula")] Lesionado lesionado)
+        public async Task<IActionResult> Edit(Guid id, IncidenteLesionado incidenteLesionado)
         {
-            if (id != lesionado.Id)
+            if (id != incidenteLesionado.Id)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
+                // Validaciones adicionales
+                if (incidenteLesionado.Lesionado == null || incidenteLesionado == null)
+                {
+                    TempData["ErrorMessage"] = "Los datos proporcionados no son válidos.";
+                    return View(incidenteLesionado);
+                }
                 try
                 {
-                    _context.Update(lesionado);
+                    // Cargar el Lesionado existente de la base de datos
+                    var lesionadoExistente = await _context.Lesionados
+                                                           .FirstOrDefaultAsync(l => l.Id == incidenteLesionado.LesionadoId);
+
+                    if (lesionadoExistente == null)
+                    {
+                        return NotFound("El lesionado no fue encontrado.");
+                    }
+
+                    // Actualizar los valores del lesionado existente
+                    lesionadoExistente.Nombre = incidenteLesionado.Lesionado.Nombre;
+                    lesionadoExistente.Apellido = incidenteLesionado.Lesionado.Apellido;
+                    lesionadoExistente.CorreoElectronico = incidenteLesionado.Lesionado.CorreoElectronico;
+
+                    // Actualizar el incidente lesionado
+                    _context.Update(incidenteLesionado);
+
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!LesionadoExists(lesionado.Id))
+                    if (!LesionadoExists(incidenteLesionado.Lesionado.Id))
                     {
                         return NotFound();
                     }
@@ -152,9 +237,16 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    // Aquí capturamos cualquier otro tipo de excepción y mostramos el mensaje.
+                    TempData["ErrorMessage"] = "Ocurrió un error al intentar guardar los cambios: " + ex.Message;
+                    return View(incidenteLesionado);
+                }
+                TempData["SuccessMessage"] = "¡El lesionado se ha editado exitosamente!";
+                return Json(new { success = true });
             }
-            return View(lesionado);
+            return PartialView(incidenteLesionado);
         }
 
         // GET: Lesionadoes/Delete/5
