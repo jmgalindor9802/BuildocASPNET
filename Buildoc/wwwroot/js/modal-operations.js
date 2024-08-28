@@ -53,13 +53,32 @@ $(document).ready(function () {
         e.preventDefault();
 
         var form = $('#modal-lg').find('form');
+        console.log('Formulario encontrado:', form);
+
         if (form.length === 0) {
             console.log('No se encontró el formulario dentro del modal.');
             addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
 
-        var formData = form.serialize();
+        // Convertir el formulario a un objeto jQuery si no lo es
+        var formElement = form[0];
+        var formData = new FormData(formElement);
+        console.log('Datos del formulario (FormData):');
+
+        // Verificar los archivos en FormData
+        for (var pair of formData.entries()) {
+            console.log(pair[0] + ':', pair[1]);
+            if (pair[0] === 'UploadedFiles') {
+                if (pair[1] instanceof File) {
+                    console.log('Archivo encontrado:', pair[1].name);
+                } else {
+                    console.log('No es un archivo:', pair[1]);
+                }
+            }
+        }
+
+      
         // Mostrar el spinner
         $('#spin').addClass('show');
 
@@ -67,6 +86,8 @@ $(document).ready(function () {
             url: form.attr('action'),
             type: form.attr('method'),
             data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
                 // Ocultar el spinner
                 $('#spin').removeClass('show');

@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240828000430_FileModel")]
+    partial class FileModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,17 +43,12 @@ namespace Buildoc.Data.Migrations
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("InspeccionId")
+                    b.Property<Guid>("InspeccionId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("TipoInspeccionId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("InspeccionId");
-
-                    b.HasIndex("TipoInspeccionId");
 
                     b.ToTable("FileModels");
                 });
@@ -704,17 +702,12 @@ namespace Buildoc.Data.Migrations
             modelBuilder.Entity("Buildoc.Models.FileModel", b =>
                 {
                     b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
-                        .WithMany("FileModels")
-                        .HasForeignKey("InspeccionId");
-
-                    b.HasOne("Buildoc.Models.TipoInspeccion", "TipoInspeccion")
-                        .WithMany("Archivos")
-                        .HasForeignKey("TipoInspeccionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("InspeccionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Inspeccion");
-
-                    b.Navigation("TipoInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
@@ -923,8 +916,6 @@ namespace Buildoc.Data.Migrations
 
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
                 {
-                    b.Navigation("FileModels");
-
                     b.Navigation("Novedades");
 
                     b.Navigation("Respuesta");
@@ -943,11 +934,6 @@ namespace Buildoc.Data.Migrations
             modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
                 {
                     b.Navigation("Incidentes");
-                });
-
-            modelBuilder.Entity("Buildoc.Models.TipoInspeccion", b =>
-                {
-                    b.Navigation("Archivos");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Usuario", b =>
