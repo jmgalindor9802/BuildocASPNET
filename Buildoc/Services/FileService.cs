@@ -19,7 +19,10 @@ namespace Buildoc.Services
             var containerInstance = _blobServiceClient.GetBlobContainerClient(containerName);
             await containerInstance.CreateIfNotExistsAsync();
 
-            var blobInstance = containerInstance.GetBlobClient(file.FileName);
+  
+            var uniqueFileName = $"{Guid.NewGuid()}_{file.FileName}";
+
+            var blobInstance = containerInstance.GetBlobClient(uniqueFileName);
             await blobInstance.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = file.ContentType });
 
             return blobInstance.Uri.ToString(); // Devuelve la URL del archivo subido
