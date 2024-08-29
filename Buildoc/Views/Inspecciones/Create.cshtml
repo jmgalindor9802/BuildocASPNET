@@ -59,14 +59,12 @@
 
             </div>
             <div class="col-lg-4 order-1 order-md-2">
-
                 <div class="form-group mb-3">
                     <label class="control-label">Categoría de Inspección</label>
                     <select id="CategoriaInspeccion" name="CategoriaInspeccion" class="form-control">
                         <option value="" disabled selected>Seleccionar Categoría</option>
                     </select>
                 </div>
-
 
                 <div class="form-group mb-3">
                     <!-- Margen inferior para separar del siguiente contenido -->
@@ -75,18 +73,21 @@
                         <option value="" disabled selected>Seleccionar</option>
                     </select>
                 </div>
-                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>                
-                <p><span  style="display: block; font-size: 0.9em;">Descripción</span> <span id="TipoInspeccionDescripcion" class="text-muted"></span></p>
+
+                <!-- Detalles del Tipo de Inspección -->
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del tipo de inspección</h6>
+                <p>
+                    <span style="display: block; font-size: 0.9em;">Descripción</span>
+                    <span id="TipoInspeccionDescripcion" class="text-muted"></span>
+                </p>
+
 
                 <div id="archivosRelacionados" class="mt-3">
                     <h6 class="text-primary"><i class="fas fa-file-alt"></i> Archivos relacionados</h6>
                     <ul id="listaArchivos" class="list-unstyled"></ul>
                 </div>
-
-
-    
-               
             </div>
+
         
         </div>
         <div class="form-group">
@@ -130,35 +131,103 @@
                 }));
             }
         }
-        $(document).ready(function () {
-            function cargarArchivos(tipoInspeccionId) {
-                var $listaArchivos = $('#listaArchivos');
-                $listaArchivos.empty();  // Limpia la lista antes de agregar los nuevos archivos
 
-                if (tipoInspeccionId) {
-                    $.getJSON('@Url.Action("GetArchivosByTipoInspeccion")', { tipoInspeccionId: tipoInspeccionId }, function (data) {
-                        if (data.length > 0) {
-                            $.each(data, function (index, item) {
-                                var downloadUrl = '@Url.Action("DownloadFile", "Inspecciones", new { fileName = "__fileName__" })'.replace('__fileName__', item.fileName);
-                                $listaArchivos.append('<li><a href="' + downloadUrl + '" target="_blank">' + item.fileName + '</a></li>');
-                            });
-                        } else {
-                            $listaArchivos.append('<li>No hay archivos relacionados.</li>');
-                        }
-                    });
-                } else {
-                    $listaArchivos.append('<li>Seleccione un tipo de inspección para ver los archivos relacionados.</li>');
-                }
-            }
+        // Función para cargar las categorías al inicio
+        function cargarCategorias() {
+            $.getJSON('@Url.Action("GetCategoriasConTipoInspeccion")', function (data) {
+                var $categoriaSelect = $('#CategoriaInspeccion');
+                $categoriaSelect.empty();
+                $categoriaSelect.append('<option value="" disabled selected>Seleccionar Categoría</option>');
 
-            // Cargar archivos cuando se selecciona un tipo de inspección
-            $('#TipoInspeccionId').change(function () {
-                var tipoInspeccionId = $(this).val();
-                cargarArchivos(tipoInspeccionId);
+                $.each(data, function (index, item) {
+                    $categoriaSelect.append($('<option>', {
+                        value: item.value,
+                        text: item.text
+                    }));
+                });
             });
+        }
+
+        // Función para cargar los tipos de inspección según la categoría seleccionada
+        function cargarTiposInspeccion(categoria) {
+            var $tipoInspeccionSelect = $('#TipoInspeccionId');
+            $tipoInspeccionSelect.empty();
+            $tipoInspeccionSelect.append('<option value="" disabled selected>Seleccionar</option>');
+
+            if (categoria) {
+                $.getJSON('@Url.Action("GetTipoInspeccionesPorCategoria")', { categoria: categoria }, function (data) {
+                    $.each(data, function (index, item) {
+                        $tipoInspeccionSelect.append($('<option>', {
+                            value: item.id,
+                            text: item.nombre
+                        }));
+                    });
+                });
+            }
+        }
+
+        function cargarDetallesTipoInspeccion(tipoInspeccionId) {
+            var $descripcion = $('#TipoInspeccionDescripcion');
+            $descripcion.empty(); // Limpia la descripción antes de llenarla
+
+            if (tipoInspeccionId) {
+                $.getJSON('@Url.Action("GetTipoInspeccionDetails")', { id: tipoInspeccionId }, function (data) {
+                    console.log('Datos recibidos:', data); // Verifica los datos recibidos/
+                    console.log('Descripción:', data.descripcion); // Verifica el valor exacto
+                    if (data) {
+                        console.log('Descripción del JSON:', data.descripcion); // Verifica el valor exacto
+                        $descripcion.text(data.descripcion || 'No hay descripción disponible.');
+                        console.log('Descripción actualizada en el DOM:', $descripcion.text()); // Verifica el valor en el DOM
+                  
+                    } else {
+                        $descripcion.text('No hay descripción disponible.');
+                    }
+                }).fail(function (jqXHR, textStatus, errorThrown) {
+                    console.error('Error en la solicitud: ', textStatus, errorThrown);
+                    $descripcion.text('Error al cargar la descripción');
+                });
+            } else {
+                $descripcion.text('Selecciona un tipo de inspección para ver los detalles.');
+            }
+        }
+
+
+        // Función para cargar los archivos relacionados según el tipo de inspección
+        function cargarArchivos(tipoInspeccionId) {
+            var $listaArchivos = $('#listaArchivos');
+            $listaArchivos.empty(); // Limpia la lista antes de agregar los nuevos archivos
+
+            if (tipoInspeccionId) {
+                $.getJSON('@Url.Action("GetArchivosByTipoInspeccion")', { tipoInspeccionId: tipoInspeccionId }, function (data) {
+                    if (data.length > 0) {
+                        $.each(data, function (index, item) {
+                            var downloadUrl = '@Url.Action("DownloadFile", "Inspecciones", new { fileName = "__fileName__" })'.replace('__fileName__', item.fileName);
+                            $listaArchivos.append('<li><a href="' + downloadUrl + '" target="_blank">' + item.fileName + '</a></li>');
+                        });
+                    } else {
+                        $listaArchivos.append('<li>No hay archivos relacionados.</li>');
+                    }
+                });
+            } else {
+                $listaArchivos.append('<li>Seleccione un tipo de inspección para ver los archivos relacionados.</li>');
+            }
+        }
+
+        // Inicializa las categorías al cargar la página
+        cargarCategorias();
+
+        // Filtra los tipos de inspección cuando cambia la categoría
+        $('#CategoriaInspeccion').change(function () {
+            var categoria = $(this).val();
+            cargarTiposInspeccion(categoria);
         });
 
-
+        // Cargar detalles y archivos cuando se selecciona un tipo de inspección
+        $('#TipoInspeccionId').change(function () {
+            var tipoInspeccionId = $(this).val();
+            cargarDetallesTipoInspeccion(tipoInspeccionId);
+            cargarArchivos(tipoInspeccionId);
+        });
 
         // Llama a la función cuando cambia el proyecto
         $('#ProyectoId').change(function () {
@@ -173,6 +242,8 @@
         }
     });
 </script>
+
+
 
 
 
