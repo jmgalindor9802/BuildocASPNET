@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Sas;
 using Buildoc.Models;
 using File = Buildoc.Models.FileModel;
 
@@ -31,7 +32,31 @@ namespace Buildoc.Services
             var downloadContent = await blobInstance.DownloadAsync();
             return downloadContent.Value.Content;
         }
+        public string GenerateDownloadLink(string fileName, string containerName)
+        {
+            var containerInstance = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blobInstance = containerInstance.GetBlobClient(fileName);
 
+            if (blobInstance.Exists())
+            {
+                var sasBuilder = new BlobSasBuilder
+                {
+                    BlobContainerName = containerName,
+                    BlobName = fileName,
+                    Resource = "b", // Tipo de recurso: 'b' para blob
+                    ExpiresOn = DateTimeOffset.UtcNow.AddMinutes(30) // Enlace válido por 30 minutos
+                };
+
+                // Permisos: permitir la lectura del archivo
+                sasBuilder.SetPermissions(BlobSasPermissions.Read);
+
+                var sasUri = blobInstance.GenerateSasUri(sasBuilder);
+
+                return sasUri.ToString(); // Devuelve la URL con el SAS token
+            }
+
+            return null; // Retorna null si el archivo no existe
+        }
 
     }
 }

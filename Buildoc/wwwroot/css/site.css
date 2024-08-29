@@ -813,3 +813,11 @@ h6,
     border-color: #001f3f; /* Color de borde personalizado */
     color: #ffffff; /* Color de texto personalizado */
 }
+
+#listaArchivos li {
+    font-size: 0.85em; /* Reduce el tamaño de la fuente */
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos (...) si el texto es demasiado largo */
+    max-width: 100%; /* Asegura que el texto no exceda el contenedor */
+}

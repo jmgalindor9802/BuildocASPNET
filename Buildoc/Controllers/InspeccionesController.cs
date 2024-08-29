@@ -414,6 +414,31 @@ namespace Buildoc.Controllers
 
             return Json(tiposInspeccion);
         }
+        // GET: Inspecciones/GetArchivosByTipoInspeccion
+public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionId)
+{
+            var archivos = await _context.FileModels
+                   .Where(a => a.TipoInspeccionId == tipoInspeccionId)
+                   .Select(a => new
+                   {
+                       a.FileName,
+                       a.FilePath
+                   })
+                   .ToListAsync();
+
+            return Json(archivos);
+}
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            var downloadLink = _fileService.GenerateDownloadLink(fileName, "documents");
+            if (string.IsNullOrEmpty(downloadLink))
+            {
+                return NotFound(); // Maneja el caso donde el archivo no exista
+            }
+
+            return Redirect(downloadLink); // Redirige al usuario al enlace de descarga temporal
+        }
 
 
         // GET: Inspecciones/Create
