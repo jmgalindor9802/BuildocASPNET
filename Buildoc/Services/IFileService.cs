@@ -7,6 +7,6 @@ namespace Buildoc.Services
         Task<string> Upload(IFormFile file, string containerName);
 
         Task<Stream> Get(string fileName);
-        string GenerateDownloadLink(string fileName, string containerName);
+        string GetFilePath(string fileName);
     }
 }

@@ -11,69 +11,67 @@ namespace Buildoc.Controllers
     {
        private readonly IFileService _fileService;
         private readonly ApplicationDbContext _context;
-        public FileController(IFileService fileService, ApplicationDbContext context)
+        private readonly ILogger<InspeccionesController> _logger;
+        public FileController(IFileService fileService, ApplicationDbContext context, ILogger<InspeccionesController> logger)
         {
             _fileService = fileService;
             _context = context;
+            _logger = logger;
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Upload(IFormFile file, Guid inspeccionId)
+        // GET: File/Download/{fileName}
+        public async Task<IActionResult> Download(string fileName)
         {
-            if (file == null || file.Length == 0)
+            var fileStream = await _fileService.Get(fileName); // Obtén el stream del archivo desde el servicio
+            if (fileStream == null)
             {
-                return Json(new { success = false, message = "No se seleccionó ningún archivo." });
+                return NotFound(); // Maneja el caso en que el archivo no existe
             }
 
-            // Definir el nombre del contenedor
-            string containerName = "inspecciones";
-
-            // Subir el archivo a Azure Blob Storage y obtener la URL del archivo
-            var fileUrl = await _fileService.Upload(file, containerName);
-
-            // Crear un modelo de archivo para guardar en la base de datos
-            var fileModel = new FileModel
-            {
-                Id = Guid.NewGuid(),
-                FileName = file.FileName,
-                FilePath = fileUrl,
-                ContentType = file.ContentType,
-                FileSize = file.Length,
-                InspeccionId = inspeccionId
-            };
-
-
-            // Guardar los metadatos del archivo en la base de datos
-            _context.FileModels.Add(fileModel);
-            await _context.SaveChangesAsync();
-
-            return Json(new { success = true, message = "Archivo subido exitosamente." });
+            var contentType = "application/octet-stream"; // Asume tipo genérico o puedes determinarlo dinámicamente
+            return File(fileStream, contentType, fileName); // Devuelve el archivo para descarga
         }
 
+
+        // GET: File/ListFiles/{containerName}
         [HttpGet]
-        public async Task<IActionResult> Get(string name)
+        public async Task<IActionResult> ListFiles(string containerName)
         {
-            var fileStream = await _fileService.Get(name);
+            // Implementar lógica para listar archivos si es necesario
+            // Esta es una idea general, puede variar según cómo quieras mostrar los archivos
 
-            // Determinar el tipo de contenido del archivo basándote en su extensión
-            string fileType = "application/octet-stream"; // Tipo de archivo por defecto
-            if (name.EndsWith(".png", StringComparison.OrdinalIgnoreCase))
-            {
-                fileType = "image/png";
-            }
-            else if (name.EndsWith(".jpeg", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase))
-            {
-                fileType = "image/jpeg";
-            }
-            // Puedes agregar más tipos de contenido si es necesario
+            // Ejemplo simplificado:
+            // var files = await _fileService.ListFiles(containerName);
+            // return View(files);
 
-            return File(fileStream, fileType);
+            return View(); // Retorna una vista con la lista de archivos
         }
 
+        // POST: File/DeleteFile/{fileName}
+        [HttpPost]
+        public async Task<IActionResult> DeleteFile(string fileName)
+        {
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return BadRequest("El nombre del archivo no puede estar vacío.");
+            }
 
+            try
+            {
+                // Implementar la lógica para eliminar el archivo
+                // await _fileService.Delete(fileName);
 
+                return Json(new { success = true, message = "Archivo eliminado exitosamente." });
+            }
+            catch
+            {
+                return StatusCode(500, "Ocurrió un error al intentar eliminar el archivo.");
+            }
+        }
     }
 
 
 }
+
+
+

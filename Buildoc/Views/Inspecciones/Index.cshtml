@@ -187,6 +187,7 @@
     <table id="example1" class="table table-bordered table-striped">
         <thead class="header-bg">
             <tr>
+                      <th>@Html.DisplayNameFor(model => model.FechaProgramacion)</th>
                 <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
                 <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
@@ -199,6 +200,7 @@
             @foreach (var item in Model)
             {
                 <tr>
+                    <td>@Html.DisplayFor(modelItem => item.FechaProgramacion)</td>
                     <td>@Html.DisplayFor(modelItem => item.FechaInspeccion)</td>
                     <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Nombre)</td>
                     <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td>

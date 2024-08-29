@@ -334,9 +334,11 @@ namespace Buildoc.Controllers
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
+                        .ThenInclude(n => n.Archivos)
                     .Include(i => i.Novedades)
                      .ThenInclude(n => n.Usuario)
                     .Include(i => i.Respuesta)
+                    .Include(i => i.FileModels)
                     .FirstOrDefaultAsync(m => m.Id == id);
 
                 if (inspeccion == null)
@@ -431,13 +433,16 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         [HttpGet]
         public async Task<IActionResult> DownloadFile(string fileName)
         {
-            var downloadLink = _fileService.GenerateDownloadLink(fileName, "documents");
-            if (string.IsNullOrEmpty(downloadLink))
+            // Aquí debes obtener la ruta completa del archivo desde el FilePath
+            // Suponiendo que tienes una forma de obtener el FilePath usando el fileName
+            var filePath = _fileService.GetFilePath(fileName);
+
+            if (string.IsNullOrEmpty(filePath))
             {
                 return NotFound(); // Maneja el caso donde el archivo no exista
             }
 
-            return Redirect(downloadLink); // Redirige al usuario al enlace de descarga temporal
+            return Redirect(filePath);
         }
 
 
