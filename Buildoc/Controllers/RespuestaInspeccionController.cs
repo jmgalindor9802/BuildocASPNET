@@ -9,6 +9,7 @@ using Buildoc.Data;
 using Buildoc.Models;
 using Buildoc.Models.Inspecciones;
 using Microsoft.AspNetCore.Identity;
+using Buildoc.Services;
 
 namespace Buildoc.Controllers
 {
@@ -16,10 +17,12 @@ namespace Buildoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
-        public RespuestaInspeccionController(ApplicationDbContext context, UserManager<Usuario> userManager)
+        private readonly IFileService _fileService;
+        public RespuestaInspeccionController(IFileService fileService, ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
         // GET: RespuestaInspeccion
@@ -101,7 +104,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion)
+        public async Task<IActionResult> Create([Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
         {
             if (ModelState.IsValid)
             {
@@ -118,6 +121,65 @@ namespace Buildoc.Controllers
                     // Establecer la relación entre Inspeccion y RespuestaInspeccion
                     inspeccion.RespuestaId = respuestaInspeccion.Id; // Asignar el Id de la respuesta a la inspección
                     inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
+
+                    // Manejo de archivos
+                    if (files != null && files.Count > 0)
+                    {
+                        foreach (var file in files)
+                        {
+                            if (file.Length > 0)
+                            {
+         
+                                var filePath = await _fileService.Upload(file, "documents");
+
+
+                                if (string.IsNullOrEmpty(filePath))
+                                {
+                                    throw new Exception("File path is null or empty.");
+                                }
+
+                                // Guardar los metadatos del archivo
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    FileName = file.FileName,
+                                    FilePath = filePath,
+                                    ContentType = file.ContentType,
+                                    FileSize = file.Length,
+                                    RespuestaInspeccionId = respuestaInspeccion.Id
+                                };
+
+                                _context.FileModels.Add(fileModel);
+                            }
+                        }
+                    }
+
+                    // Manejo de imágenes
+                    if (images != null && images.Count > 0)
+                    {
+                        foreach (var image in images)
+                        {
+                            if (image.Length > 0)
+                            {
+                                
+                                var imagePath = await _fileService.Upload(image, "images");
+
+                                // Guardar los metadatos de la imagen
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    FileName = image.FileName,
+                                    FilePath = imagePath,
+                                    ContentType = image.ContentType,
+                                    FileSize = image.Length,
+                                    InspeccionId = inspeccion.Id
+                                };
+
+                                _context.FileModels.Add(fileModel);
+                            }
+                        }
+                    }
+
 
 
                     // Crear una nueva novedad
@@ -155,7 +217,7 @@ namespace Buildoc.Controllers
             // Si el modelo no es válido, devolver la vista parcial con los datos existentes
             ViewData["InspeccionId"] = new SelectList(_context.Inspecciones, "Id", "Id", respuestaInspeccion.InspeccionId);
             ViewData["InspeccionAdicionalId"] = new SelectList(_context.Inspecciones, "Id", "Id", respuestaInspeccion.InspeccionAdicionalId);
-            return PartialView(respuestaInspeccion);
+            return Json(new { success = false, message = "El modelo no es válido." });
         }
 
 

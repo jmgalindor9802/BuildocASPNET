@@ -35,6 +35,14 @@ namespace Buildoc.Services
             // Sube el archivo al blob
             await blobInstance.UploadAsync(file.OpenReadStream(), new BlobHttpHeaders { ContentType = file.ContentType });
 
+
+            // Verifica si el blob existe después de la subida
+            var exists = await blobInstance.ExistsAsync();
+            if (!exists)
+            {
+                throw new Exception("File upload failed.");
+            }
+
             // Retorna la URL pública del archivo subido
             return blobInstance.Uri.ToString();
         }

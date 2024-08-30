@@ -48,7 +48,6 @@ $(document).ready(function () {
         });
     });
 
-    // Manejar la acción de guardar
     $('#modal-lg').on('click', '.btn-save', function (e) {
         e.preventDefault();
 
@@ -57,29 +56,15 @@ $(document).ready(function () {
 
         if (form.length === 0) {
             console.log('No se encontró el formulario dentro del modal.');
+            $('#spin').removeClass('show');
             addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
 
-        // Convertir el formulario a un objeto jQuery si no lo es
         var formElement = form[0];
         var formData = new FormData(formElement);
         console.log('Datos del formulario (FormData):');
 
-        // Verificar los archivos en FormData
-        for (var pair of formData.entries()) {
-            console.log(pair[0] + ':', pair[1]);
-            if (pair[0] === 'UploadedFiles') {
-                if (pair[1] instanceof File) {
-                    console.log('Archivo encontrado:', pair[1].name);
-                } else {
-                    console.log('No es un archivo:', pair[1]);
-                }
-            }
-        }
-
-      
-        // Mostrar el spinner
         $('#spin').addClass('show');
 
         $.ajax({
@@ -89,8 +74,7 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                // Ocultar el spinner
-                $('#spin').removeClass('show');
+                $('#spin').removeClass('spin.show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
@@ -100,11 +84,13 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-
+               
+                $('#spin').removeClass('spin.show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
     });
+
 
     // Manejar la acción de eliminar
     $('#modal-lg').on('click', '.btn-delete', function (e) {

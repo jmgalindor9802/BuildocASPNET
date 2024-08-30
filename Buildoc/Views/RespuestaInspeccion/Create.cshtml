@@ -89,7 +89,7 @@
 </div>
 
 
-        <form asp-action="Create">
+<form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="InspeccionId" value="@inspeccionId" />
 
@@ -136,7 +136,17 @@
                 <input asp-for="RecomendacionesFuturasList" class="form-control" />
                 <span asp-validation-for="RecomendacionesFuturasList" class="text-danger"></span>
             </div>
+    <!-- Campo para subir archivos -->
+    <div class="form-group">
+        <label for="fileUpload">Subir Archivos</label>
+        <input type="file" id="fileUpload" name="files" multiple />
+    </div>
 
+    <div class="form-group">
+        <label for="imageUpload">Subir Imágenes</label>
+        <input type="file" id="imageUpload" name="images" multiple accept="image/*" onchange="previewImages()" />
+        <div id="imagePreview" class="mt-2"></div>
+    </div>
         </form>
 
 
@@ -169,6 +179,29 @@
         $('#recomendacionesFuturasSwitch').on('switchChange.bootstrapSwitch', function (event, state) {
             toggleRecomendacionesFuturasList();
         });
+
+
+        function previewImages() {
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = ''; // Limpiar vista previa anterior
+
+            const files = document.getElementById('imageUpload').files;
+            for (const file of files) {
+                const reader = new FileReader();
+
+                reader.onload = function (event) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = event.target.result;
+                    imgElement.style.width = '100px'; // Ajustar el tamaño de la miniatura
+                    imgElement.style.height = 'auto'; // Mantener proporción
+                    imgElement.style.marginRight = '10px'; // Espaciado entre miniaturas
+
+                    imagePreview.appendChild(imgElement);
+                };
+
+                reader.readAsDataURL(file);
+            }
+        }
 
         function toggleAccionesCorrectivasLista() {
             if ($('#accionesCorrectivasSwitch').bootstrapSwitch('state')) {
