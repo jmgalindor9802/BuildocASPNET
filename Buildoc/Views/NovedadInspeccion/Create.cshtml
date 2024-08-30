@@ -92,7 +92,13 @@
                     <input asp-for="Comentario" class="form-control" />
                     <span asp-validation-for="Comentario" class="text-danger"></span>
                 </div>
-
+                @if (!esCoordinador && estadoInspeccion == "Desaprobada")
+                {
+                    <div class="form-group">
+                        <input type="checkbox" id="chkVolverRevision" />
+                        <label for="chkVolverRevision">Volver a revisión</label>
+                    </div>
+                }
                 @if (esCoordinador && estadoInspeccion != "Programada")
                     {
                         <div class="form-group">
@@ -131,8 +137,19 @@
                 $('#hiddenActionAprobacion').val('Desaprobar');
             });
 
+
+            $("#chkVolverRevision").change(function () {
+                if ($(this).is(":checked")) {
+                    $('#hiddenActionAprobacion').val('Devolver');
+                } else {
+                    // Aquí decides qué hacer si el checkbox no está marcado
+                    $('#hiddenActionAprobacion').val(''); // O un valor predeterminado
+                }
+            });
+
             $("#createNovedadForm").submit(function (event) {
                 event.preventDefault(); // Previene el envío tradicional del formulario
+              
                 $.ajax({
                     url: $(this).attr('action'),
                     type: 'POST',

@@ -78,7 +78,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string actionAprobacion)
+        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string actionAprobacion, bool volverRevision)
         {
             if (!_context.Inspeccion.Any(i => i.Id == idInspeccion))
             {
@@ -106,8 +106,13 @@ namespace Buildoc.Controllers
                     return NotFound();
                 }
 
-                // Manejar la acción seleccionada
-                if (actionAprobacion == "Aprobar")
+                if (actionAprobacion == "Devolver")
+                {
+                    inspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
+                    novedadInspeccion.Estado = EstadoInspeccion.PendientesDeRevision;
+                }
+
+                else if (actionAprobacion == "Aprobar")
                 {
                     inspeccion.Estado = EstadoInspeccion.Aprobada;
                     novedadInspeccion.Estado = EstadoInspeccion.Aprobada;
@@ -116,6 +121,8 @@ namespace Buildoc.Controllers
                 {
                     inspeccion.Estado = EstadoInspeccion.Desaprobada;
                     novedadInspeccion.Estado = EstadoInspeccion.Desaprobada;
+
+                   
                 }
                 else
                 {
