@@ -338,6 +338,7 @@ namespace Buildoc.Controllers
                     .Include(i => i.Novedades)
                      .ThenInclude(n => n.Usuario)
                     .Include(i => i.Respuesta)
+                       .ThenInclude(n => n.FileModels)
                     .Include(i => i.FileModels)
                     .FirstOrDefaultAsync(m => m.Id == id);
 

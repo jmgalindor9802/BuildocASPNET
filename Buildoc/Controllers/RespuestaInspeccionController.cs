@@ -74,6 +74,7 @@ namespace Buildoc.Controllers
             var respuestaInspeccion = await _context.RespuestaInspeccion
                 .Include(r => r.Inspeccion)
                 .Include(r => r.InspeccionAdicional)
+                .Include(r => r.Inspeccion.FileModels)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (respuestaInspeccion == null)
             {

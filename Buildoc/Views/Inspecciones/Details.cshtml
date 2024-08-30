@@ -127,6 +127,23 @@
                                     {
                                         <p><strong>Lista de Recomendaciones Futuras:</strong> @Model.Respuesta.RecomendacionesFuturasList</p>
                                     }
+
+                                    <h6>Archivos adjuntos:</h6>
+                                    @if (Model.Respuesta.FileModels != null && Model.Respuesta.FileModels.Any())
+                                    {
+                                        <ul>
+                                            @foreach (var file in Model.Respuesta.FileModels)
+                                            {
+                                                <li>
+                                                    <a href="@file.FilePath" target="_blank">@file.FileName</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p>No hay archivos asociados a esta inspección.</p>
+                                    }
                                 </div>
                             </div>
                         </div>
