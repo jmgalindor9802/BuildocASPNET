@@ -111,7 +111,6 @@
                                     <span class="time"><i class="fas fa-clock"></i> @novedad.FechaCreacion.ToString("dd/MM/yyyy HH:mm")</span>
                                     <h3 class="timeline-header">Novedad</h3>
                                     <div class="timeline-body">
-                                        <p>@novedad.Titulo</p>
                                         <p>@novedad.Descripcion</p>
                                         <span class="badge @(novedad.EstadoNovedad == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
                                               novedad.EstadoNovedad == EstadoIncidenteEnum.Vencido ? "badge-programada" :

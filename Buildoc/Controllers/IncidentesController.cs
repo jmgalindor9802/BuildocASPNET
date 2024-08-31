@@ -456,9 +456,11 @@ namespace Buildoc.Controllers
             else
             {
                 // Si se activan los afectados, valida los datos
-                if (model.Lesionados == null || model.IncidenteLesionados == null)
+                if ((model.Lesionados == null || model.IncidenteLesionados == null)
+                    || model.Lesionados.Count == 0 || model.IncidenteLesionados.Count == 0
+                    || model.Lesionados.All(l => l.Cedula == null && l.Nombre == null && l.Apellido == null))
                 {
-                    return Json(new { success = false, message = "Los datos del lesionado estan incompletos o mal diligenciados" });
+                    return Json(new { success = false, message = "Los datos del lesionado están incompletos o mal diligenciados" });
                 }
                 foreach (var lesionado in model.Lesionados)
                 {
@@ -479,6 +481,12 @@ namespace Buildoc.Controllers
                     {
                         return Json(new { success = false, message = "La cédula no puede contener números negativos." });
                     }
+                }
+                // Validar cédulas duplicadas
+                var cedulas = model.Lesionados.Select(l => l.Cedula).ToList();
+                if (cedulas.Count != cedulas.Distinct().Count())
+                {
+                    return Json(new { success = false, message = "El formulario contiene cédulas duplicadas." });
                 }
             }
             // Validar que la fecha del incidente no sea mayor a la fecha actual
@@ -596,9 +604,30 @@ namespace Buildoc.Controllers
 
                             await _emailSender.SendEmailAsync(coordinador.Email, subjectCoordinador, htmlMessageCoordinador);
                         }
+                    }else if (switchAfectados && model.Lesionados != null && model.Lesionados.Count > 0)
+                    {
+                        // **Enviar correo si hay lesionados reportados**
+                        // Preparar y enviar el correo
+                        var proyecto = await _context.Proyectos
+                            .Include(p => p.Coordinador)
+                            .FirstOrDefaultAsync(p => p.Id == incidenteConTipo.ProyectoId);
+                        var coordinador = await _userManager.FindByIdAsync(proyecto.CoordinadorId);
+
+                        var lesionadosInfo = string.Join("<br>", model.Lesionados.Select(l => $"Cédula: {l.Cedula}, Nombre completo: {l.Nombre} {l.Apellido}"));
+
+                        var subjectAfectados = "Reporte de Incidente con Lesionados";
+                        var htmlMessageAfectados = $@"
+                        <p>Estimado/a {coordinador.Nombres},</p>
+                        <p>Le informamos que se han reportado {model.Lesionados.Count} lesionado(s) en el proyecto <strong>{proyecto.Nombre}</strong>. Puede consultar más detalles en el incidente titulado <strong>{incidenteConTipo.Titulo}</strong>. A continuación, se detalla la información de los lesionados reportados hasta el momento:</p>
+                        <ul>
+                            {lesionadosInfo}
+                        </ul>
+                        <p>Saludos cordiales,</p>
+                        <p>El equipo de <strong>Buildoc</strong></p>";
+
+                        await _emailSender.SendEmailAsync(coordinador.Email, subjectAfectados, htmlMessageAfectados);
                     }
                 }
-
                 TempData["SuccessMessage"] = "¡El incidente se ha creado exitosamente!";
                 return Json(new { success = true });
             }

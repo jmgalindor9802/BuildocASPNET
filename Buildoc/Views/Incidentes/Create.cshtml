@@ -244,3 +244,32 @@
 
 <script src="/js/scriptincidentecreate.js"></script>
 <script src="/js/afectados.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#tuFormulario').on('submit', function (e) {
+            // Crear un array para almacenar las cédulas
+            let cedulas = [];
+            let cedulaDuplicada = false;
+
+            // Recorrer todos los campos de cédula en el formulario
+            $('.cedula').each(function () {
+                let cedula = $(this).val();
+
+                // Verificar si la cédula ya está en el array
+                if (cedulas.includes(cedula)) {
+                    cedulaDuplicada = true;
+                    return false; // Rompe el bucle si encuentra una cédula duplicada
+                }
+
+                // Añadir la cédula al array
+                cedulas.push(cedula);
+            });
+
+            // Si hay una cédula duplicada, mostrar el mensaje y evitar el envío del formulario
+            if (cedulaDuplicada) {
+                e.preventDefault(); // Evitar que se envíe el formulario
+                return Json(new { success = false, message = "Hay cédulas duplicadas en el formulario." });
+            }
+        });
+    });
+</script>

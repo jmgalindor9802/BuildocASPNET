@@ -13,13 +13,8 @@
             <div class="row">
                 <div class="col-lg-7">
                     <div class="form-group">
-                        <label asp-for="Titulo" class="control-label"></label>
-                        <input asp-for="Titulo" class="form-control" />
-                        <span asp-validation-for="Titulo" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
                         <label asp-for="Descripcion" class="control-label"></label>
-                        <input asp-for="Descripcion" class="form-control" />
+                        <textarea asp-for="Descripcion" class="form-control"></textarea>
                         <span asp-validation-for="Descripcion" class="text-danger"></span>
                     </div>
                     @if (esCoordinador)
@@ -93,6 +88,8 @@
                             $('#SelectEstadoIncidente').show();  // Muestra el select
                         } else {
                             $('#SelectEstadoIncidente').hide();  // Oculta el select
+                            // Establece el valor del select al valor predeterminado
+                            $('#SelectEstadoIncidente select').val('');
                         }
                     });
 

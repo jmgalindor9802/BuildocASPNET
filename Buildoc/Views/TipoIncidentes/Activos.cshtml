@@ -1,0 +1,96 @@
+﻿@model IEnumerable<Buildoc.Models.TipoIncidente>
+
+@{
+    ViewData["Title"] = "Activos";
+}
+<div class="container-page">
+    <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16">
+                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z" />
+                    <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+                </svg> Activos
+            </h1>
+            <p class="mb-0">
+                <a href="#" id="createNewModal" class="create-new btn btn-light"
+                   data-url="@Url.Action("Create", "TipoIncidentes")"
+                   data-title="Crear tipo de incidente" data-action="create">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                    </svg> Crear Tipo de incidente
+                </a>
+                <a asp-action="Index" class="btn btn-light">Volver</a>
+            </p>
+        </div>
+    </div>
+    <tr>
+        <div class="row mt-3">
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por categoria</label>
+                <select id="categoria-filter" class="form-control">
+                    <option value="">Todas las categorias</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por gravedad</label>
+                <select id="gravedad-filter" class="form-control">
+                    <option value="">Todas las gravedades</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+        </div>
+    </tr>
+    <table id="example1" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Categoria)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Titulo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Gravedad)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Titulo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gravedad)
+                    </td>
+                    <td>
+                        <a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "TipoIncidentes", new { id = item.Id })" data-title="Editar tipo de incidente" data-action="edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                            </svg>
+                        </a> |
+                        <a href="#" class="details-view" data-url="@Url.Action("Details", "TipoIncidentes", new { id = item.Id })" data-title="Detalles del tipo de incidente" data-action="details">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </a> |
+                        <a href="#" class="delete-item" data-url="@Url.Action("Delete", "TipoIncidentes", new { id = item.Id })" data-title="Archivar tipo de incidente" data-action="delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/js/tipoincidentetablafiltros.js"></script>

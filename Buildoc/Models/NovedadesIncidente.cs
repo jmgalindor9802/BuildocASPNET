@@ -8,10 +8,6 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         [Required]
-        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 150")]
-        [Display(Name = "Título")]
-        public string Titulo { get; set; } = string.Empty;
-        [Required]
         [MaxLength(5000, ErrorMessage = "El campo debe terner un maximo de 150")]
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; } = string.Empty;
