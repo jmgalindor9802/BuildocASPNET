@@ -52,6 +52,9 @@ namespace Buildoc.Models
 	
         public EstadoRespuestaInspeccion EstadoRespuestaInspeccion { get; set; }
 
-      
+        // Colección de archivos asociados a la inspección
+        public ICollection<FileModel> FileModels { get; set; } = new List<FileModel>();
+
+
     }
 }

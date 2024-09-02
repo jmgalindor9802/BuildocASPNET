@@ -53,5 +53,9 @@ namespace Buildoc.Models
 
         // Colección de novedades relacionadas
         public ICollection<NovedadInspeccion> Novedades { get; set; }
+
+        // Colección de archivos asociados a la inspección
+        public ICollection<FileModel> FileModels { get; set; } = new List<FileModel>();
+
     }
 }

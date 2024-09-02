@@ -457,6 +457,48 @@
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 	
 
+		<!-- Spinner para carga -->
+		<div id="loadingSpinner" class="modal" style="display: none; background-color: rgba(0, 0, 0, 0.5); z-index: 1050;">
+			<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+				<div class="spinner-border text-light" role="status">
+					<span class="sr-only">Cargando...</span>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			$(document).ready(function () {
+				// Mostrar el modal de carga cuando se inicia la petición
+				function showLoadingSpinner() {
+					$("#loadingSpinner").fadeIn();
+				}
+
+				// Ocultar el modal de carga cuando la petición termina
+				function hideLoadingSpinner() {
+					$("#loadingSpinner").fadeOut();
+				}
+
+				$(".details-view, .edit-item, .create-new").on("click", function (e) {
+					e.preventDefault();
+
+					var url = $(this).data("url");
+					var title = $(this).data("title");
+					var action = $(this).data("action");
+
+					showLoadingSpinner();
+
+					$.get(url, function (data) {
+						hideLoadingSpinner();
+						$("#modalTitle").text(title);
+						$("#modalBody").html(data);
+						$("#genericModal").modal("show");
+					}).fail(function () {
+						hideLoadingSpinner();
+						alert("Ocurrió un error al intentar cargar el contenido.");
+					});
+				});
+			});
+		</script>
 
 
 		@RenderSection("Scripts", required: false)

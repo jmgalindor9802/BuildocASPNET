@@ -8,16 +8,20 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
 using Buildoc.Utilities;
+using Buildoc.Services;
 
 namespace Buildoc.Controllers
 {
     public class TipoInspeccionesController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public TipoInspeccionesController(ApplicationDbContext context)
+        private readonly IFileService _fileService;
+        private readonly ILogger<InspeccionesController> _logger;
+        public TipoInspeccionesController(IFileService fileService, ApplicationDbContext context,ILogger<InspeccionesController> logger)
         {
             _context = context;
+            _fileService = fileService;
+            _logger = logger;
         }
 
         // GET: TipoInspecciones
@@ -79,9 +83,8 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Categoria,Descripcion")] TipoInspeccion tipoInspeccion)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Categoria,Descripcion")] TipoInspeccion tipoInspeccion, List<IFormFile> UploadedFiles)
         {
-
             // Verificar si ya existe un tipo de inspección con el mismo nombre
             var existingTipoInspeccion = await _context.TipoInspeccion
                 .FirstOrDefaultAsync(t => t.Nombre == tipoInspeccion.Nombre);
@@ -90,6 +93,7 @@ namespace Buildoc.Controllers
             {
                 return Json(new { success = false, message = "Ya existe un tipo de inspección con este nombre." });
             }
+
             if (!ModelState.IsValid)
             {
                 // Obtener errores de validación
@@ -99,17 +103,56 @@ namespace Buildoc.Controllers
                 return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
             }
 
-
-            if (ModelState.IsValid)
+            try
             {
-
+                // Agregar el TipoInspeccion
                 _context.Add(tipoInspeccion);
                 await _context.SaveChangesAsync();
+
+                // Manejo de archivos subidos
+                if (UploadedFiles != null && UploadedFiles.Count > 0)
+                {
+                    foreach (var file in UploadedFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            // Cargar el archivo a Azure Blob Storage
+                            var fileUrl = await _fileService.Upload(file, "documents");
+
+                            _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
+
+                            // Crear el modelo de archivo y agregarlo al contexto
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                TipoInspeccionId = tipoInspeccion.Id,
+                                FileName = Path.GetFileName(file.FileName),
+                                FilePath = fileUrl,
+                                ContentType = file.ContentType,
+                                FileSize = file.Length
+                            };
+
+                            _context.FileModels.Add(fileModel);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                }
+
                 TempData["SuccessMessage"] = "¡El tipo de inspección se ha creado exitosamente!";
                 return Json(new { success = true });
             }
-            return PartialView("Create",tipoInspeccion);
+            catch (Exception ex)
+            {
+                // Registrar el error
+                Console.WriteLine(ex.Message); // O usa un servicio de logging si lo tienes configurado
+                                               // Si hubo un error en la creación de archivos, revertir el cambio en TipoInspeccion
+                _context.Remove(tipoInspeccion);
+                await _context.SaveChangesAsync();
+                // Manejar errores y retornar un mensaje adecuado
+                return Json(new { success = false, message = "Hubo un error al crear el tipo de inspección. Inténtelo nuevamente." });
+            }
         }
+
 
         // GET: TipoInspecciones/Edit/5
         public async Task<IActionResult> Edit(int? id)

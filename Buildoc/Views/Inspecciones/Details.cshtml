@@ -60,6 +60,47 @@
                                         @Html.DisplayFor(model => model.Estado)
                                     </span>
                                 </p>
+                                <h6>Archivos Relacionados:</h6>
+                                <ul>
+                                    @if (Model.TipoInspeccion != null && Model.TipoInspeccion.Archivos != null)
+                                    {
+                                        var archivosTipoInspeccion = Model.TipoInspeccion.Archivos;
+                                        var archivosInspeccion = Model.FileModels ?? new List<FileModel>();
+
+                                        var todosLosArchivos = archivosTipoInspeccion.Concat(archivosInspeccion).Distinct().ToList();
+
+                                        if (todosLosArchivos.Any())
+                                        {
+                                            foreach (var archivo in todosLosArchivos)
+                                            {
+                                                <li>
+                                                    <a href="@archivo.FilePath" target="_blank">
+                                                        @archivo.FileName
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p>No hay archivos relacionados.</p>
+                                        }
+                                    }
+                                    else if (Model.FileModels != null && Model.FileModels.Any())
+                                    {
+                                        foreach (var archivo in Model.FileModels)
+                                        {
+                                            <li>
+                                                <a href="@archivo.FilePath" target="_blank">
+                                                    @archivo.FileName
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p>No hay archivos relacionados.</p>
+                                    }
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -85,6 +126,23 @@
                                     @if (!string.IsNullOrEmpty(Model.Respuesta.RecomendacionesFuturasList))
                                     {
                                         <p><strong>Lista de Recomendaciones Futuras:</strong> @Model.Respuesta.RecomendacionesFuturasList</p>
+                                    }
+
+                                    <h6>Archivos adjuntos:</h6>
+                                    @if (Model.Respuesta.FileModels != null && Model.Respuesta.FileModels.Any())
+                                    {
+                                        <ul>
+                                            @foreach (var file in Model.Respuesta.FileModels)
+                                            {
+                                                <li>
+                                                    <a href="@file.FilePath" target="_blank">@file.FileName</a>
+                                                </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <p>No hay archivos asociados a esta inspección.</p>
                                     }
                                 </div>
                             </div>

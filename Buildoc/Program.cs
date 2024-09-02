@@ -6,6 +6,7 @@ using Buildoc.Services;
 using System.Globalization;
 using Buildoc.Services.Proyectos;
 using Buildoc.Services.Incidentes;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
 var cultureInfo = new CultureInfo("es-CO");
@@ -17,6 +18,11 @@ CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped(_ =>
+{
+    return new BlobServiceClient(builder.Configuration.GetConnectionString("AzureBlobStorage"));
+});
+builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
@@ -31,17 +37,18 @@ builder.Services.AddRazorPages();
 // A�adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();
 builder.Services.AddScoped<UserManager<Usuario>>();
-builder.Services.AddHostedService<IncidenteEstadoService>();
-builder.Services.AddHostedService<ProyectoEstadoService>();
+builder.Services.AddScoped<IncidenteEstadoService>();
+builder.Services.AddScoped<ProyectoEstadoService>();
+
 
 
 // Add EmailSender service
 builder.Services.AddScoped<IEmailSender, EmailSender>();
-builder.Services.AddTransient<IEmailSender, EmailSender>(); 
+
 
 //Contenedor
 builder.Services.AddScoped<IAzureStorageService, AzureBlobStorageService>();
-
+builder.Services.AddScoped<IFileService, FileService>();
 
 //Cors
 builder.Services.AddCors();

@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240828000430_FileModel")]
+    partial class FileModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,22 +43,12 @@ namespace Buildoc.Data.Migrations
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint");
 
-                    b.Property<Guid?>("InspeccionId")
+                    b.Property<Guid>("InspeccionId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("RespuestaInspeccionId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("TipoInspeccionId")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("InspeccionId");
-
-                    b.HasIndex("RespuestaInspeccionId");
-
-                    b.HasIndex("TipoInspeccionId");
 
                     b.ToTable("FileModels");
                 });
@@ -68,7 +61,6 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Estado")
@@ -89,7 +81,6 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Sugerencia")
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("TipoIncidenteId")
@@ -97,8 +88,7 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<string>("Titulo")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsuarioId")
                         .HasColumnType("nvarchar(450)");
@@ -121,7 +111,6 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ActividadRealizada")
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("AsociadaProyecto")
@@ -130,13 +119,7 @@ namespace Buildoc.Data.Migrations
                     b.Property<bool>("Defuncion")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("FechaCreacion")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
-
                     b.Property<string>("GeneroAfectado")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Hospitalizado")
@@ -251,20 +234,17 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<string>("Apellido")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long?>("Cedula")
                         .HasColumnType("bigint");
 
                     b.Property<string>("CorreoElectronico")
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -278,12 +258,7 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("EstadoNovedad")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("FechaCreacion")
                         .ValueGeneratedOnAdd()
@@ -292,6 +267,9 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<Guid>("IncidenteId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Titulo")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UsuarioId")
                         .HasColumnType("nvarchar(450)");
@@ -426,21 +404,16 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
-                        .IsRequired()
-                        .HasMaxLength(5000)
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Estado")
                         .HasColumnType("bit");
 
                     b.Property<string>("Gravedad")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Titulo")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -729,23 +702,12 @@ namespace Buildoc.Data.Migrations
             modelBuilder.Entity("Buildoc.Models.FileModel", b =>
                 {
                     b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
-                        .WithMany("FileModels")
-                        .HasForeignKey("InspeccionId");
-
-                    b.HasOne("Buildoc.Models.RespuestaInspeccion", "RespuestaInspeccion")
-                        .WithMany("FileModels")
-                        .HasForeignKey("RespuestaInspeccionId");
-
-                    b.HasOne("Buildoc.Models.TipoInspeccion", "TipoInspeccion")
-                        .WithMany("Archivos")
-                        .HasForeignKey("TipoInspeccionId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .WithMany()
+                        .HasForeignKey("InspeccionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Inspeccion");
-
-                    b.Navigation("RespuestaInspeccion");
-
-                    b.Navigation("TipoInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
@@ -954,8 +916,6 @@ namespace Buildoc.Data.Migrations
 
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
                 {
-                    b.Navigation("FileModels");
-
                     b.Navigation("Novedades");
 
                     b.Navigation("Respuesta");
@@ -971,19 +931,9 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Incidentes");
                 });
 
-            modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
-                {
-                    b.Navigation("FileModels");
-                });
-
             modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
                 {
                     b.Navigation("Incidentes");
-                });
-
-            modelBuilder.Entity("Buildoc.Models.TipoInspeccion", b =>
-                {
-                    b.Navigation("Archivos");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Usuario", b =>

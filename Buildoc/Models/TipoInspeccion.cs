@@ -17,6 +17,8 @@ namespace Buildoc.Models
         [MaxLength(500)]
         public string Descripcion { get; set; }
 
+        // Relación uno a muchos con FileModel
+        public ICollection<FileModel> Archivos { get; set; }
 
     }
 }

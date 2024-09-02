@@ -51,14 +51,14 @@
 #spin {
     opacity: 0;
     visibility: hidden;
-    transition: opacity .5s ease-out, visibility 0s linear .5s;
+    transition: opacity 0.5s ease-out, visibility 0s ease-out 0.5s;
     z-index: 99999;
 }
 
     #spin.show {
-        transition: opacity .5s ease-out, visibility 0s linear 0s;
-        visibility: visible;
         opacity: 1;
+        visibility: visible;
+        transition: opacity 0.5s ease-out, visibility 0s ease-out 0s;
     }
 
 
@@ -817,4 +817,12 @@ h6,
     background-color: #001f3f; /* Color de fondo personalizado */
     border-color: #001f3f; /* Color de borde personalizado */
     color: #ffffff; /* Color de texto personalizado */
+}
+
+#listaArchivos li {
+    font-size: 0.85em; /* Reduce el tamaño de la fuente */
+    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    text-overflow: ellipsis; /* Muestra puntos suspensivos (...) si el texto es demasiado largo */
+    max-width: 100%; /* Asegura que el texto no exceda el contenedor */
 }
