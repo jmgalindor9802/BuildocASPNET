@@ -104,14 +104,25 @@ namespace Buildoc.Controllers
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 novedadesIncidente.UsuarioId = userId;
 
+                // Convertir el valor del select a enum
+                EstadoIncidenteEnum? estadoSeleccionado = null;
+                if (!string.IsNullOrEmpty(EstadoIncidenteNovedad))
+                {
+                    if (Enum.TryParse(EstadoIncidenteNovedad, out EstadoIncidenteEnum estado))
+                    {
+                        estadoSeleccionado = estado;
+                        novedadesIncidente.EstadoNovedad = estado;  // Asignar el estado seleccionado al campo EstadoNovedad
+                    }
+                }
+
                 // Buscar el incidente en la base de datos
                 var incidente = await _context.Incidentes.FindAsync(novedadesIncidente.IncidenteId);
                 if (incidente != null)
                 {
-                    // Convertir el string recibido a enum y actualizar el estado del incidente
-                    if (Enum.TryParse(typeof(EstadoIncidenteEnum), EstadoIncidenteNovedad, out var estado))
+                    // Actualizar el estado del incidente si se ha seleccionado un estado
+                    if (estadoSeleccionado.HasValue)
                     {
-                        incidente.Estado = (EstadoIncidenteEnum)estado;
+                        incidente.Estado = estadoSeleccionado.Value;
                         _context.Update(incidente);
                     }
                 }

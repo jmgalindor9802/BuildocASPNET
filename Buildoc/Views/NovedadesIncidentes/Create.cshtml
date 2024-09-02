@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Create";
+    var esCoordinador = User.IsInRole("Coordinador");
 }
 
 <div class="row justify-content-center mb-4">
@@ -9,164 +10,72 @@
         <form asp-action="Create" class="ml-3 mr-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IncidenteId" />
-            <div class="bs-stepper">
-                <!-- Encabezado del formulario paso a paso -->
-                <div class="bs-stepper-header" role="tablist">
-                    <div class="step" data-target="#seguimiento-part">
-                        <button type="button" class="step-trigger" role="tab" aria-controls="seguimiento-part" id="seguimiento-part-trigger">
-                            <span class="bs-stepper-circle">1</span>
-                            <span class="bs-stepper-label">Detalles del Seguimiento</span>
-                        </button>
+            <div class="row">
+                <div class="col-lg-7">
+                    <div class="form-group">
+                        <label asp-for="Descripcion" class="control-label"></label>
+                        <textarea asp-for="Descripcion" class="form-control"></textarea>
+                        <span asp-validation-for="Descripcion" class="text-danger"></span>
                     </div>
-                    <div class="line"></div>
-                    <div class="step" data-target="#afectadosSeguimiento-part">
-                        <button type="button" class="step-trigger" role="tab" aria-controls="afectadosSeguimiento-part" id="afectadosSeguimiento-part-trigger">
-                            <span class="bs-stepper-circle">2</span>
-                            <span class="bs-stepper-label">Detalles de los Afectados</span>
-                        </button>
-                    </div>
+                    @if (esCoordinador)
+                    {
+                        <div class="form-group">
+                            <label class="control-label">¿Desea cambiar el estado del incidente?</label>
+                            <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
+                        </div>
+                        <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
+                            <label class="control-label">Estado del Incidente</label>
+                            <select name="EstadoIncidenteNovedad" class="form-control">
+                                <option value="">Seleccione un estado</option>
+                                <option value="Cerrado">Cerrado</option>
+                                <option value="Solucionado">Solucionado</option>
+                            </select>
+                        </div>
+                    }
                 </div>
-                <!--Cuerpo del formulario paso a paso-->
-                <div class="bs-stepper-content">
-                    <!-- Step 1: Detalles del Seguimiento -->
-                    <div id="seguimiento-part" class="content" role="tabpanel" aria-labelledby="seguimiento-part-trigger">
-                        <div class="row">
-                            <div class="col-lg-7">
-                                <div class="form-group">
-                                    <label asp-for="Titulo" class="control-label"></label>
-                                    <input asp-for="Titulo" class="form-control" />
-                                    <span asp-validation-for="Titulo" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label asp-for="Descripcion" class="control-label"></label>
-                                    <input asp-for="Descripcion" class="form-control" />
-                                    <span asp-validation-for="Descripcion" class="text-danger"></span>
-                                </div>
-                                <div class="form-group">
-                                    <label class="control-label">¿Desea cambiar el estado del incidente?</label>
-                                    <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
-                                </div>
-                                <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
-                                    <label class="control-label">Estado del Incidente</label>
-                                    <select name="EstadoIncidenteNovedad" class="form-control">
-                                        <option value="">Seleccione un estado</option>
-                                        <option value="Cerrado">Cerrado</option>
-                                        <option value="Solucionado">Solucionado</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-5 order-1 order-md-2">
-                                <div class="card card-default collapsed-card">
-                                    <div class="card-header">
-                                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del incidente</h6>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <p><span style="display: block; font-size: 0.9em;">Incidente:</span> <span class="text-muted">@Model.Incidente.Titulo</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Fecha:</span> <span class="text-muted">@Model.Incidente.FechaIncidente.ToShortDateString()</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Hora:</span> <span class="text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Descripción:</span> <span class="text-muted">@Model.Incidente.Descripcion</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Tipo de Incidente:</span> <span class="text-muted">@Model.Incidente.TipoIncidente?.Titulo</span></p>
-                                        @* 
-                                        @if (Model.Incidente.Afectados.Any())
-                                        {
-                                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">@Model.Incidente.Afectados.Count()</span></p>
-                                        }
-                                        else
-                                        {
-                                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
-                                        }
-                                         *@
-                                    </div>
-                                </div>
-
-                                <div class="card card-default collapsed-card">
-                                    <div class="card-header">
-                                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
-                                        <div class="card-tools">
-                                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <p><span style="display: block; font-size: 0.9em;">Nombre:</span> <span class="text-muted">@Model.Incidente.Proyecto.Nombre</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Departamento:</span> <span class="text-muted">@Model.Incidente.Proyecto.Departamento</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Municipio:</span> <span class="text-muted">@Model.Incidente.Proyecto.Municipio</span></p>
-                                        <p><span style="display: block; font-size: 0.9em;">Dirección:</span> <span class="text-muted">@Model.Incidente.Proyecto.Direccion</span></p>
-                                    </div>
-                                </div>
-                                <button type="button" class="btn btn-primary btn-next" id="btnNext">Siguiente</button>
+                <div class="col-lg-5 order-1 order-md-2">
+                    <div class="card card-default collapsed-card">
+                        <div class="card-header">
+                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del incidente</h6>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
                         </div>
+                        <div class="card-body">
+                            <p><span style="display: block; font-size: 0.9em;">Incidente:</span> <span class="text-muted">@Model.Incidente.Titulo</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Fecha:</span> <span class="text-muted">@Model.Incidente.FechaIncidente.ToShortDateString()</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Hora:</span> <span class="text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Descripción:</span> <span class="text-muted">@Model.Incidente.Descripcion</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Tipo de Incidente:</span> <span class="text-muted">@Model.Incidente.TipoIncidente?.Titulo</span></p>
+                            @*
+                            @if (Model.Incidente.Afectados.Any())
+                            {
+                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">@Model.Incidente.Afectados.Count()</span></p>
+                            }
+                            else
+                            {
+                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
+                            }
+                            *@
+                        </div>
                     </div>
-                    <div id="afectadosSeguimiento-part" class="content" role="tabpanel" aria-labelledby="afectadosSeguimiento-part-trigger">
-                        <div class="afectado-group" id="afectadoTemplate">
-                            <h5>Afectado</h5>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Cedula</label>
-                                        <input type="number" class="form-control" />
-                                        <span  class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label class="control-label">Correo electronico</label>
-                                        <input type="email" class="form-control" />
-                                        <span class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="control-label">Genero</label>
-                                        <select class="form-control">
-                                            <option value="Hombre">Hombre</option>
-                                            <option value="Mujer">Mujer</option>
-                                        </select>
-                                        <span class="text-danger"></span>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="defuncionAfectado">
-                                        <label for="defuncionAfectado">¿El afectado esta muerto?</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="trabajadorAfectado">
-                                        <label for="trabajadorAfectado">¿El afectado es un trabajador?</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="primerosAuxiliosAfectado">
-                                        <label for="primerosAuxiliosAfectado">¿Se brindaron primeros auxilios?</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="hospitalizarAfectado">
-                                        <label for="hospitalizarAfectado">¿Tuvieron que hospitalizar al afectado?</label>
-                                    </div>
-                                </div>
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4">
-                                    <div class="icheck-primary d-inline">
-                                        <input type="checkbox" id="lesionAfectado">
-                                        <label for="lesionAfectado">¿El afectado presenta alguna lesion?</label>
-                                    </div>
-                                </div>
+
+                    <div class="card card-default collapsed-card">
+                        <div class="card-header">
+                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
                             </div>
-                            <div class="row" id="contenedorLesionesAfectado">
-                                <button type="button" class="btn btn-primary btn-previous">Anterior</button>
-                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p><span style="display: block; font-size: 0.9em;">Nombre:</span> <span class="text-muted">@Model.Incidente.Proyecto.Nombre</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Departamento:</span> <span class="text-muted">@Model.Incidente.Proyecto.Departamento</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Municipio:</span> <span class="text-muted">@Model.Incidente.Proyecto.Municipio</span></p>
+                            <p><span style="display: block; font-size: 0.9em;">Dirección:</span> <span class="text-muted">@Model.Incidente.Proyecto.Direccion</span></p>
                         </div>
                     </div>
                 </div>
@@ -179,6 +88,8 @@
                             $('#SelectEstadoIncidente').show();  // Muestra el select
                         } else {
                             $('#SelectEstadoIncidente').hide();  // Oculta el select
+                            // Establece el valor del select al valor predeterminado
+                            $('#SelectEstadoIncidente select').val('');
                         }
                     });
 

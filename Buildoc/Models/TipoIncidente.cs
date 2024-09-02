@@ -11,10 +11,18 @@ namespace Buildoc.Models
 		[Key]
 		public Guid Id { get; set; }
 		public CategoriaEnum Categoria { get; set; }
-		public string Titulo { get; set; }
-		public string Descripcion { get; set; }
-		public string Gravedad { get; set; }
-		public bool Estado { get; set; }
+        [Required]
+        [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 150")]
+        [Display(Name = "Título")]
+        public string Titulo { get; set; }
+        [Required]
+        [MaxLength(5000, ErrorMessage = "El campo debe terner un maximo de 5000")]
+        [Display(Name = "Descripción")]
+        public string Descripcion { get; set; }
+        [Required]
+        public string Gravedad { get; set; }
+        [Required]
+        public bool Estado { get; set; }
 
 		// Collection of Incidentes
 		public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();

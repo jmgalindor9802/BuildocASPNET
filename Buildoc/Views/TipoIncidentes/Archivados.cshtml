@@ -11,42 +11,73 @@
 	}
 </style>
 
-<h1 class="mb-4">Tipos de incidentes archivados</h1>
+<div class="container-page">
+    <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" fill="currentColor" class="bi bi-card-checklist" viewBox="0 0 16 16">
+                    <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2z" />
+                    <path d="M7 5.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 1 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0M7 9.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5m-1.496-.854a.5.5 0 0 1 0 .708l-1.5 1.5a.5.5 0 0 1-.708 0l-.5-.5a.5.5 0 0 1 .708-.708l.146.147 1.146-1.147a.5.5 0 0 1 .708 0" />
+                </svg> Archivados
+            </h1>
+            <p class="mb-0">
+                <a asp-action="Index" class="btn btn-light">Volver</a>
+            </p>
+        </div>
+    </div>
 
-<p>
-    <a asp-action="Index" class="btn btn-primary">Volver</a>
-</p>
-<table id="example1" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Categoria)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Gravedad)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categoria)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Gravedad)
-            </td>
-            <td>
-                    <a href="#" class="delete-item" data-url="@Url.Action("Restaurar", "TipoIncidentes", new { id = item.Id })" data-title="Reactivar" data-action="restore">Restaurar</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <tr>
+        <div class="row mt-3">
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por categoria</label>
+                <select id="categoria-filter" class="form-control">
+                    <option value="">Todas las categorias</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por gravedad</label>
+                <select id="gravedad-filter" class="form-control">
+                    <option value="">Todas las gravedades</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+        </div>
+    </tr>
+    <table id="example1" class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Categoria)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Titulo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Gravedad)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Categoria)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Titulo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Gravedad)
+                    </td>
+                    <td>
+                        <a href="#" class="delete-item" data-url="@Url.Action("Restaurar", "TipoIncidentes", new { id = item.Id })" data-title="Reactivar" data-action="restore">Restaurar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script src="~/js/tipoincidentetablafiltros.js"></script>

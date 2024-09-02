@@ -93,6 +93,10 @@ namespace Buildoc.Data
                 .Property(s => s.FechaCreacion)
                 .HasDefaultValueSql("GETDATE()");
 
+            builder.Entity<IncidenteLesionado>()
+                .Property(il => il.FechaCreacion)
+                .HasDefaultValueSql("GETDATE()");
+
 
             builder.Entity<NovedadInspeccion>()
        .HasOne(n => n.Usuario)

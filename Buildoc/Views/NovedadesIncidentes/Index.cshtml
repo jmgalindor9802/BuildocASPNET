@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Descripcion)
             </th>
             <th>
@@ -33,9 +30,6 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Descripcion)
             </td>

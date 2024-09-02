@@ -32,15 +32,6 @@ namespace Buildoc.Controllers
 			// Obtener todos los tipos de incidentes
 			var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
 
-			// Contar los tipos de incidentes totales
-			var tipoIncidentesTotales = tipoIncidentes.Count;
-
-			// Contar los tipos de incidentes activos (estado true)
-			var tipoIncidentesActivos = tipoIncidentes.Count(ti => ti.Estado);
-
-			// Contar los tipos de incidentes archivados (estado false)
-			var tipoIncidentesArchivados = tipoIncidentes.Count(ti => !ti.Estado);
-
             // Filtrar tipos de incidentes activos para mostrar en la vista
             var tiposIncidentesActivosParaVista = tipoIncidentes
                 .Where(ti => ti.Estado)
@@ -54,7 +45,10 @@ namespace Buildoc.Controllers
                     Estado = ti.Estado
                 })
                 .ToList();
-
+            //Contadores
+            var tipoIncidentesTotales = tipoIncidentes.Count;
+            var tipoIncidentesActivos = tipoIncidentes.Count(ti => ti.Estado);
+            var tipoIncidentesArchivados = tipoIncidentes.Count(ti => !ti.Estado);
 
             // Pasar los contadores a la vista mediante ViewBag
             ViewBag.tipoIncidentesTotales = tipoIncidentesTotales;
@@ -62,8 +56,19 @@ namespace Buildoc.Controllers
 			ViewBag.tipoIncidentesArchivados = tipoIncidentesArchivados;
 
 			// Retornar a la vista los tipos de incidentes activos
-			return View(tiposIncidentesActivosParaVista);
+			return View(tipoIncidentes);
 		}
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Activos()
+        {
+            // Obtener todos los tipos de incidentes
+            var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
+            // Filtrar tipos de incidentes activos para mostrar en la vista
+            var tiposIncidentesActivosParaVista = tipoIncidentes.Where(ti => ti.Estado).ToList();
+            // Retornar a la vista los tipos de incidentes activos
+            return View(tiposIncidentesActivosParaVista);
+        }
+
 
         // GET: TipoIncidentes
         [Authorize(Roles = "Administrador")]
@@ -112,6 +117,14 @@ namespace Buildoc.Controllers
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Create([Bind("Id,Categoria,Titulo,Descripcion,Gravedad")] TipoIncidente tipoIncidente)
         {
+            if (!ModelState.IsValid)
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
             if (ModelState.IsValid)
             {
                 tipoIncidente.Id = Guid.NewGuid();
@@ -267,7 +280,7 @@ namespace Buildoc.Controllers
             tipoIncidente.Estado = true;
             _context.Update(tipoIncidente);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "¡El tipo de incidente se ha eliminado exitosamente!";
+            TempData["SuccessMessage"] = "¡El tipo de incidente se ha restaurado exitosamente!";
             return Json(new { success = true });
         }
 
