@@ -70,18 +70,19 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                $('#spin').removeClass('spin.show');
+                $('#spin').removeClass('show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
                     location.reload();
                 } else {
+             
                     addAlert(response.message || 'Error no especificado.', 'danger');
                 }
             },
             error: function () {
                
-                $('#spin').removeClass('spin.show');
+                $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
