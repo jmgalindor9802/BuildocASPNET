@@ -16,10 +16,6 @@ $(document).ready(function () {
         $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
-            // Inicializar bs-stepper si existe en el modal cargado
-            if ($('#modal-lg .bs-stepper').length > 0) {
-                initializeStepper();
-            }
      
             // Configurar los botones del modal según la acción
             if (action === 'create' || action === 'edit' || action === 'respond') {
@@ -74,18 +70,19 @@ $(document).ready(function () {
             processData: false,
             contentType: false,
             success: function (response) {
-                $('#spin').removeClass('spin.show');
+                $('#spin').removeClass('show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
                     location.reload();
                 } else {
+             
                     addAlert(response.message || 'Error no especificado.', 'danger');
                 }
             },
             error: function () {
                
-                $('#spin').removeClass('spin.show');
+                $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });

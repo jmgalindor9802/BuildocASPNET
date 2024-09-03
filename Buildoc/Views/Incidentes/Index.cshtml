@@ -2,167 +2,207 @@
 
 @{
     ViewData["Title"] = "Index";
+    var esCoordinador = User.IsInRole("Coordinador");
     var proyectos = ViewBag.Proyectos != null && ((List<Buildoc.Models.Proyecto>)ViewBag.Proyectos).Any() ?
         new SelectList(ViewBag.Proyectos as List<Buildoc.Models.Proyecto>, "Id", "Nombre") :
         new SelectList(Enumerable.Empty<SelectListItem>());
 }
-
 <style>
-    /* Estilos para desactivar el color azul y el subrayado en <a> */
+    /* Estilos para desactivar el color azul y el subrayado en a */
     a {
         text-decoration: none; /* Elimina el subrayado */
         cursor: pointer; /* Cambia el cursor al estilo de un botón */
     }
 </style>
 
-<h1 class="mb-4">Incidentes</h1>
-
-<div class="row mb-3">
-    <a href="#" id="createNewModal" class="create-new btn btn-primary mr-3"
-       data-url="@Url.Action("Create", "Incidentes")"
-       data-title="Crear incidente" data-action="create">
-        <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="bi bi-plus" viewBox="0 0 16 16">
-            <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-        </svg> Reportar incidente
-    </a>
-    <select id="proyectoFilter" class="form-control">
-        <option value="">Seleccione un proyecto</option>
-        @foreach (var proyecto in proyectos)
-        {
-            <option value="@proyecto.Value">@proyecto.Text</option>
-        }
-    </select>
-</div>
-
-<div class="row">
-    <div class="col-md-3 col-sm-6 col-12">
-        <div class="info-box">
-            <span class="info-box-icon bg-danger">
-                <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                </svg>
-            </span>
-
-            <div class="info-box-content">
-                <span class="info-box-text">Incidentes reportados</span>
-                <span class="info-box-number">@ViewBag.TotalesIncidentes</span>
-            </div>
-            <!-- /.info-box-content -->
-        </div>
-        <!-- /.info-box -->
-    </div>
-    <div class="col-lg-3 col-6">
-        <!-- small card -->
-        <div class="small-box bg-danger">
-            <div class="inner">
-                <h3>@ViewBag.ActivosIncidentes</h3>
-
-                <p>Incidentes Activos</p>
-            </div>
-            <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
-                </svg>
-            </div>
-            <a asp-action="IncidenteActivos" class="small-box-footer">
-                Ver <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <!-- small card -->
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>@ViewBag.CerradosIncidentes</h3>
-                <p>Incidentes Cerrados</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-lock"></i>
-            </div>
-            <a asp-action="IncidenteCerrados" class="small-box-footer">
-                Ver <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <!-- small card -->
-        <div class="small-box bg-info">
-            <div class="inner">
-                <h3>@ViewBag.VencidosIncidentes</h3>
-                <p>Incidentes Vencidos</p>
-            </div>
-            <div class="icon">
-                <i class="fas fa-backspace"></i>
-            </div>
-            <a asp-action="IncidenteVencidos" class="small-box-footer">
-                Ver <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-    <div class="col-lg-3 col-6">
-        <!-- small card -->
-        <div class="small-box bg-success">
-            <div class="inner">
-                <h3>@ViewBag.ArchivadosIncidentes</h3>
-
-                <p>Incidentes resueltos</p>
-            </div>
-            <div class="icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
-                    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5z" />
-                    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708" />
-                </svg>
-            </div>
-            <a asp-action="IncidenteArchivados" class="small-box-footer">
-                Ver <i class="fas fa-arrow-circle-right"></i>
-            </a>
-        </div>
-    </div>
-</div>
-<table id="example1" class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Titulo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaIncidente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Proyecto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoIncidente)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-            <tr data-proyectoid="@item.ProyectoId">
-            <td>
-                @Html.DisplayFor(modelItem => item.Titulo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaIncidente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Proyecto.Nombre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
-            </td>
-            <td>
-                <a href="#" class="edit-item" data-url="@Url.Action("Details", "Incidentes", new { id = item.Id })" data-title="Detalles del incidente" data-action="details">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                        <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                    </svg>
+<div class="container-page">
+    <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Incidentes</h1>
+            <p class="mb-0">
+                <a href="#" id="createNewModal" class="create-new btn btn-light"
+                   data-url="@Url.Action("Create", "Incidentes")"
+                   data-title="Reportar incidente" data-action="create">
+                    <i class="fas fa-plus"></i> Reportar incidente
                 </a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col mb-1">
+            <!-- small card -->
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>@ViewBag.ActivosIncidentes</h3>
+
+                    <p>Activos</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-exclamation-triangle" style="font-size:55px;"></i>
+                </div>
+                <a asp-action="IncidenteActivos" class="small-box-footer">
+                    Ver <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col mb-1">
+            <!-- small card -->
+            <div class="small-box bg-gray">
+                <div class="inner">
+                    <h3>@ViewBag.CerradosIncidentes</h3>
+                    <p>Cerrados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-lock" style="font-size:55px;"></i>
+                </div>
+                <a asp-action="IncidenteCerrados" class="small-box-footer">
+                    Ver <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        @if (esCoordinador)
+        {
+            <div class="col mb-1">
+                <!-- small card -->
+                <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>@ViewBag.VencidosIncidentes</h3>
+                        <p>Vencidos</p>
+                    </div>
+                    <div class="icon">
+                        <i class="fas fa-backspace" style="font-size:55px;"></i>
+                    </div>
+                    <a asp-action="IncidenteVencidos" class="small-box-footer">
+                        Ver <i class="fas fa-arrow-circle-right"></i>
+                    </a>
+                </div>
+            </div>
+        }
+        <div class="col mb-1">
+            <!-- small card -->
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>@ViewBag.ArchivadosIncidentes</h3>
+
+                    <p>Resueltos</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-check-circle" style="font-size:55px;"></i>
+                </div>
+                <a asp-action="IncidenteArchivados" class="small-box-footer">
+                    Ver <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col mb-1">
+            <!-- small card -->
+            <div class="small-box bg-olive">
+                <div class="inner">
+                    <h3>@ViewBag.TotalLesionados</h3>
+
+                    <p>Lecionados</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-medkit" style="font-size:55px;"></i>
+                </div>
+                <a asp-controller="Lesionadoes" asp-action="Index" class="small-box-footer">
+                    Ver <i class="fas fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <tr>
+        <div class="row mt-3">
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por proyecto</label>
+                <select id="proyecto-filter" class="form-control">
+                    <option value="">Todos los proyectos</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+            <div class="form-group mb-3 col-6">
+                <label class="control-label">Filtrar por tipo de incidente</label>
+                <select id="tipo-incidente-filter" class="form-control">
+                    <option value="">Todos los tipos de incidentes</option>
+                    <!-- Las opciones se llenarán dinámicamente -->
+                </select>
+            </div>
+        </div>
+    </tr>
+    <table id="example1" class="table table-bordered table-striped">
+        <thead class="header-bg">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Titulo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FechaIncidente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Proyecto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TipoIncidente)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Estado)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-proyecto="@item.Proyecto.Id" data-tipo-incidente="@item.TipoIncidente.Id">
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Titulo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FechaIncidente)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Proyecto.Nombre)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
+                    </td>
+                    <td>
+                        <span class="badge @(item.Estado == EstadoIncidenteEnum.Activo ? "badge-sin-responder" :
+                                              item.Estado == EstadoIncidenteEnum.Vencido ? "badge-programada" :
+                                              item.Estado == EstadoIncidenteEnum.Solucionado ? "badge-aprobada" :
+                                              item.Estado == EstadoIncidenteEnum.Cerrado ? "badge-cerrado" : "")">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </span>
+                    </td>
+                    <td>
+                        <a href="#" class="edit-item" data-url="@Url.Action("Details", "Incidentes", new { id = item.Id })" data-title="Detalles del incidente" data-action="details">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                            </svg>
+                        </a> |
+                        @if (item.Estado == EstadoIncidenteEnum.Activo)
+                        {
+                            <a href="#" type="button" class="respond-item"
+                                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
+                                    data-title="Agregar Novedad"
+                                    data-action="respond">
+                                <i class="fas fa-info-circle"></i> |
+                            </a>
+                            <a href="#" type="button" class="respond-item"
+                                    data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = item.Id })"
+                                    data-title="Agregar Novedad"
+                                    data-action="respond">
+                                <i class="fas fa-user-injured"></i>
+                            </a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
 <script>
     $(document).ready(function () {
         // Inicializa la DataTable con la configuración deseada
@@ -181,23 +221,69 @@
             ordering: true,
             info: true
         });
+        // Función para obtener proyectos únicos del DataTable
+        function getProyectos() {
+            const proyectos = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                if (!proyectos.includes(proyecto)) {
+                    proyectos.push(proyecto);
+                }
+            });
+            return proyectos;
+        }
 
-        // Filtro por proyecto
-        $('#proyectoFilter').change(function () {
-            var proyectoId = $(this).val();
-            if (proyectoId) {
-                $('#example1 tbody tr').each(function () {
-                    var rowProyectoId = $(this).data('proyectoid');
-                    if (rowProyectoId == proyectoId) {
-                        $(this).show();
-                    } else {
-                        $(this).hide();
-                    }
-                });
-            } else {
-                $('#example1 tbody tr').show(); // Muestra todas las filas si no hay filtro
-            }
-            table.draw(); // Actualiza la DataTable
+        // Función para obtener tipos de incidentes únicos del DataTable
+        function getTiposIncidentes() {
+            const tiposIncidentes = [];
+            table.rows().every(function () {
+                const data = this.data();
+                const tipoIncidente = data[3]; // Asume que la columna de tipo de incidente es la 4ta (índice 3)
+                if (!tiposIncidentes.includes(tipoIncidente)) {
+                    tiposIncidentes.push(tipoIncidente);
+                }
+            });
+            return tiposIncidentes;
+        }
+
+        // Llenar el select con las opciones de proyecto
+        function fillProyectoSelect() {
+            const proyectoFilterEl = $('#proyecto-filter');
+            proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
+            proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
+            const proyectos = getProyectos();
+            proyectos.forEach(proyecto => {
+                const option = $('<option></option>').val(proyecto).text(proyecto);
+                proyectoFilterEl.append(option);
+            });
+        }
+
+        // Llenar el select con las opciones de tipo de incidente
+        function fillTipoIncidenteSelect() {
+            const tipoIncidenteFilterEl = $('#tipo-incidente-filter');
+            tipoIncidenteFilterEl.empty(); // Limpiar el select antes de llenarlo
+            tipoIncidenteFilterEl.append('<option value="">Todos los tipos de incidentes</option>'); // Opción predeterminada
+            const tiposIncidentes = getTiposIncidentes();
+            tiposIncidentes.forEach(tipoIncidente => {
+                const option = $('<option></option>').val(tipoIncidente).text(tipoIncidente);
+                tipoIncidenteFilterEl.append(option);
+            });
+        }
+
+        // Inicializa los selects
+        fillProyectoSelect();
+        fillTipoIncidenteSelect();
+
+        // Agregar evento de cambio al select para filtrar la tabla
+        $('#proyecto-filter').on('change', function () {
+            const proyectoFilter = $(this).val();
+            table.column(2).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+        });
+
+        $('#tipo-incidente-filter').on('change', function () {
+            const tipoIncidenteFilter = $(this).val();
+            table.column(3).search(tipoIncidenteFilter).draw(); // Filtra la columna de tipo de incidente
         });
     });
 </script>
