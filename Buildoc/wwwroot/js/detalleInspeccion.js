@@ -22,10 +22,8 @@ $(document).ready(function () {
                     $('#DuracionHoras').val(response.data.DuracionHoras);
                     $('#EsTodoElDia').prop('checked', response.data.EsTodoElDia);
                     $('#Estado').val(response.data.Estado);
-                } else {
-                    console.error('Error: ' + response.message);
-                }
-            },
+                    
+            }
             error: function (jqXHR, textStatus, errorThrown) {
                 console.error('Error al cargar los detalles de la inspección:', textStatus, errorThrown);
             }

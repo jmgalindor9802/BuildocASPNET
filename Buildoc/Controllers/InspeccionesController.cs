@@ -12,6 +12,8 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
+using Buildoc.Models.Inspecciones;
+using Buildoc.Services;
 
 
 namespace Buildoc.Controllers
@@ -22,9 +24,11 @@ namespace Buildoc.Controllers
         private readonly IEmailSender _emailSender;
         private readonly UserManager<Usuario> _userManager;
         private readonly ILogger<InspeccionesController> _logger;
+        private readonly IFileService _fileService;
 
-        public InspeccionesController(IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager, ILogger<InspeccionesController> logger)
+        public InspeccionesController(IFileService fileService, IEmailSender emailSender, ApplicationDbContext context, UserManager<Usuario> userManager, ILogger<InspeccionesController> logger)
         {
+            _fileService = fileService;
             _context = context;
             _emailSender = emailSender;
             _userManager = userManager;
@@ -330,9 +334,12 @@ namespace Buildoc.Controllers
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
+                        .ThenInclude(n => n.Archivos)
                     .Include(i => i.Novedades)
                      .ThenInclude(n => n.Usuario)
                     .Include(i => i.Respuesta)
+                       .ThenInclude(n => n.FileModels)
+                    .Include(i => i.FileModels)
                     .FirstOrDefaultAsync(m => m.Id == id);
 
                 if (inspeccion == null)
@@ -410,6 +417,34 @@ namespace Buildoc.Controllers
 
             return Json(tiposInspeccion);
         }
+        // GET: Inspecciones/GetArchivosByTipoInspeccion
+public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionId)
+{
+            var archivos = await _context.FileModels
+                   .Where(a => a.TipoInspeccionId == tipoInspeccionId)
+                   .Select(a => new
+                   {
+                       a.FileName,
+                       a.FilePath
+                   })
+                   .ToListAsync();
+
+            return Json(archivos);
+}
+        [HttpGet]
+        public async Task<IActionResult> DownloadFile(string fileName)
+        {
+            // Aquí debes obtener la ruta completa del archivo desde el FilePath
+            // Suponiendo que tienes una forma de obtener el FilePath usando el fileName
+            var filePath = _fileService.GetFilePath(fileName);
+
+            if (string.IsNullOrEmpty(filePath))
+            {
+                return NotFound(); // Maneja el caso donde el archivo no exista
+            }
+
+            return Redirect(filePath);
+        }
 
 
         // GET: Inspecciones/Create
@@ -427,8 +462,10 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Create(InspeccionCreateViewModel model)
         {
+            var inspeccion = model.Inspeccion;
+
             if (!ModelState.IsValid)
             {
                 // Obtener errores de validación
@@ -477,6 +514,40 @@ namespace Buildoc.Controllers
             _context.Add(inspeccion);
             await _context.SaveChangesAsync();
 
+
+
+            // Manejo de archivos subidos
+            if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
+            {
+                foreach (var file in model.UploadedFiles)
+                {
+                    if (file.Length > 0)
+                    {
+                        var fileUrl = await _fileService.Upload(file, "documents");
+                        _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
+                        var fileModel = new FileModel
+                        {
+                            Id = Guid.NewGuid(),
+                            InspeccionId = inspeccion.Id,
+                            FileName = Path.GetFileName(file.FileName),
+                            FilePath = fileUrl,
+                            ContentType = file.ContentType,
+                            FileSize = file.Length
+                        };
+
+                        _context.FileModels.Add(fileModel);
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Archivo {file.FileName} tiene longitud cero.");
+                    }
+                }
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                _logger.LogWarning("No se recibieron archivos.");
+            }
             // Obtener el inspector y proyecto asignados
             var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
             var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
@@ -505,6 +576,8 @@ namespace Buildoc.Controllers
 
             // Enviar el correo electrónico al inspector
             await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
+
+        
 
             TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
             return Json(new { success = true });

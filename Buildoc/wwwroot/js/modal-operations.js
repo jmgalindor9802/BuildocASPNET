@@ -44,42 +44,50 @@ $(document).ready(function () {
         });
     });
 
-    // Manejar la acción de guardar
     $('#modal-lg').on('click', '.btn-save', function (e) {
         e.preventDefault();
 
         var form = $('#modal-lg').find('form');
+        console.log('Formulario encontrado:', form);
+
         if (form.length === 0) {
             console.log('No se encontró el formulario dentro del modal.');
+            $('#spin').removeClass('show');
             addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
 
-        var formData = form.serialize();
-        // Mostrar el spinner
+        var formElement = form[0];
+        var formData = new FormData(formElement);
+        console.log('Datos del formulario (FormData):');
+
         $('#spin').addClass('show');
 
         $.ajax({
             url: form.attr('action'),
             type: form.attr('method'),
             data: formData,
+            processData: false,
+            contentType: false,
             success: function (response) {
-                // Ocultar el spinner
                 $('#spin').removeClass('show');
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
                     location.reload();
                 } else {
+             
                     addAlert(response.message || 'Error no especificado.', 'danger');
                 }
             },
             error: function () {
-
+               
+                $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
     });
+
 
     // Manejar la acción de eliminar
     $('#modal-lg').on('click', '.btn-delete', function (e) {
@@ -170,6 +178,12 @@ $(document).ready(function () {
         });
     });
 
-
+    // Manejar la acción de guardar al presionar Enter
+    $('#modal-lg').on('keypress', 'form', function (e) {
+        if (e.which === 13) { // Código de tecla Enter
+            e.preventDefault(); // Evita el comportamiento por defecto
+            $('#modal-lg .btn-save').click(); // Simula un clic en el botón de guardar
+        }
+    });
   
 });

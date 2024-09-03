@@ -99,9 +99,18 @@ namespace Buildoc.Data
 
 
             builder.Entity<NovedadInspeccion>()
-       .HasOne(n => n.Usuario)
-       .WithMany() 
-       .HasForeignKey(n => n.UsuarioId);
+           .HasOne(n => n.Usuario)
+           .WithMany() 
+           .HasForeignKey(n => n.UsuarioId);
+
+            builder.Entity<TipoInspeccion>()
+           .HasMany(t => t.Archivos)
+           .WithOne(f => f.TipoInspeccion)
+           .HasForeignKey(f => f.TipoInspeccionId)
+           .OnDelete(DeleteBehavior.Cascade);
+
+
+
         }
 
         public DbSet<Proyecto> Proyectos { get; set; }
@@ -118,6 +127,9 @@ namespace Buildoc.Data
         public DbSet<Lesionado> Lesionados { get; set; }
         public DbSet<IncidenteLesionado> IncidenteLesionados { get; set; }
         public DbSet<NovedadInspeccion> NovedadInspeccion { get; set; }
+
+        public DbSet<FileModel> FileModels { get; set; }
+
 
     }
 }
