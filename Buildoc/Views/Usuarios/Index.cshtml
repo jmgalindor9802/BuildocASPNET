@@ -85,8 +85,10 @@
 			<tr>
 				<th>Nombre Completo</th>
 				<th>@Html.DisplayNameFor(model => model.First().Email)</th>
+				<th>@Html.DisplayNameFor(model => model.First().Profesion)</th>
 				<th>@Html.DisplayNameFor(model => model.First().Eps)</th>
 				<th>@Html.DisplayNameFor(model => model.First().Role)</th>
+				<th>@Html.DisplayNameFor(model => model.First().Estado)</th>
 				<th></th>
 			</tr>
 		</thead>
@@ -101,10 +103,16 @@
 						@Html.DisplayFor(modelItem => usuario.Email)
 					</td>
 					<td>
+						@Html.DisplayFor(modelItem => usuario.Profesion)
+					</td>
+					<td>
 						@Html.DisplayFor(modelItem => usuario.Eps)
 					</td>
 					<td>
 						@Html.DisplayFor(modelItem => usuario.Role)
+					</td>
+					<td>
+						@Html.DisplayFor(modelItem => usuario.Estado)
 					</td>
 					<td>
 						<a href="#" style="color: blue;" class="edit-item" data-url="@Url.Action("Edit", "Usuarios", new { id = usuario.Id })" data-title="Editar usuario" data-action="edit">
@@ -147,6 +155,54 @@
 			paging: true,
 			ordering: true,
 			info: true
+		});
+
+		// Función para obtener roles únicos del DataTable
+		function getRoles() {
+			const roles = [];
+			table.rows().every(function () {
+				const data = this.data();
+				const rol = data[4];
+				if (!roles.includes(rol)) {
+					roles.push(rol);
+				}
+			});
+			return roles;
+		}
+
+		function getLasEps() {
+			const lasEps = [];
+			table.rows().every(function () {
+				const data = this.data();
+				const eps = data[3];
+				if (!lasEps.includes(eps)) {
+					lasEps.push(eps);
+				}
+			});
+			return lasEps;
+		}
+
+		// Llenar el select con las opciones de eps
+		function fillEpsSelect() {
+			const epsFilterEl = $('#eps-filter');
+			epsFilterEl.empty(); // Limpiar el select antes de llenarlo
+			epsFilterEl.append('<option value="">Todos las eps</option>'); // Opción predeterminada
+			const lasEps = getlasEps();
+			lasEps.forEach(eps => {
+				const option = $('<option></option>').val(eps).text(eps);
+				epsFilterEl.append(option);
+			});
+		}
+
+
+
+		// Inicializa los selects
+		fillRolSelect();
+
+		// Agregar evento de cambio al select para filtrar la tabla
+		$('#rol-filter').on('change', function () {
+			const rolFilter = $(this).val();
+			table.column(4).search(rolFilter).draw(); // Filtra la columna de proyectos
 		});
 	});
 </script>
