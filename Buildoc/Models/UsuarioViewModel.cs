@@ -13,6 +13,7 @@ namespace Buildoc.Models
         public string Apellidos { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]
+        [RegularExpression(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", ErrorMessage = "Correo electrónico inválido")]
         [Display(Name = "Correo electrónico")]
         public string Email { get; set; }
 
