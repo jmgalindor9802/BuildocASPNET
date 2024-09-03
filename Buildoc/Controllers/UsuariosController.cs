@@ -83,6 +83,7 @@ namespace Buildoc.Controllers
                         Id = usuario.Id,
                         Email = usuario.Email,
                         Nombres = usuario.Nombres,
+                        Eps = usuario.Eps,
                         Estado = usuario.Estado,
                         Cedula = usuario.Cedula,
                         Apellidos = usuario.Apellidos,
