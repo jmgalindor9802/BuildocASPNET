@@ -19,8 +19,12 @@ namespace Buildoc.Models
         public string ContentType { get; set; }  // Tipo de contenido (e.g., "application/pdf")
         public long FileSize { get; set; }  // Tamaño del archivo en bytes
 
-        // Relación con Inspección
-        public Guid? InspeccionId { get; set; }  // Clave foránea
+		// Relación con Inspección
+		public Guid? IncidenteId { get; set; }  // Clave foránea
+		public Incidente Incidente { get; set; }  // Navegación hacia la inspección relacionada
+
+		// Relación con Inspección
+		public Guid? InspeccionId { get; set; }  // Clave foránea
         public Inspeccion Inspeccion { get; set; }  // Navegación hacia la inspección relacionada
 
         // Relación con TipoInspeccion

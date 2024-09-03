@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Authorization;
 using System.Data;
+using Buildoc.Services;
 
 namespace Buildoc.Controllers
 {
@@ -20,13 +21,15 @@ namespace Buildoc.Controllers
         private readonly ApplicationDbContext _context;
 		private readonly UserManager<Usuario> _userManager;
         private readonly IEmailSender _emailSender;
+		private readonly IFileService _fileService;
 
-        public IncidentesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender)
+		public IncidentesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender, IFileService fileService)
         {
             _context = context;
 			_userManager = userManager;
             _emailSender = emailSender;
-        }
+			_fileService = fileService;
+		}
 
         // GET: Incidentes
         public async Task<IActionResult> Index(Guid? proyectoId)
@@ -547,6 +550,32 @@ namespace Buildoc.Controllers
                         await _context.SaveChangesAsync();
                     }
                 }
+
+                // Manejo de archivos subidos
+                if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
+                {
+                    foreach (var file in model.UploadedFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var fileUrl = await _fileService.Upload(file, "documents");
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                IncidenteId = model.Incidente.Id,
+                                FileName = Path.GetFileName(file.FileName),
+                                FilePath = fileUrl,
+                                ContentType = file.ContentType,
+                                FileSize = file.Length
+                            };
+
+                            _context.FileModels.Add(fileModel);
+                        }
+           
+                    }
+                    await _context.SaveChangesAsync();
+                }
+                
 
                 // Obtener el incidente con su TipoIncidente
                 var incidenteConTipo = await _context.Incidentes

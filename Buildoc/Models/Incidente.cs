@@ -46,8 +46,10 @@ namespace Buildoc.Models
         // Collection of NovedadesIncidente
         public virtual ICollection<NovedadesIncidente> NovedadesIncidentes { get; set; } = new List<NovedadesIncidente>();
 
-        // Constructor para establecer la fecha de creación
-        public Incidente()
+		// Colección de archivos asociados a la incidente
+		public ICollection<FileModel> FileModels { get; set; } = new List<FileModel>();
+		// Constructor para establecer la fecha de creación
+		public Incidente()
         {
             FechaCreacion = DateTime.Now;
         }
