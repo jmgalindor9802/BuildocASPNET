@@ -590,52 +590,77 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         }
 
 
-        // GET: Inspecciones/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-
-            ViewBag.EstadoList = Enum.GetValues(typeof(EstadoInspeccion))
-      .Cast<EstadoInspeccion>()
-      .Select(e => new SelectListItem
-      {
-          Value = e.ToString(),
-          Text = e.GetType()
-                    .GetField(e.ToString())
-                    .GetCustomAttributes(typeof(DisplayAttribute), false)
-                    .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
-      }).ToList();
-
             if (id == null)
             {
                 return NotFound();
             }
 
-            var inspeccion = await _context.Inspeccion.FindAsync(id);
+            var inspeccion = await _context.Inspeccion
+                .Include(i => i.Proyecto)
+                .Include(i => i.Inspector)
+                .Include(i => i.TipoInspeccion)
+                .FirstOrDefaultAsync(i => i.Id == id);
+
             if (inspeccion == null)
             {
                 return NotFound();
             }
 
-			
+            // Obtener los archivos relacionados con la inspección
+            var archivosInspeccion = await _context.FileModels
+                .Where(f => f.InspeccionId == inspeccion.Id)
+                .ToListAsync();
 
-			ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
+            // Obtener los archivos relacionados con el tipo de inspección
+            var archivosTipoInspeccion = await _context.FileModels
+                .Where(f => f.TipoInspeccionId == inspeccion.TipoInspeccionId)
+                .ToListAsync();
+
+            // Crear el ViewModel
+            var viewModel = new InspeccionEditViewModel
+            {
+                Inspeccion = inspeccion,
+                ArchivosInspeccion = archivosInspeccion,
+                ArchivosTipoInspeccion = archivosTipoInspeccion
+            };
+
+            // Poblar los SelectLists en ViewBag
+            ViewBag.EstadoList = Enum.GetValues(typeof(EstadoInspeccion))
+                .Cast<EstadoInspeccion>()
+                .Select(e => new SelectListItem
+                {
+                    Value = e.ToString(),
+                    Text = e.GetType()
+                              .GetField(e.ToString())
+                              .GetCustomAttributes(typeof(DisplayAttribute), false)
+                              .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
+                }).ToList();
+
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
-			// Pasar el estado de la inspección a la vista
-			ViewData["Estado"] = inspeccion.Estado;
-			return PartialView("Edit",inspeccion);
+
+            // Pasar el estado de la inspección a la vista
+            ViewData["Estado"] = inspeccion.Estado;
+
+            // Devolver la vista parcial con el ViewModel
+            return PartialView("Edit", viewModel);
         }
+
 
         // POST: Inspecciones/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,FechaInspeccion,Objetivo,Descripcion,TipoInspeccionId,ProyectoId,InspectorId,Estado,DuracionHoras,EsTodoElDia")] Inspeccion inspeccion)
+        public async Task<IActionResult> Edit(Guid id, InspeccionEditViewModel model)
         {
-
+              var inspeccion = model.Inspeccion;
             if (!ModelState.IsValid)
             {
+              
                 // Obtener errores de validación
                 var errors = ModelState.Values.SelectMany(v => v.Errors)
                                               .Select(e => e.ErrorMessage)
@@ -703,6 +728,31 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                 {
                     _context.Update(inspeccion);
                     await _context.SaveChangesAsync();
+
+                    // Manejo de archivos subidos (solo si se suben nuevos archivos)
+                    if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
+                    {
+                        foreach (var file in model.UploadedFiles)
+                        {
+                            if (file.Length > 0)
+                            {
+                                var fileUrl = await _fileService.Upload(file, "documents");  // Supone que tienes un servicio para manejar la subida
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    InspeccionId = inspeccion.Id,
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FilePath = fileUrl,
+                                    ContentType = file.ContentType,
+                                    FileSize = file.Length
+                                };
+
+                                _context.FileModels.Add(fileModel);  // Asegúrate de tener un modelo `FileModel`
+                            }
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
 
                     // Obtener el inspector original y el nuevo inspector
                     var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
