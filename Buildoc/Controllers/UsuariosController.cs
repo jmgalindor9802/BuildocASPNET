@@ -49,7 +49,7 @@ namespace Buildoc.Controllers
 
         // GET: Usuarios
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Index(string roleFilter)
+        public async Task<IActionResult> Index()
         {
             var todosUsuarios = await _userManager.Users.ToListAsync(); // Obtén todos los usuarios
 
@@ -61,13 +61,8 @@ namespace Buildoc.Controllers
             ViewBag.UsuariosActivos = usuariosActivos;
             ViewBag.UsuariosDesactivos = usuariosDesactivos;
 
-            if (!string.IsNullOrEmpty(roleFilter))
-            {
-                return await FiltrarRol(roleFilter);
-            }
 
             var usuarios = await _userManager.Users
-                                            .Where(u => u.Estado) // Filtra usuarios con Estado true
                                             .ToListAsync();
 
             var usuariosConRoles = new List<IndexUsuarioViewModel>();
@@ -84,6 +79,7 @@ namespace Buildoc.Controllers
                         Email = usuario.Email,
                         Nombres = usuario.Nombres,
                         Eps = usuario.Eps,
+                        Profesion = usuario.Profesion,
                         Estado = usuario.Estado,
                         Cedula = usuario.Cedula,
                         Apellidos = usuario.Apellidos,
@@ -95,35 +91,38 @@ namespace Buildoc.Controllers
             return View(usuariosConRoles);
         }
 
-        // Método para filtrar por roles los usuarios
-        public async Task<IActionResult> FiltrarRol(string roleFilter)
+		// GET: Usuarios
+		[Authorize(Roles = "Administrador")]
+		public async Task<IActionResult> Activos()
         {
-            // Obtener el rol especificado
-            var role = await _roleManager.FindByNameAsync(roleFilter);
-            if (role == null)
-            {
-                // Manejar el caso en que el rol no exista
-                return NotFound();
-            }
+			var usuarios = await _userManager.Users
+											.Where(u => u.Estado) // Filtra usuarios con Estado true
+											.ToListAsync();
 
-            // Obtener los usuarios asociados a este rol
-            var roleUsers = await _userManager.GetUsersInRoleAsync(role.Name);
+			var usuariosConRoles = new List<IndexUsuarioViewModel>();
 
-            // Crear la lista de usuarios con el rol filtrado
-            var usuariosConRol = (from u in roleUsers
-                                  select new IndexUsuarioViewModel
-                                  {
-                                      Id = u.Id,
-                                      Email = u.Email,
-                                      Nombres = u.Nombres,
-                                      Direccion = u.Direccion,
-                                      Estado = u.Estado,
-                                      Cedula = u.Cedula,
-                                      Role = roleFilter // Asignar el rol filtrado
-                                  }).ToList();
+			foreach (var usuario in usuarios)
+			{
+				var roles = await _userManager.GetRolesAsync(usuario);
 
-            return View("Index", usuariosConRol); // Devolver la vista con los usuarios filtrados
-        }
+				if (!roles.Contains("Administrador"))
+				{
+					usuariosConRoles.Add(new IndexUsuarioViewModel
+					{
+						Id = usuario.Id,
+						Email = usuario.Email,
+						Nombres = usuario.Nombres,
+						Eps = usuario.Eps,
+						Profesion = usuario.Profesion,
+						Cedula = usuario.Cedula,
+						Apellidos = usuario.Apellidos,
+						Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+					});
+				}
+			}
+
+			return View(usuariosConRoles);
+		}
 
         // GET: Usuarios/Details/5
         [Authorize(Roles = "Administrador")]
@@ -207,19 +206,6 @@ namespace Buildoc.Controllers
         public async Task<IActionResult> Create(UsuarioViewModel model, string returnUrl = null)
         {
             returnUrl ??= Url.Content("~/");
-            // Verificar si ya existe un usuario con el mismo Email
-            var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
-            if (existingUserByEmail != null)
-            {
-                return Json(new { success = false, message = "Ya existe un usuario con este correo electrónico." });
-            }
-
-            // Verificar si ya existe un usuario con el mismo Cedula
-            var existingUserByCedula = await _context.Users.FirstOrDefaultAsync(u => u.Cedula == model.Cedula);
-            if (existingUserByCedula != null)
-            {
-                return Json(new { success = false, message = "Ya existe un usuario con este número de cédula." });
-            }
 			// Validar la edad del usuario
 			var birthDate = model.FechaNacimiento.ToDateTime(TimeOnly.MinValue);
 			var age = DateTime.Today.Year - birthDate.Year;
@@ -229,8 +215,29 @@ namespace Buildoc.Controllers
 			{
 				return Json(new { success = false, message = "El usuario debe ser mayor de 18 años." });
 			}
-			if (ModelState.IsValid)
+            // Validar que la cédula tenga entre 7 y 10 dígitos
+            if (model.Cedula < 0)
             {
+                return Json(new { success = false, message = "La cédula no puede contener números negativos." });
+            }else if (model.Cedula.ToString().Length < 7 || model.Cedula.ToString().Length > 10)
+            {
+                return Json(new { success = false, message = "La cédula debe tener entre 7 y 10 dígitos." });
+            }
+            if (ModelState.IsValid)
+            {
+                // Verificar si ya existe un usuario con el mismo Email
+                var existingUserByEmail = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUserByEmail != null)
+                {
+                    return Json(new { success = false, message = "Ya existe un usuario con este correo electrónico." });
+                }
+
+                // Verificar si ya existe un usuario con el mismo Cedula
+                var existingUserByCedula = await _context.Users.FirstOrDefaultAsync(u => u.Cedula == model.Cedula);
+                if (existingUserByCedula != null)
+                {
+                    return Json(new { success = false, message = "Ya existe un usuario con este número de cédula." });
+                }
                 // Generar contraseña aleatoria
                 var randomPassword = PasswordGenerator.GenerateRandomPassword();
                 model.Password = randomPassword;
@@ -288,9 +295,17 @@ namespace Buildoc.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
+            else
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
 
             // Si llegamos aquí, significa que hubo un error en el modelo, devolvemos la vista con errores
-            
+
             return PartialView("Create", model);
         }
 
@@ -605,14 +620,15 @@ namespace Buildoc.Controllers
                 var roles = await _userManager.GetRolesAsync(usuario);
                 usuariosConRoles.Add(new IndexUsuarioViewModel
                 {
-                    Id = usuario.Id,
-                    Email = usuario.Email,
-                    Nombres = usuario.Nombres,
-                    Direccion = usuario.Direccion,
-                    Estado = usuario.Estado,
-                    Cedula = usuario.Cedula,
-                    Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
-                });
+					Id = usuario.Id,
+					Email = usuario.Email,
+					Nombres = usuario.Nombres,
+					Eps = usuario.Eps,
+					Profesion = usuario.Profesion,
+					Cedula = usuario.Cedula,
+					Apellidos = usuario.Apellidos,
+					Role = roles.FirstOrDefault() // Suponemos que el usuario tiene un solo rol
+				});
             }
 
             return View(usuariosConRoles);

@@ -3,28 +3,6 @@
 @{
     ViewData["Title"] = "Create";
 }
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $("#rol").change(function () {
-                var selectedRole = $(this).val();
-                if (selectedRole === "49232564-b506-4675-bb5d-731c1e8c05f6" || selectedRole === "madre") {
-                    $("#jardin").show();
-                    $("label[for='jardin']").show();
-                } else {
-                    $("#jardin").hide();
-                    $("label[for='jardin']").hide();
-                }
-            });
-
-            // Trigger change event on page load to ensure correct initial state
-            $("#rol").change();
-        });
-    </script>
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-}
 
 <div class="row justify-content-center">
     <div class="col-md-12">
@@ -115,14 +93,18 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="Eps" class="control-label"></label>
-                        <input asp-for="Eps" class="form-control" required />
+                        <select asp-for="Eps" class="form-control" id="eps-select" required>
+                            <option value="">Seleccione una EPS</option>
+                        </select>
                         <span asp-validation-for="Eps" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label asp-for="Arl" class="control-label"></label>
-                        <input asp-for="Arl" class="form-control" required />
+                        <select asp-for="Arl" class="form-control" id="arl-select" required>
+                            <option value="">Seleccione una ARL</option>
+                        </select>
                         <span asp-validation-for="Arl" class="text-danger"></span>
                     </div>
                 </div>
@@ -148,3 +130,4 @@
         </form>
     </div>
 </div>
+<script src="~/js/selectepsyarlusuario.js"></script>
