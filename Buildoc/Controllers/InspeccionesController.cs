@@ -79,7 +79,16 @@ namespace Buildoc.Controllers
 
             List<Inspeccion> inspecciones = new List<Inspeccion>();
 
-            if (rolUsuario == "Coordinador")
+            if (rolUsuario == "Administrador")
+            {
+                // Mostrar todas las inspecciones si es administrador
+                inspecciones = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Coordinador")
             {
                 // Obtén los proyectos asociados al coordinador logueado
                 var proyectos = await _context.Proyectos

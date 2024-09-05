@@ -6,20 +6,28 @@
 }
 
 
-    <h1>Tipos de Inspección</h1>
+<div class="container-page">
+    <div class="row mb-4 align-items-center text-white  p-3" style="background-color:	#001f3f;">
+        <div class="col-12 d-flex justify-content-between align-items-center">
+            <h1 class="mb-0 ">
+                <i class="fas fa-clipboard-list"></i> Tipos de inspecciones
+            </h1><p class="mb-0">
+                <a href="#" id="createNewModal" class="create-new btn btn-light"
+                   data-url="@Url.Action("Create", "TipoInspecciones")"
+                   data-title="Crear nuevo tipo de inspección" data-action="create">
+                    <i class="fas fa-plus"></i> Crear nuevo tipo de inspección
+                </a>
+                <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-light">
+                    <i class="fas fa-arrow-left"></i> Volver
+                </a>
+            </p>
+        </div>
+    </div>
+</div>
 
-    <p>
-        <a href="#" id="createNewModal" class="create-new btn btn-primary"
-           data-url="@Url.Action("Create", "TipoInspecciones")"
-           data-title="Crear nuevo tipo de inspección" data-action="create">
-            <i class="fas fa-plus"></i> Crear nuevo tipo de inspección
-        </a>
-    </p>
 
-
-
-    <table id="example1" class="table table-bordered table-striped">
-        <thead>
+<table id="example1" class="table table-bordered table-striped">
+    <thead class="header-bg">
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Nombre)</th>
                 <th>@Html.DisplayNameFor(model => model.Categoria)</th>

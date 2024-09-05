@@ -7,6 +7,7 @@
 @{
     ViewData["Title"] = "Inspecciones";
     var esCoordinador = User.IsInRole("Coordinador");
+    var esAdmin= User.IsInRole("Administrador");
     var usuarioId = ViewBag.UsuarioId as string;
 }
 
@@ -19,6 +20,15 @@
             <h1 class="mb-0">
                 <i class="fas fa-paste"></i> Inspecciones
             </h1><p class="mb-0">
+
+            @if (esAdmin)
+                {
+                    <a href="@Url.Action("Index", "TipoInspecciones")" class="btn btn-light">
+                        <i class="fas fa-clipboard-list"></i> Tipos de inspecciones
+                    </a>
+
+                }
+
                 @if (esCoordinador)
                 {
                     <a href="#" id="createNewModal" class="create-new btn btn-light"
@@ -115,41 +125,44 @@
 
 
     <div class="row">
-        <!-- Columna con el mapa de Colombia -->
-        <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
-            <div class="map-container">
-                <!-- Contenedor para los controles del mapa -->
-                <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
-                    <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
-                        <i class="fas fa-search-plus"></i>
-                    </button>
-                    <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
-                        <i class="fas fa-search-minus"></i>
-                    </button>
-                    <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                </div>
+        @if (!esAdmin)
+        {
+            <!-- Columna con el mapa de Colombia -->
+            <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
+                <div class="map-container">
+                    <!-- Contenedor para los controles del mapa -->
+                    <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
+                        <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                        <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
+                            <i class="fas fa-search-minus"></i>
+                        </button>
+                        <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
 
-                <!-- Filtro para inspecciones dentro del mapa -->
-                <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
-                    <label for="filterEstado" class="form-label">Filtrar por estado:</label>
-                    <select id="filterEstado" class="form-control">
-                        <option value="all">Todos</option>
-                        <option value="0">Por aprobar</option>
-                        <option value="1">En proceso</option>
-                        <option value="2">Finalizada</option>
-                        <option value="3">Programada</option>
-                        <option value="4">Sin responder</option>
-                        <option value="5">Aprobada</option>
-                        <option value="6">Desaprobada</option>
-                    </select>
-                </div>
+                    <!-- Filtro para inspecciones dentro del mapa -->
+                    <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
+                        <label for="filterEstado" class="form-label">Filtrar por estado:</label>
+                        <select id="filterEstado" class="form-control">
+                            <option value="all">Todos</option>
+                            <option value="0">Por aprobar</option>
+                            <option value="1">En proceso</option>
+                            <option value="2">Finalizada</option>
+                            <option value="3">Programada</option>
+                            <option value="4">Sin responder</option>
+                            <option value="5">Aprobada</option>
+                            <option value="6">Desaprobada</option>
+                        </select>
+                    </div>
 
-                <!-- Mapa -->
-                <div id="map"></div>
+                    <!-- Mapa -->
+                    <div id="map"></div>
+                </div>
             </div>
-        </div>
+        }
     </div>
 
 
@@ -283,7 +296,7 @@
             const proyectos = [];
             table.rows().every(function () {
                 const data = this.data();
-                const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                const proyecto = data[3]; // Asume que la columna de proyecto es la 3ra (índice 2)
                 if (!proyectos.includes(proyecto)) {
                     proyectos.push(proyecto);
                 }
@@ -296,7 +309,7 @@
             const inspectores = [];
             table.rows().every(function () {
                 const data = this.data();
-                const inspector = data[3]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                const inspector = data[4]; // Asume que la columna de proyecto es la 3ra (índice 2)
                 if (!inspectores.includes(inspector)) {
                     inspectores.push(inspector);
                 }
@@ -304,12 +317,12 @@
             return inspectores;
         }
 
-        // Función para obtener tipos de inspeccon únicos del DataTable
+        // Función para obtener tipos de inspeccion únicos del DataTable
         function getTipos() {
             const tipos = [];
             table.rows().every(function () {
                 const data = this.data();
-                const tipo = data[1]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                const tipo = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
                 if (!tipos.includes(tipo)) {
                     tipos.push(tipo);
                 }
@@ -367,19 +380,19 @@
         // Agregar evento de cambio al select para filtrar la tabla
         $('#proyecto-filter').on('change', function () {
             const proyectoFilter = $(this).val();
-            table.column(2).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+            table.column(3).search(proyectoFilter).draw(); // Filtra la columna de proyectos
         });
 
         // Agregar evento de cambio al select para filtrar la tabla
         $('#inspector-filter').on('change', function () {
             const inspectorFilter = $(this).val();
-            table.column(3).search(inspectorFilter).draw(); // Filtra la columna de proyectos
+            table.column(4).search(inspectorFilter).draw(); // Filtra la columna de proyectos
         });
 
         // Agregar evento de cambio al select para filtrar la tabla
         $('#tipo-filter').on('change', function () {
             const tipoFilter = $(this).val();
-            table.column(1).search(tipoFilter).draw(); // Filtra la columna de proyectos
+            table.column(2).search(tipoFilter).draw(); // Filtra la columna de proyectos
         });
 
         // Agregar función de búsqueda personalizada si es necesario
