@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905000838_RelacionInspeccionArchivos")]
+    partial class RelacionInspeccionArchivos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("TipoInspeccionId");
 
-                    b.ToTable("FileModels", (string)null);
+                    b.ToTable("FileModels");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Incidente", b =>
@@ -111,7 +114,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("Incidentes", (string)null);
+                    b.ToTable("Incidentes");
                 });
 
             modelBuilder.Entity("Buildoc.Models.IncidenteLesionado", b =>
@@ -157,7 +160,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("LesionadoId");
 
-                    b.ToTable("IncidenteLesionados", (string)null);
+                    b.ToTable("IncidenteLesionados");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Inspeccion", b =>
@@ -209,7 +212,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("TipoInspeccionId");
 
-                    b.ToTable("Inspeccion", (string)null);
+                    b.ToTable("Inspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Inspecciones.NovedadInspeccion", b =>
@@ -240,7 +243,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("NovedadInspeccion", (string)null);
+                    b.ToTable("NovedadInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Lesionado", b =>
@@ -268,7 +271,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Lesionados", (string)null);
+                    b.ToTable("Lesionados");
                 });
 
             modelBuilder.Entity("Buildoc.Models.NovedadesIncidente", b =>
@@ -302,7 +305,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("NovedadesIncidentes", (string)null);
+                    b.ToTable("NovedadesIncidentes");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
@@ -357,7 +360,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasIndex("CoordinadorId");
 
-                    b.ToTable("Proyectos", (string)null);
+                    b.ToTable("Proyectos");
                 });
 
             modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>
@@ -413,7 +416,7 @@ namespace Buildoc.Data.Migrations
                     b.HasIndex("InspeccionId")
                         .IsUnique();
 
-                    b.ToTable("RespuestaInspeccion", (string)null);
+                    b.ToTable("RespuestaInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.TipoIncidente", b =>
@@ -444,7 +447,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoIncidentes", (string)null);
+                    b.ToTable("TipoIncidentes");
                 });
 
             modelBuilder.Entity("Buildoc.Models.TipoInspeccion", b =>
@@ -470,7 +473,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TipoInspeccion", (string)null);
+                    b.ToTable("TipoInspeccion");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Usuario", b =>

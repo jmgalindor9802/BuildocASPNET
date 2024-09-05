@@ -402,9 +402,7 @@ namespace Buildoc.Controllers
             var proyecto = await _context.Proyectos.FindAsync(id);
             if (proyecto != null)
             {
-                // Cambiar el estado a "Archivado" en lugar de eliminar
-                proyecto.Estado = Proyecto.EstadoProyecto.Archivado;
-                _context.Proyectos.Update(proyecto);
+                _context.Proyectos.Remove(proyecto);              
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; 
             }

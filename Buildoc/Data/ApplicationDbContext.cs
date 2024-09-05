@@ -44,7 +44,36 @@ namespace Buildoc.Data
             builder.Entity<Proyecto>()
                 .HasMany(p => p.Incidentes)
                 .WithOne(i => i.Proyecto)
-                .HasForeignKey(i => i.ProyectoId);
+                .HasForeignKey(i => i.ProyectoId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar en cascada incidentes al eliminar un proyecto
+
+            // Configurar la relación entre Proyecto y Inspecciones
+            builder.Entity<Proyecto>()
+                .HasMany(p => p.Inspecciones)
+                .WithOne(i => i.Proyecto)
+                .HasForeignKey(i => i.ProyectoId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar en cascada inspecciones al eliminar un proyecto
+
+            // Configurar la relación entre Inspección y RespuestaInspeccion
+            builder.Entity<Inspeccion>()
+                .HasOne(i => i.Respuesta)
+                .WithOne(r => r.Inspeccion)
+                .HasForeignKey<RespuestaInspeccion>(r => r.InspeccionId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar en cascada la respuesta al eliminar la inspección
+
+            // Configurar la relación entre Inspección y archivos (FileModel)
+            builder.Entity<Inspeccion>()
+                .HasMany(i => i.FileModels)
+                .WithOne(f => f.Inspeccion)
+                .HasForeignKey(f => f.InspeccionId)
+                .OnDelete(DeleteBehavior.Restrict);  
+
+            // Configurar la relación entre TipoInspeccion y archivos
+            builder.Entity<TipoInspeccion>()
+                .HasMany(t => t.Archivos)
+                .WithOne(f => f.TipoInspeccion)
+                .HasForeignKey(f => f.TipoInspeccionId)
+                .OnDelete(DeleteBehavior.Cascade); // Eliminar en cascada archivos al eliminar un tipo de inspección
 
             // Configurar la relación entre Usuario y Incidente
             builder.Entity<Usuario>()

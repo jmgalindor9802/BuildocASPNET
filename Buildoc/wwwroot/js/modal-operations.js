@@ -1,65 +1,77 @@
-// Función para añadir una alerta si no existe una con el mismo mensaje, o actualizarla si ya existe
-function addAlert(message, type) {
-    $('#modal-lg .modal-body .alert').remove();
-    $('#modal-lg .modal-body').prepend('<div class="alert alert-' + type + '">' + message + '</div>');
-}
-
 $(document).ready(function () {
-    // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
+    console.log('jQuery está listo');
+
+    // Manejar clics en los elementos que abren el modal
     $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item,.respond-item', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
         var title = $(this).data('title');
         var action = $(this).data('action'); // 'create', 'edit', 'details', 'delete', 'restore'
 
+        console.log('Abrir modal con acción:', action);
         $('#modal-lg .modal-title').text(title);
+
+        // Cargar contenido del modal
         $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
-     
+            console.log('Contenido cargado en el modal.');
+
+            // Iniciar las validaciones unobtrusive
+            $.validator.unobtrusive.parse('#modal-lg form');
+            console.log('Validaciones unobtrusive inicializadas.');
+
             // Configurar los botones del modal según la acción
-            if (action === 'create' || action === 'edit' || action === 'respond') {
-                $('.btn-save').show();
-                $('.btn-delete').hide();
-                $('.btn-edit').hide();
-                $('.btn-restore').hide();
-            } else if (action === 'delete') {
-                $('.btn-save').hide();
-                $('.btn-delete').show();
-                $('.btn-edit').hide();
-                $('.btn-restore').hide();
-            } else if (action === 'details') {
-                $('.btn-save').hide();
-                $('.btn-delete').hide();
-                $('.btn-edit').hide();
-                $('.btn-restore').hide();
-            } else if (action === 'restore') {
-                $('.btn-save').hide();
-                $('.btn-delete').hide();
-                $('.btn-edit').hide();
-                $('.btn-restore').show();
-            }
+            configureModalButtons(action);
+
         }).fail(function () {
             console.log('Error al cargar el contenido del modal.');
         });
     });
 
+    // Función para configurar los botones del modal
+    function configureModalButtons(action) {
+        // Ocultar todos los botones por defecto
+        console.log('Configurando botones para la acción:', action);
+        $('.btn-save, .btn-delete, .btn-edit, .btn-restore').hide();
+
+        if (action === 'create' || action === 'edit' || action === 'respond') {
+            console.log('Mostrando botón de guardar');
+            $('.btn-save').show(); // Mostrar el botón de guardar
+        } else if (action === 'delete') {
+            console.log('Mostrando botón de eliminar');
+            $('.btn-delete').show(); // Mostrar el botón de eliminar
+        } else if (action === 'restore') {
+            console.log('Mostrando botón de restaurar');
+            $('.btn-restore').show(); // Mostrar el botón de restaurar
+        } else {
+            console.log('No se necesita mostrar ningún botón.');
+        }
+    }
+
+    // Acción para guardar el formulario
     $('#modal-lg').on('click', '.btn-save', function (e) {
         e.preventDefault();
+        console.log('Botón de guardar clicado');
 
         var form = $('#modal-lg').find('form');
-        console.log('Formulario encontrado:', form);
-
         if (form.length === 0) {
             console.log('No se encontró el formulario dentro del modal.');
-            $('#spin').removeClass('show');
             addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
+        // Verificar si el plugin de validación está disponible
+        if (typeof form.valid === "function") {
+            if (!form.valid()) {
+                console.log('El formulario no es válido');
+                return;
+            }
+        } else {
+            console.error('El método form.valid() no está disponible.');
+        }
 
-        var formElement = form[0];
-        var formData = new FormData(formElement);
-        console.log('Datos del formulario (FormData):');
+        var formData = new FormData(form[0]);
+        console.log('Datos del formulario (FormData) listos para enviar.');
 
         $('#spin').addClass('show');
 
@@ -71,37 +83,34 @@ $(document).ready(function () {
             contentType: false,
             success: function (response) {
                 $('#spin').removeClass('show');
+                console.log('Respuesta recibida:', response);
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
                     location.reload();
                 } else {
-             
                     addAlert(response.message || 'Error no especificado.', 'danger');
                 }
             },
             error: function () {
-               
                 $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
     });
 
-
-    // Manejar la acción de eliminar
+    // Acción para eliminar
     $('#modal-lg').on('click', '.btn-delete', function (e) {
         e.preventDefault();
+        console.log('Botón de eliminar clicado');
 
         var form = $('#modal-lg').find('form');
         if (form.length === 0) {
-            console.log('No se encontró el formulario dentro del modal.');
             addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
 
         var formData = form.serialize();
-        // Mostrar el spinner
         $('#spin').addClass('show');
 
         $.ajax({
@@ -109,8 +118,8 @@ $(document).ready(function () {
             type: form.attr('method'),
             data: formData,
             success: function (response) {
-                // Ocultar el spinner
                 $('#spin').removeClass('show');
+                console.log('Respuesta recibida:', response);
 
                 if (response.success) {
                     $('#modal-lg').modal('hide');
@@ -120,36 +129,20 @@ $(document).ready(function () {
                 }
             },
             error: function () {
-                // Ocultar el spinner
                 $('#spin').removeClass('show');
                 addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
     });
 
-    // Manejar la acción de editar desde los detalles
-    $('#modal-lg').on('click', '.btn-edit', function (e) {
-        e.preventDefault();
-        var editUrl = $(this).data('url');
-
-        $.get(editUrl).done(function (data) {
-            $('#modal-lg .modal-body').html(data);
-            $('#modal-lg').modal('show');
-            $('#modal-lg .btn-save').show();
-            $('#modal-lg .btn-edit').hide();
-        }).fail(function () {
-            console.log('Error al cargar el contenido del modal de edición.');
-        });
-    });
-
-    // Manejar la acción de restaurar
+    // Acción de restaurar
     $('#modal-lg').on('click', '.btn-restore', function (e) {
         e.preventDefault();
+        console.log('Botón de restaurar clicado');
 
         var form = $('#modal-lg').find('form');
         if (form.length === 0) {
-            console.log('No se encontró el formulario dentro del modal.');
-            $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">No se encontró el formulario dentro del modal.</div>');
+            addAlert('No se encontró el formulario dentro del modal.', 'danger');
             return;
         }
 
@@ -163,27 +156,38 @@ $(document).ready(function () {
                     $('#modal-lg').modal('hide');
                     location.reload();
                 } else {
-                    if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                        $('#modal-lg .alert.alert-danger').text().indexOf(response.message) === -1) {
-                        $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">' + (response.message || 'Error no especificado.') + '</div>');
-                    }
+                    addAlert(response.message || 'Error no especificado.', 'danger');
                 }
             },
             error: function () {
-                if ($('#modal-lg .alert.alert-danger').length === 0 ||
-                    $('#modal-lg .alert.alert-danger').text().indexOf('Se produjo un error al procesar la solicitud.') === -1) {
-                    $('#modal-lg .modal-body').prepend('<div class="alert alert-danger">Se produjo un error al procesar la solicitud.</div>');
-                }
+                addAlert('Se produjo un error al procesar la solicitud.', 'danger');
             }
         });
     });
 
-    // Manejar la acción de guardar al presionar Enter
+    // Acción de guardar con Enter
     $('#modal-lg').on('keypress', 'form', function (e) {
         if (e.which === 13) { // Código de tecla Enter
-            e.preventDefault(); // Evita el comportamiento por defecto
-            $('#modal-lg .btn-save').click(); // Simula un clic en el botón de guardar
+            e.preventDefault(); // Evitar el comportamiento predeterminado
+            $('#modal-lg .btn-save').click(); // Simular clic en el botón de guardar
         }
     });
-  
+
+    // Cargar validación unobtrusive al abrir el modal
+    $(document).on('shown.bs.modal', '#modal-lg', function () {
+        $.validator.unobtrusive.parse('#modal-lg form'); // Cargar validación manualmente al abrir el modal
+    });
+
+
+    function addAlert(message, type) {
+        $('#modal-lg .modal-body .alert').remove(); // Elimina cualquier alerta existente
+        var alertHtml = '<div class="alert alert-' + type + ' alert-dismissible fade show" role="alert">'
+            + message
+            + '<button type="button" class="close" data-dismiss="alert" aria-label="Close">'
+            + '<span aria-hidden="true">&times;</span>'
+            + '</button></div>';
+        $('#modal-lg .modal-body').prepend(alertHtml); // Inserta el mensaje de alerta al inicio del modal
+    }
+
+
 });
