@@ -9,6 +9,8 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Buildoc</title>
+	<!-- Favicon -->
+	<link rel="icon" href="~/HeadLogo.png" type="image/png">
 	<link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
 	<!-- Google Font: Source Sans Pro -->
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
@@ -67,6 +69,29 @@
 			color: white; /* Color del texto en el encabezado */
 		}
 
+		.user-role {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			padding: 10px;
+		}
+
+		.user-role-text {
+			margin-left: 10px;
+		}
+
+		.sidebar-mini.sidebar-collapse .user-role-text {
+			display: none; /* Oculta el texto del rol cuando el sidebar está contraído */
+		}
+
+		.sidebar-mini.sidebar-collapse .user-role {
+			justify-content: center; /* Alinea el ícono en el centro cuando el texto está oculto */
+			width: 100%; /* Asegura que ocupe el mismo ancho */
+		}
+
+
+
 	</style>
 </head>
 
@@ -92,124 +117,17 @@
 			</ul>
 
 			<!-- Right navbar links -->
-			<ul class="navbar-nav ml-auto">
-				<!-- Navbar Search -->
-				<li class="nav-item">
-					<a class="nav-link" data-widget="navbar-search" href="#" role="button">
-						<i class="fas fa-search"></i>
-					</a>
-					<div class="navbar-search-block">
-						<form class="form-inline">
-							<div class="input-group input-group-sm">
-								<input class="form-control form-control-navbar" type="search" placeholder="Buscar" aria-label="Search">
-								<div class="input-group-append">
-									<button class="btn btn-navbar" type="submit">
-										<i class="fas fa-search"></i>
-									</button>
-									<button class="btn btn-navbar" type="button" data-widget="navbar-search">
-										<i class="fas fa-times"></i>
-									</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</li>
-
-				<!-- Messages Dropdown Menu -->
-				<li class="nav-item dropdown">
-					<a class="nav-link" data-toggle="dropdown" href="#">
-						<i class="far fa-comments"></i>
-						<span class="badge badge-danger navbar-badge">3</span>
-					</a>
-					<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-						<a href="#" class="dropdown-item">
-							<!-- Message Start -->
-							<div class="media">
-								<img src="../../dist/img/user1-128x128.jpg" alt="User Avatar" class="img-size-50 mr-3 img-circle">
-								<div class="media-body">
-									<h3 class="dropdown-item-title">
-										Brad Diesel
-										<span class="float-right text-sm text-danger"><i class="fas fa-star"></i></span>
-									</h3>
-									<p class="text-sm">Call me whenever you can...</p>
-									<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-								</div>
-							</div>
-							<!-- Message End -->
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item">
-							<!-- Message Start -->
-							<div class="media">
-								<img src="../../dist/img/user8-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-								<div class="media-body">
-									<h3 class="dropdown-item-title">
-										John Pierce
-										<span class="float-right text-sm text-muted"><i class="fas fa-star"></i></span>
-									</h3>
-									<p class="text-sm">I got your message bro</p>
-									<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-								</div>
-							</div>
-							<!-- Message End -->
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item">
-							<!-- Message Start -->
-							<div class="media">
-								<img src="../../dist/img/user3-128x128.jpg" alt="User Avatar" class="img-size-50 img-circle mr-3">
-								<div class="media-body">
-									<h3 class="dropdown-item-title">
-										Nora Silvester
-										<span class="float-right text-sm text-warning"><i class="fas fa-star"></i></span>
-									</h3>
-									<p class="text-sm">The subject goes here</p>
-									<p class="text-sm text-muted"><i class="far fa-clock mr-1"></i> 4 Hours Ago</p>
-								</div>
-							</div>
-							<!-- Message End -->
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-					</div>
-				</li>
-				<!-- Notifications Dropdown Menu -->
-				<li class="nav-item dropdown">
-					<a class="nav-link" data-toggle="dropdown" href="#">
-						<i class="far fa-bell"></i>
-						<span class="badge badge-warning navbar-badge">15</span>
-					</a>
-					<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-						<span class="dropdown-item dropdown-header">15 Notifications</span>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item">
-							<i class="fas fa-envelope mr-2"></i> 4 new messages
-							<span class="float-right text-muted text-sm">3 mins</span>
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item">
-							<i class="fas fa-users mr-2"></i> 8 friend requests
-							<span class="float-right text-muted text-sm">12 hours</span>
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item">
-							<i class="fas fa-file mr-2"></i> 3 new reports
-							<span class="float-right text-muted text-sm">2 days</span>
-						</a>
-						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
-					</div>
-				</li>
+			<ul class="navbar-nav ml-auto">								
 				<li class="nav-item">
 					<a class="nav-link" data-widget="fullscreen" href="#" role="button">
 						<i class="fas fa-expand-arrows-alt"></i>
 					</a>
 				</li>
-				<li class="nav-item">
+				@* <li class="nav-item">
 					<a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
 						<i class="fas fa-th-large"></i>
 					</a>
-				</li>
+				</li> *@
 			</ul>
 			<partial name="_LoginPartial" />
 		</nav>
@@ -217,25 +135,56 @@
 		<!-- Main Sidebar Container -->
 		<aside class="main-sidebar sidebar-dark-primary elevation-4" style=" background-color: #001f3f">
 			<!-- Brand Logo -->
-			<a href="../../index3.html" class="brand-link">
-				<img src="/logo_buildoc_icono_blanco.png" alt="Buildoc Logo" class="brand-image  " style="opacity: .8">
+			<a href="@Url.Action("Index", "Home")" class="brand-link">
+				<img src="/logo_buildoc_icono_blanco.png" alt="Buildoc Logo" class="brand-image" style="opacity: .8">
 				<span class="brand-text font-weight-light">Servinco SAS</span>
 			</a>
 
+
 			<!-- Sidebar -->
 			<div class="sidebar">
-				<!-- Sidebar user (optional) -->
-				<div class="user-panel mt-3 pb-3 mb-3 d-flex">
-					
-					<div class="info">
-						@{
-							var usuario = await UserManager.GetUserAsync(User);
-							var roles = await UserManager.GetRolesAsync(usuario);
-							var rolPrincipal = roles.FirstOrDefault(); // Obtener el primer rol asignado al usuario
-						}
-						<a href="#" class="d-block">@rolPrincipal</a>
-					</div>
-				</div>
+			
+				<nav class="mt-2">
+				<ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+					<li class="nav-item">
+							@{
+								var usuario = await UserManager.GetUserAsync(User);
+								var roles = await UserManager.GetRolesAsync(usuario);
+								var rolPrincipal = roles.FirstOrDefault(); // Obtener el primer rol asignado al usuario
+								string roleIcon = "";
+								string roleColor = "";
+
+								// Asignar iconos y colores basados en el rol
+								switch (rolPrincipal)
+								{
+									case "Administrador":
+										roleIcon = "fas fa-user-shield"; // Icono para Admin
+										roleColor = "bg-danger"; // Fondo rojo para Admin
+										break;
+									case "Coordinador":
+										roleIcon = "fas fa-user-tie"; // Icono para Coordinador
+										roleColor = "bg-primary"; // Fondo azul para Coordinador
+										break;
+									case "Residente":
+										roleIcon = "fas fa-hard-hat"; // Icono para Residente
+										roleColor = "bg-success"; // Fondo verde para Residente
+										break;
+									default:
+										roleIcon = "fas fa-user"; // Icono predeterminado
+										roleColor = "bg-secondary"; // Fondo gris predeterminado
+										break;
+								}
+							}
+							<a href="#" class="d-block text-white p-2 rounded @roleColor w-100 text-center user-role">
+							<i class="@roleIcon"></i>
+							<span class="user-role-text">@rolPrincipal</span>
+						</a>
+					</li>
+				</ul>
+				</nav>
+
+				</br>
+
 
 				<!-- SidebarSearch Form -->
 				<div class="form-inline">
