@@ -39,8 +39,9 @@ namespace Buildoc.Models
 
         public virtual ICollection<Usuario> Residentes { get; set; } = new List<Usuario>();
 		public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
-
-		public enum EstadoProyecto
+      
+        public virtual ICollection<Inspeccion> Inspecciones { get; set; } = new List<Inspeccion>();
+        public enum EstadoProyecto
         {
             [Display(Name = "En curso")]
             EnCurso,

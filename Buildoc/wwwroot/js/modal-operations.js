@@ -6,6 +6,7 @@ function addAlert(message, type) {
 
 $(document).ready(function () {
     // Manejar el clic en los enlaces de operación (crear, editar, detalles, eliminar, restaurar)
+    console.log('jQuery está listo');
     $(document).on('click', '.create-new, .edit-item, .details-view, .delete-item, .restore-item,.respond-item', function (e) {
         e.preventDefault();
         var url = $(this).data('url');
@@ -130,9 +131,17 @@ $(document).ready(function () {
     // Manejar la acción de editar desde los detalles
     $('#modal-lg').on('click', '.btn-edit', function (e) {
         e.preventDefault();
-        var editUrl = $(this).data('url');
+        console.log('Evento de clic en botón de edición capturado');
+        var url = $(this).data('url');
+        console.log('URL de edición:', url); 
 
-        $.get(editUrl).done(function (data) {
+        if (!url) {
+            console.error('La URL no está definida.');
+            return;
+        }
+        var title = $(this).data('title');
+        $('#modal-lg .modal-title').text(title);
+        $.get(url).done(function (data) {
             $('#modal-lg .modal-body').html(data);
             $('#modal-lg').modal('show');
             $('#modal-lg .btn-save').show();
