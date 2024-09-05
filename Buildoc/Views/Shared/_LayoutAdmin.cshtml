@@ -7,7 +7,6 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Buildoc</title>
 	<link rel="stylesheet" href="/css/site.css" asp-append-version="true" />
@@ -23,46 +22,37 @@
 	<link rel="stylesheet" href="/AdminLTE/css/adminlte.min.css">
 	<!-- Toastr -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
-	@* Incluir el CSS y JS necesario para el bs-stepper *@
-	<link href="/adminlte/plugins/bs-stepper/css/bs-stepper.min.css" rel="stylesheet" />
 	<!-- iCheck for checkboxes and radio inputs -->
 	<link href="/adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css" rel="stylesheet" />
-	@* Select2 css *@
+	<!-- Select2 css -->
 	<link href="/adminlte/plugins/select2/css/select2.min.css" rel="stylesheet" />
+	<!-- BS Stepper -->
+	<link href="/adminlte/plugins/bs-stepper/css/bs-stepper.min.css" rel="stylesheet" />
 	<!-- jQuery -->
 	<script src="/AdminLTE/plugins/jquery/jquery.min.js"></script>
-	<!-- jQuery Validation -->
-	<script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
-	<script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
+	<!-- jQuery Validation and Validation Unobtrusive -->
+
+	<script src="/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 	<!-- Toastr -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 	<!-- Toastr Setup -->
 	<script src="/js/toastr-setup.js"></script>
-	<!-- Bootstrap Switch -->
-	<script src="/AdminLTE/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
 	<!-- D3.js and TopoJSON -->
 	<script src="https://d3js.org/d3.v6.min.js"></script>
-	<script src="https://d3js.org/topojson.v3.min.js"></script>
-	<!-- Incluye jQuery y Bootstrap Switch -->
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/css/bootstrap3/bootstrap-switch.min.css" />
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-switch/3.3.4/js/bootstrap-switch.min.js"></script>
-	<!-- AdminLTE App -->
-	<script src="/AdminLTE/js/adminlte.min.js"></script>
-
-	<script src="/js/modal-operations.js"></script>
-	<script src="~/adminlte/plugins/bs-stepper/js/bs-stepper.min.js"></script>
-	@* Select2 js *@
-	<script src="~/adminlte/plugins/select2/js/select2.min.js"></script>
+	<script src="https://d3js.org/topojson.v3.min.js"></script>	
 	<style>
+		/* .btn-save, .btn-delete, .btn-edit, .btn-restore {
+			display: inline-block !important;
+		} */
+
 		.btn-primary {
 			background-color: #001f3f; /* Color de fondo personalizado */
 			border-color: #001f3f; /* Color de borde personalizado */
 			color: #ffffff; /* Color de texto personalizado */
 		}
-			.dl-horizontal dt
 
-		{
+		.dl-horizontal dt {
 			font-weight: normal; /* Quita la negrita del texto */
 			font-size: 0.9em; /* Reduce el tamaño de la fuente */
 		}
@@ -73,13 +63,13 @@
 		}
 
 		.header-bg {
-		background-color: #001f3f; /* Color info de Bootstrap */color: white; /* Color del texto en el encabezado */
-	}
-
-
+			background-color: #001f3f; /* Color info de Bootstrap */
+			color: white; /* Color del texto en el encabezado */
+		}
 
 	</style>
 </head>
+
 <body class="hold-transition sidebar-mini">
 
 	<!-- Site wrapper -->
@@ -415,26 +405,7 @@
     <!-- ./wrapper -->
    
     
-    <!-- Bootstrap 4 -->
-    <script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
-
-    <!-- AdminLTE for demo purposes -->
-        <script src="/AdminLTE/js/demo.js"></script>
-
-       
-
-		@* Script Excusivo del formulario crear incidente *@
-		<script src="~/js/scriptincidentecreate.js"></script>
-
-		<script src="/js/departamentos.js"></script>
-
-		@* Script para la data table *@
-
-		<script>
-			console.log('jQuery versión:', $.fn.jquery); // Deberías ver la versión de jQuery en la consola
-		</script>
-	
-		<script>
+ 		<script>
 			// Pasar mensajes de TempData a JavaScript
 			var successMessage = '@TempData["SuccessMessage"]';
 			var errorMessage = '@TempData["ErrorMessage"]';
@@ -442,7 +413,15 @@
 			var infoMessage = '@TempData["InfoMessage"]';
 		</script>
 
-		<!-- DataTables  & Plugins -->
+		<!-- Bootstrap 4 -->
+		<script src="/AdminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+		<!-- AdminLTE App -->
+		<script src="/AdminLTE/js/adminlte.min.js"></script>
+		<!-- AdminLTE for demo purposes -->
+		<script src="/AdminLTE/js/demo.js"></script>
+
+		<!-- DataTables & Plugins -->
 		<script src="/AdminLTE/plugins/datatables/jquery.dataTables.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-responsive/js/dataTables.responsive.min.js"></script>
@@ -455,7 +434,19 @@
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.print.min.js"></script>
 		<script src="/AdminLTE/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
-	
+
+		<!-- BS Stepper -->
+		<script src="/adminlte/plugins/bs-stepper/js/bs-stepper.min.js"></script>
+		<!-- Select2 -->
+		<script src="/adminlte/plugins/select2/js/select2.min.js"></script>
+		<!-- Bootstrap Switch -->
+		<script src="/AdminLTE/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
+		<!-- Mapa JS -->
+		<script src="/js/mapa.js"></script>
+		<!-- Tus scripts personalizados -->
+		<script src="/js/modal-operations.js"></script>
+		<script src="/js/departamentos.js"></script>
+		<script src="~/js/scriptincidentecreate.js"></script>
 
 		<!-- Spinner para carga -->
 		<div id="loadingSpinner" class="modal" style="display: none; background-color: rgba(0, 0, 0, 0.5); z-index: 1050;">
@@ -499,6 +490,8 @@
 				});
 			});
 		</script>
+
+		
 
 
 		@RenderSection("Scripts", required: false)
