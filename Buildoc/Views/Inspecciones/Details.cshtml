@@ -111,7 +111,14 @@
                         <div class="timeline-item">
                             <i class="fas fa-reply bg-green"></i>
                             <div class="timeline-item">
-                                <span class="time"><i class="fas fa-clock"></i> @Model.Respuesta.FechaRespuesta.ToString("dd/MM/yyyy HH:mm")</span>
+                                <span class="time"><i class="fas fa-clock"></i> @Model.Respuesta.FechaRespuesta.ToString("dd/MM/yyyy HH:mm")
+                                    @if (Model.Respuesta.FechaEdicion != null && Model.Respuesta.FechaEdicion != Model.Respuesta.FechaRespuesta)
+                                    {
+                                        <span class="badge badge-secondary">Editado</span>
+                                    }
+                                
+                                </span>
+
                                 <h3 class="timeline-header">Respuesta de Inspección</h3>
                                 <div class="timeline-body">
                                     <p><strong>Resultado:</strong> @Model.Respuesta.Resultado</p>

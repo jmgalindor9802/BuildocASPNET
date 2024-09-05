@@ -92,6 +92,11 @@
                     <input asp-for="Comentario" class="form-control" />
                     <span asp-validation-for="Comentario" class="text-danger"></span>
                 </div>
+                <!-- Campo de carga de archivos -->
+                <div class="form-group">
+                    <label for="archivos">Subir Archivos:</label>
+                    <input type="file" id="archivos" name="archivos" multiple class="form-control-file" />
+                </div>
                 @if (!esCoordinador && estadoInspeccion == "Desaprobada")
                 {
                     <div class="form-group">

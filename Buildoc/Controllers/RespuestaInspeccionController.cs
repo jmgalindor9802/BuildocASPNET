@@ -230,24 +230,44 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var respuestaInspeccion = await _context.RespuestaInspeccion.FindAsync(id);
-            if (respuestaInspeccion == null)
+            // Buscar la inspección por el ID proporcionado
+            var inspeccion = await _context.Inspecciones
+                .Include(i => i.Respuesta) // Incluir la respuesta asociada
+                .FirstOrDefaultAsync(i => i.Id == id);
+
+            if (inspeccion == null)
             {
                 return NotFound();
             }
-            ViewData["InspeccionId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionId);
-            ViewData["InspeccionAdicionalId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionAdicionalId);
-            return View(respuestaInspeccion);
+
+            // Verificar si la inspección tiene una respuesta asociada
+            var respuestaInspeccion = inspeccion.Respuesta;
+
+            if (respuestaInspeccion == null)
+            {
+                return NotFound("No se encontró una respuesta asociada a esta inspección.");
+            }
+
+            // Pasar los detalles de la inspección y la respuesta a la vista
+            ViewData["InspeccionDetalles"] = inspeccion;
+            ViewData["InspeccionId"] = inspeccion.Id;
+
+            // Retornar la vista parcial con los datos de la respuesta
+            return PartialView("Edit", respuestaInspeccion);
         }
 
+
+
         // POST: RespuestaInspeccion/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,InspeccionId,Resultado,Observaciones,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
         {
-            if (id != respuestaInspeccion.Id)
+            // Buscar la respuesta asociada a la inspección
+            var respuestaInspeccionOriginal = await _context.RespuestaInspeccion
+                .FirstOrDefaultAsync(r => r.InspeccionId == id);
+
+            if (respuestaInspeccionOriginal == null)
             {
                 return NotFound();
             }
@@ -256,12 +276,73 @@ namespace Buildoc.Controllers
             {
                 try
                 {
-                    _context.Update(respuestaInspeccion);
+                    // Actualizar solo los campos que han cambiado
+                    respuestaInspeccionOriginal.Resultado = respuestaInspeccion.Resultado;
+                    respuestaInspeccionOriginal.Observaciones = respuestaInspeccion.Observaciones;
+                    respuestaInspeccionOriginal.EsNecesariaInspeccionAdicional = respuestaInspeccion.EsNecesariaInspeccionAdicional;
+                    respuestaInspeccionOriginal.AccionesCorrectivas = respuestaInspeccion.AccionesCorrectivas;
+                    respuestaInspeccionOriginal.AccionesCorrectivasLista = respuestaInspeccion.AccionesCorrectivasLista;
+                    respuestaInspeccionOriginal.DocumentacionCompleta = respuestaInspeccion.DocumentacionCompleta;
+                    respuestaInspeccionOriginal.RecomendacionesFuturas = respuestaInspeccion.RecomendacionesFuturas;
+                    respuestaInspeccionOriginal.RecomendacionesFuturasList = respuestaInspeccion.RecomendacionesFuturasList;
+                    respuestaInspeccionOriginal.FechaEdicion = DateTime.Now;
+
+
+                    // Manejo de archivos si se cargan nuevos
+                    if (files != null && files.Count > 0)
+                    {
+                        foreach (var file in files)
+                        {
+                            if (file.Length > 0)
+                            {
+                                var filePath = await _fileService.Upload(file, "documents");
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    FileName = file.FileName,
+                                    FilePath = filePath,
+                                    ContentType = file.ContentType,
+                                    FileSize = file.Length,
+                                    RespuestaInspeccionId = respuestaInspeccionOriginal.Id
+                                };
+
+                                _context.FileModels.Add(fileModel);
+                            }
+                        }
+                    }
+
+                    // Manejo de imágenes si se cargan nuevas
+                    if (images != null && images.Count > 0)
+                    {
+                        foreach (var image in images)
+                        {
+                            if (image.Length > 0)
+                            {
+                                var imagePath = await _fileService.Upload(image, "images");
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    FileName = image.FileName,
+                                    FilePath = imagePath,
+                                    ContentType = image.ContentType,
+                                    FileSize = image.Length,
+                                    RespuestaInspeccionId = respuestaInspeccionOriginal.Id
+                                };
+
+                                _context.FileModels.Add(fileModel);
+                            }
+                        }
+                    }
+
+                    // Guardar los cambios
                     await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "La respuesta de inspección se ha actualizado correctamente.";
+                    return Json(new { success = true });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!RespuestaInspeccionExists(respuestaInspeccion.Id))
+                    if (!RespuestaInspeccionExists(respuestaInspeccionOriginal.Id))
                     {
                         return NotFound();
                     }
@@ -270,12 +351,12 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["InspeccionId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionId);
-            ViewData["InspeccionAdicionalId"] = new SelectList(_context.Inspeccion, "Id", "Id", respuestaInspeccion.InspeccionAdicionalId);
-            return View(respuestaInspeccion);
+
+            ViewData["InspeccionId"] = respuestaInspeccionOriginal.InspeccionId;
+            return Json(new { success = false, message = "El modelo no es válido." });
         }
+
 
         // GET: RespuestaInspeccion/Delete/5
         public async Task<IActionResult> Delete(Guid? id)

@@ -78,7 +78,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string actionAprobacion, bool volverRevision)
+        public async Task<IActionResult> Create([Bind("Comentario")] NovedadInspeccion novedadInspeccion, Guid idInspeccion, string actionAprobacion, bool volverRevision, List<IFormFile> archivos)
         {
             if (!_context.Inspeccion.Any(i => i.Id == idInspeccion))
             {
@@ -134,7 +134,9 @@ namespace Buildoc.Controllers
 
                 _context.Add(novedadInspeccion);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "¡La novedad se ha agregado exitosamente!";
+				
+
+				TempData["SuccessMessage"] = "¡La novedad se ha agregado exitosamente!";
                 return Json(new { success = true });
             }
 

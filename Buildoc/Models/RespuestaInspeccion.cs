@@ -47,8 +47,8 @@ namespace Buildoc.Models
 		[Display(Name = "Inspección Adicional Asociada")]
 		public Guid? InspeccionAdicionalId { get; set; }
 		public Inspeccion? InspeccionAdicional { get; set; }
-
-		[Display(Name = "Estado de la Respuesta")]
+        public DateTime? FechaEdicion { get; set; }
+        [Display(Name = "Estado de la Respuesta")]
 	
         public EstadoRespuestaInspeccion EstadoRespuestaInspeccion { get; set; }
 

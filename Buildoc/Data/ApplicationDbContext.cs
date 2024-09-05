@@ -29,10 +29,7 @@ namespace Buildoc.Data
                 .HasForeignKey(p => p.CoordinadorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-              builder.Entity<Inspeccion>()
-             .HasOne(i => i.Respuesta)
-             .WithOne(r => r.Inspeccion)
-             .HasForeignKey<RespuestaInspeccion>(r => r.InspeccionId);
+           
 
             // Configurar la relación muchos a muchos entre Proyecto y Residentes
             builder.Entity<Proyecto>()
