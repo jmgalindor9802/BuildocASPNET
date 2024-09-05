@@ -579,15 +579,15 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
 
         
 
-            TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
-            return Json(new { success = true });
 
             // Si el modelo no es válido, retornar la vista parcial con los datos existentes
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
-            return PartialView("Create", inspeccion);
-        }
+
+			TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
+			return Json(new { success = true });
+		}
 
 
         public async Task<IActionResult> Edit(Guid? id)
