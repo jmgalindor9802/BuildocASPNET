@@ -82,9 +82,9 @@ namespace Buildoc.Controllers
             // Obtener todos los tipos de incidentes para el select
             var tiposIncidentes = await _context.TipoIncidentes.ToListAsync();
 
-            // Obtener la cantidad total de lesionados asociados a esos incidentes
-            var totalLesionados = await _context.IncidenteLesionados
-                .Where(il => todosIncidentes.Select(i => i.Id).Contains(il.IncidenteId))
+            // Obtener la cantidad total de lesionados asociados a los incidentes
+            var totalLesionados = await _context.Lesionados
+                .Where(l => l.IncidenteLesionados.Any(il => todosIncidentes.Select(i => i.Id).Contains(il.IncidenteId)))
                 .CountAsync();
 
             // Filtrar incidentes activos 
@@ -467,22 +467,24 @@ namespace Buildoc.Controllers
                 }
                 foreach (var lesionado in model.Lesionados)
                 {
-                    // Validar que la cédula esté completa (no sea null)
-                    if (lesionado.Cedula == null)
-                    {
-                        return Json(new { success = false, message = "La cédula del lesionado no está completa." });
-                    }
-
-                    // Validar que la cédula tenga entre 7 y 10 dígitos
-                    if (lesionado.Cedula.Value.ToString().Length < 7 || lesionado.Cedula.Value.ToString().Length > 10)
-                    {
-                        return Json(new { success = false, message = "La cédula debe tener entre 7 y 10 dígitos." });
-                    }
-
                     // Validar que la cédula no sea un número negativo
                     if (lesionado.Cedula < 0)
                     {
                         return Json(new { success = false, message = "La cédula no puede contener números negativos." });
+                    }
+                    else if (lesionado.Cedula.Value.ToString().Length < 7 || lesionado.Cedula.Value.ToString().Length > 10)
+                    {
+                        // Validar que la cédula tenga entre 7 y 10 dígitos
+                        return Json(new { success = false, message = "La cédula debe tener entre 7 y 10 dígitos." });
+                    }
+                    // Verificar si el lesionado ya está registrado como fallecido
+                    var existingLesionado = await _context.Lesionados
+                        .FirstOrDefaultAsync(l => l.Cedula == lesionado.Cedula);
+
+                    if (existingLesionado != null && existingLesionado.ConfimacionDefuncion == true)
+                    {
+                        // Si el lesionado está muerto, no permitir el reporte en futuros incidentes
+                        return Json(new { success = false, message = $"El lesionado con cédula {lesionado.Cedula} está registrado como fallecido y no puede ser reportado en nuevos incidentes." });
                     }
                 }
                 // Validar cédulas duplicadas
@@ -546,8 +548,21 @@ namespace Buildoc.Controllers
 
                             incidenteLesionado.IncidenteId = model.Incidente.Id;
                             _context.Add(incidenteLesionado);
+                            // **Verificar si Defuncion es true y actualizar ConfimacionDefuncion**
+                            if (incidenteLesionado.Defuncion)
+                            {
+                                var lesionadoDefuncion = await _context.Lesionados.FirstOrDefaultAsync(l => l.Id == incidenteLesionado.LesionadoId);
+
+                                if (lesionadoDefuncion != null)
+                                {
+                                    lesionadoDefuncion.ConfimacionDefuncion = true;
+                                    _context.Lesionados.Update(lesionadoDefuncion);
+                                    await _context.SaveChangesAsync();
+                                }
+                            }
                         }
                         await _context.SaveChangesAsync();
+
                     }
                 }
 
