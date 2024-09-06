@@ -35,6 +35,10 @@ namespace Buildoc.Models
         // Relación con Respuesta Inpseccion
         public Guid? RespuestaInspeccionId { get; set; }  // Clave foránea opcional para TipoInspeccion
         public RespuestaInspeccion RespuestaInspeccion { get; set; }
+        
+        // Relación con NovedadIncidente
+        public Guid? NovedadesIncidenteId { get; set; }  // Clave foránea
+        public NovedadesIncidente NovedadesIncidente { get; set; }  // Navegación hacia la inspección relacionada
     }
 
 }

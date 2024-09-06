@@ -1,4 +1,4 @@
-﻿@model Buildoc.Models.NovedadesIncidente
+﻿@model NovedadesIncidenteViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -7,9 +7,9 @@
 
 <div class="row justify-content-center mb-4">
     <div class="col-md-12">
-        <form asp-action="Create" class="ml-3 mr-3">
+        <form asp-action="Create" class="ml-3 mr-3" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="IncidenteId" />
+            <input type="hidden" asp-for="NovedadesIncidente.IncidenteId" />
             <div class="card-container">
                 <div class="card">
                     <!-- Card para Detalles de Incidente -->
@@ -70,9 +70,13 @@
                 </div>
             }
             <div class="form-group">
-                <label asp-for="Descripcion" class="control-label"></label>
-                <textarea asp-for="Descripcion" class="form-control"></textarea>
-                <span asp-validation-for="Descripcion" class="text-danger"></span>
+                <label asp-for="NovedadesIncidente.Descripcion" class="control-label"></label>
+                <textarea asp-for="NovedadesIncidente.Descripcion" class="form-control"></textarea>
+                <span asp-validation-for="NovedadesIncidente.Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="UploadedFiles">Subir Archivos</label>
+                <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
             </div>
             <script>
                 $(document).ready(function () {

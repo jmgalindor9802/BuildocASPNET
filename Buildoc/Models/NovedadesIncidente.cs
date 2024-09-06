@@ -25,7 +25,10 @@ namespace Buildoc.Models
         public string? UsuarioId { get; set; }
         // Navigation property for Usuario
         public virtual Usuario? Usuario { get; set; }
+        // Colección de archivos asociados al novedad incidente
+        public ICollection<FileModel> FileModels { get; set; } = new List<FileModel>();
         // Constructor para establecer la fecha de creación
+
         public NovedadesIncidente()
         {
             FechaCreacion = DateTime.Now;

@@ -9,6 +9,7 @@ using Buildoc.Data;
 using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Buildoc.Services;
 
 namespace Buildoc.Controllers
 {
@@ -17,12 +18,15 @@ namespace Buildoc.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
         private readonly IEmailSender _emailSender;
+        private readonly IFileService _fileService;
 
-        public NovedadesIncidentesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender)
+
+        public NovedadesIncidentesController(ApplicationDbContext context, UserManager<Usuario> userManager, IEmailSender emailSender, IFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _emailSender = emailSender;
+            _fileService = fileService;
         }
 
         // GET: novedadesIncidentees
@@ -69,10 +73,10 @@ namespace Buildoc.Controllers
             {
                 return NotFound();
             }
+
             var incidente = await _context.Incidentes
-                .Include(i => i.TipoIncidente) // Incluir el tipo de incidente si deseas mostrarlo
-                .Include(i => i.Proyecto) // Incluir la información del proyecto
-                /*.Include(i =>i.Afectados)*/ //Incluir los afectados
+                .Include(i => i.TipoIncidente)
+                .Include(i => i.Proyecto)
                 .FirstOrDefaultAsync(i => i.Id == incidenteId);
 
             if (incidente == null)
@@ -80,29 +84,31 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            // Crear una instancia de NovedadesIncidente con el incidente actual
-            var novedadesIncidente = new NovedadesIncidente
+            var model = new NovedadesIncidenteViewModel
             {
-                IncidenteId = incidenteId.Value,
-                Incidente = incidente // Pasar la información del incidente
+                NovedadesIncidente = new NovedadesIncidente
+                {
+                    IncidenteId = incidenteId.Value
+                },
+                Incidente = incidente // Pasar el incidente al ViewModel
             };
 
-            // Pasar los estados posibles a la vista
             ViewBag.Estados = new SelectList(Enum.GetValues(typeof(EstadoIncidenteEnum)));
-            return PartialView(novedadesIncidente);
+            return PartialView(model); // Asegúrate de que devuelves el PartialView correcto
         }
+
 
         // POST: novedadesIncidentees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IncidenteId, Titulo, Descripcion")] NovedadesIncidente novedadesIncidente, string EstadoIncidenteNovedad)
+        public async Task<IActionResult> Create(NovedadesIncidenteViewModel model, string EstadoIncidenteNovedad)
         {
             if (ModelState.IsValid)
             {
-                novedadesIncidente.Id = Guid.NewGuid();
+                model.NovedadesIncidente.Id = Guid.NewGuid();
                 // Obtener el ID del usuario actual
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                novedadesIncidente.UsuarioId = userId;
+                model.NovedadesIncidente.UsuarioId = userId;
 
                 // Convertir el valor del select a enum
                 EstadoIncidenteEnum? estadoSeleccionado = null;
@@ -111,12 +117,12 @@ namespace Buildoc.Controllers
                     if (Enum.TryParse(EstadoIncidenteNovedad, out EstadoIncidenteEnum estado))
                     {
                         estadoSeleccionado = estado;
-                        novedadesIncidente.EstadoNovedad = estado;  // Asignar el estado seleccionado al campo EstadoNovedad
+                        model.NovedadesIncidente.EstadoNovedad = estado;  // Asignar el estado seleccionado al campo EstadoNovedad
                     }
                 }
 
                 // Buscar el incidente en la base de datos
-                var incidente = await _context.Incidentes.FindAsync(novedadesIncidente.IncidenteId);
+                var incidente = await _context.Incidentes.FindAsync(model.NovedadesIncidente.IncidenteId);
                 if (incidente != null)
                 {
                     // Actualizar el estado del incidente si se ha seleccionado un estado
@@ -129,8 +135,33 @@ namespace Buildoc.Controllers
 
 
                 // Agregar la novedad
-                _context.Add(novedadesIncidente);
+                _context.Add(model.NovedadesIncidente);
                 await _context.SaveChangesAsync();
+
+                // Manejo de archivos subidos
+                if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
+                {
+                    foreach (var file in model.UploadedFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var fileUrl = await _fileService.Upload(file, "documents");
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                NovedadesIncidenteId = model.NovedadesIncidente.Id,
+                                FileName = Path.GetFileName(file.FileName),
+                                FilePath = fileUrl,
+                                ContentType = file.ContentType,
+                                FileSize = file.Length
+                            };
+
+                            _context.FileModels.Add(fileModel);
+                        }
+
+                    }
+                    await _context.SaveChangesAsync();
+                }
 
                 TempData["SuccessMessage"] = "¡La novedad del incidente se ha creado exitosamente!";
                 return Json(new { success = true });
@@ -146,7 +177,7 @@ namespace Buildoc.Controllers
 
             // Pasar los estados posibles a la vista si la validación falla
             ViewBag.Estados = new SelectList(Enum.GetValues(typeof(EstadoIncidenteEnum)));
-            return PartialView(novedadesIncidente);
+            return PartialView(model.NovedadesIncidente);
         }
 
 

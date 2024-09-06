@@ -344,22 +344,33 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var incidente = await _context.Incidentes
+            try
+            {
+                var incidente = await _context.Incidentes
                 .Include(i => i.Proyecto)
                 .Include(i => i.TipoIncidente)
                 .Include(i => i.Usuario)
                 .Include(i => i.IncidenteLesionados)
                     .ThenInclude(il => il.Lesionado) // Incluye la entidad Lesionado
                 .Include(i => i.NovedadesIncidentes)
-                    .ThenInclude(s => s.Usuario)
+                    .ThenInclude(n => n.Usuario) // Incluye la entidad Usuario en NovedadesIncidentes
+                .Include(i => i.NovedadesIncidentes)
+                    .ThenInclude(n => n.FileModels) // Incluye la entidad FileModels en NovedadesIncidentes
+                .Include(i => i.FileModels)
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (incidente == null)
-            {
-                return NotFound();
-            }
+                if (incidente == null)
+                {
+                    return NotFound();
+                }
 
-            return PartialView(incidente);
+                return PartialView(incidente);
+            }
+            catch (Exception ex)
+            {
+                // Registra la excepción
+                return StatusCode(500, "Se produjo un error en el servidor.");
+            }
         }
 
 

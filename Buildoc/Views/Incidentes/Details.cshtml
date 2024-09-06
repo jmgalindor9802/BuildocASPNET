@@ -138,6 +138,22 @@
                                             @novedad.EstadoNovedad
                                         </span>
                                         <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>
+                                        <h6>Archivos adjuntos:</h6>
+                                        @if (novedad.FileModels != null && novedad.FileModels.Any())
+                                        {
+                                            <ul>
+                                                @foreach (var file in novedad.FileModels)
+                                                {
+                                                    <li>
+                                                        <a href="@file.FilePath" target="_blank">@file.FileName</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <p>No hay archivos asociados a esta inspección.</p>
+                                        }
                                     </div>
                                 </div>
                             </div>
