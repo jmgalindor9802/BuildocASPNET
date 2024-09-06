@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Incidentes archivados";
+    var esCoordinador = User.IsInRole("Coordinador");
 }
 
 <style>
@@ -76,12 +77,15 @@
                         @Html.DisplayFor(modelItem => item.TipoIncidente.Titulo)
                     </td>
                     <td>
-                        <a href="@Url.Action("Desarchivar", "Proyectos", new { id = item.Id })" style="color: green;" title="Desarchivar proyecto">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-up" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 0 0 .708.708L7.5 2.707V14.5A.5.5 0 0 0 8 15z" />
-                            </svg>
-                            Desarchivar
-                        </a> |
+                        @if (esCoordinador)
+                        {
+                            <a href="#" type="button" class="respond-item"
+                               data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
+                               data-title="Agregar Novedad"
+                               data-action="respond">
+                                <i class="fas fa-info-circle"></i> |
+                            </a>
+                        }
                         <a href="#" class="edit-item" data-url="@Url.Action("Details", "Incidentes", new { id = item.Id })" data-title="Detalles del incidente" data-action="details">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />

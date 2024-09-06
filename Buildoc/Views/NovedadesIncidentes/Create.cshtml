@@ -56,8 +56,16 @@
                     <label class="control-label">Estado del Incidente</label>
                     <select name="EstadoIncidenteNovedad" class="form-control">
                         <option value="">Seleccione un estado</option>
-                        <option value="Cerrado">Cerrado</option>
-                        <option value="Solucionado">Solucionado</option>
+                        @if (Model.Incidente.Estado == EstadoIncidenteEnum.Activo)
+                        {
+                            <option value="Cerrado">Cerrado</option>
+                            <option value="Solucionado">Solucionado</option>
+                        }
+                        else if (Model.Incidente.Estado == EstadoIncidenteEnum.Cerrado)
+                        {
+                            <option value="Activo">Activo</option>
+                            <option value="Solucionado">Solucionado</option>
+                        }
                     </select>
                 </div>
             }
