@@ -45,7 +45,8 @@ namespace Buildoc.Services.Incidentes
                         foreach (var incidente in incidentesVencidos)
                         {
                             // Cambiar el estado del incidente a "Vencido"
-                            incidente.Estado = EstadoIncidenteEnum.Vencido;
+                            incidente.Estado = EstadoIncidenteEnum.Cerrado;
+                            incidente.CierrePorServidor = true;
                         }
 
                         // Si hay incidentes que han sido vencidos, enviar un correo al coordinador del proyecto

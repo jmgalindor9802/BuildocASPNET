@@ -24,6 +24,7 @@ namespace Buildoc.Models
         public DateOnly FechaIncidente { get; set; }
         [Display(Name = "Hora")]
         public TimeOnly? HoraIncidente { get; set; }
+        public bool CierrePorServidor { get; set; } = false;
         public EstadoIncidenteEnum Estado { get; set; }
         [MaxLength(5000, ErrorMessage = "El cambo debe tener un maximo de 5000 caracteres")]
         [Display(Name = "Sugerencia")]

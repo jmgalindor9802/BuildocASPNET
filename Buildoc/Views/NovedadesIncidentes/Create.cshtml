@@ -10,75 +10,61 @@
         <form asp-action="Create" class="ml-3 mr-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="IncidenteId" />
-            <div class="row">
-                <div class="col-lg-7">
-                    <div class="form-group">
-                        <label asp-for="Descripcion" class="control-label"></label>
-                        <textarea asp-for="Descripcion" class="form-control"></textarea>
-                        <span asp-validation-for="Descripcion" class="text-danger"></span>
-                    </div>
-                    @if (esCoordinador)
-                    {
-                        <div class="form-group">
-                            <label class="control-label">¿Desea cambiar el estado del incidente?</label>
-                            <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
-                        </div>
-                        <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
-                            <label class="control-label">Estado del Incidente</label>
-                            <select name="EstadoIncidenteNovedad" class="form-control">
-                                <option value="">Seleccione un estado</option>
-                                <option value="Cerrado">Cerrado</option>
-                                <option value="Solucionado">Solucionado</option>
-                            </select>
-                        </div>
-                    }
-                </div>
-                <div class="col-lg-5 order-1 order-md-2">
-                    <div class="card card-default collapsed-card">
-                        <div class="card-header">
-                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del incidente</h6>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p><span style="display: block; font-size: 0.9em;">Incidente:</span> <span class="text-muted">@Model.Incidente.Titulo</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Fecha:</span> <span class="text-muted">@Model.Incidente.FechaIncidente.ToShortDateString()</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Hora:</span> <span class="text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Descripción:</span> <span class="text-muted">@Model.Incidente.Descripcion</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Tipo de Incidente:</span> <span class="text-muted">@Model.Incidente.TipoIncidente?.Titulo</span></p>
-                            @*
-                            @if (Model.Incidente.Afectados.Any())
-                            {
-                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">@Model.Incidente.Afectados.Count()</span></p>
-                            }
-                            else
-                            {
-                            <p><span style="display: block; font-size: 0.9em;">Cantidad de Afectados:</span> <span class="text-muted">No se han registrado afectados en este incidente.</span></p>
-                            }
-                            *@
-                        </div>
-                    </div>
-
-                    <div class="card card-default collapsed-card">
-                        <div class="card-header">
-                            <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
-                            <div class="card-tools">
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <p><span style="display: block; font-size: 0.9em;">Nombre:</span> <span class="text-muted">@Model.Incidente.Proyecto.Nombre</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Departamento:</span> <span class="text-muted">@Model.Incidente.Proyecto.Departamento</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Municipio:</span> <span class="text-muted">@Model.Incidente.Proyecto.Municipio</span></p>
-                            <p><span style="display: block; font-size: 0.9em;">Dirección:</span> <span class="text-muted">@Model.Incidente.Proyecto.Direccion</span></p>
-                        </div>
+            <div class="card-container">
+                <div class="card">
+                    <!-- Card para Detalles de Incidente -->
+                    <div class="card-body">
+                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del incidente</h6>
+                        <dl class="row mb-0 dl-horizontal">
+                            <dt class="col-sm-4">Tipo de incidente</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.TipoIncidente?.Titulo</dd>
+                            <dt class="col-sm-4">Incidente</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Titulo</dd>
+                            <dt class="col-sm-4">fecha</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.FechaIncidente.ToShortDateString()</dd>
+                            <dt class="col-sm-4">Hora</dt>
+                            <dd class="col-sm-8 text-muted">@(Model.Incidente.HoraIncidente.HasValue ? Model.Incidente.HoraIncidente.Value.ToString() : "Desconocida")</dd>
+                            <dt class="col-sm-4">Descripción</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Descripcion</dd>
+                        </dl>
                     </div>
                 </div>
+                <div class="card">
+                    <!-- Card para Detalles de Respuesta proyecto -->
+                    <div class="card-body">
+                        <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
+                        <dl class="row mb-0 dl-horizontal">
+                            <dt class="col-sm-4">Nombre</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Proyecto.Nombre</dd>
+                            <dt class="col-sm-4">Departamento</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Proyecto.Departamento</dd>
+                            <dt class="col-sm-4">Municipio</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Proyecto.Municipio</dd>
+                            <dt class="col-sm-4">Direccion</dt>
+                            <dd class="col-sm-8 text-muted">@Model.Incidente.Proyecto.Direccion</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            @if (esCoordinador)
+            {
+                <div class="form-group">
+                    <label class="control-label">¿Desea cambiar el estado del incidente?</label>
+                    <input type="checkbox" id="MostrarEstadoCheck" data-bootstrap-switch>
+                </div>
+                <div class="form-group" id="SelectEstadoIncidente" style="display: none;">
+                    <label class="control-label">Estado del Incidente</label>
+                    <select name="EstadoIncidenteNovedad" class="form-control">
+                        <option value="">Seleccione un estado</option>
+                        <option value="Cerrado">Cerrado</option>
+                        <option value="Solucionado">Solucionado</option>
+                    </select>
+                </div>
+            }
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <textarea asp-for="Descripcion" class="form-control"></textarea>
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
             </div>
             <script>
                 $(document).ready(function () {

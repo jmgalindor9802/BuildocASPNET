@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Buildoc.Data;
 using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace Buildoc.Controllers
 {
@@ -35,7 +36,7 @@ namespace Buildoc.Controllers
             var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioLogueado.Id));
             var rolUsuario = roles.FirstOrDefault();
 
-            List<IncidenteLesionado> todosIncidenteLesionados = new List<IncidenteLesionado>(); // Declarar la variable fuera del if-else
+            List<Lesionado> todosLesionados = new List<Lesionado>(); // Declarar la variable fuera del if-else
             if (rolUsuario == "Coordinador")
             {
                 // Obtener los proyectos donde el usuario logueado es el coordinador
@@ -43,38 +44,36 @@ namespace Buildoc.Controllers
                     .Where(p => p.CoordinadorId == usuarioLogueado.Id)
                     .Select(p => p.Id)
                     .ToListAsync();
-                // Obtener todos los incidentes asociados a esos proyectos
-                var todosIncidentes = await _context.Incidentes
+                // Obtener los incidentes asociados a esos proyectos
+                var incidentes = await _context.Incidentes
                     .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
                     .Select(i => i.Id)
                     .ToListAsync();
-                todosIncidenteLesionados = await _context.IncidenteLesionados
-                    .Include(il => il.Lesionado)
-                    .Include(il => il.Incidente)
-                        .ThenInclude(i => i.Proyecto)
-                    .Where(il => todosIncidentes.Contains(il.IncidenteId))
+
+                // Obtener todos los lesionados asociados a esos incidentes
+                todosLesionados = await _context.Lesionados
+                    .Where(l => l.IncidenteLesionados.Any(il => incidentes.Contains(il.IncidenteId)))
                     .ToListAsync();
             }
             else if (rolUsuario == "Residente")
             {
-               // Obtener los incidentes y lesionados reportados por el usuario logueado
-               var todosIncidentes = await _context.Incidentes
+                // Obtener los incidentes reportados por el usuario logueado
+                var incidentes = await _context.Incidentes
                     .Where(i => i.UsuarioId == usuarioLogueado.Id)
                     .Select(i => i.Id)
                     .ToListAsync();
-                todosIncidenteLesionados = await _context.IncidenteLesionados
-                    .Include(il => il.Lesionado)
-                    .Include(il => il.Incidente)
-                        .ThenInclude(i => i.Proyecto)
-                    .Where(il => todosIncidentes.Contains(il.IncidenteId))
+
+                // Obtener todos los lesionados asociados a esos incidentes
+                todosLesionados = await _context.Lesionados
+                    .Where(l => l.IncidenteLesionados.Any(il => incidentes.Contains(il.IncidenteId)))
                     .ToListAsync();
             }
             else
             {
-                // Manejar otros roles o el caso en que el rol no sea "Coordinador" ni "Residente"
-                todosIncidenteLesionados = new List<IncidenteLesionado>(); // O maneja esto de acuerdo a tus necesidades
+                // Si el rol no es Coordinador ni Residente, maneja otros casos o filtra según sea necesario
+                todosLesionados = new List<Lesionado>();
             }
-            return View(todosIncidenteLesionados);
+            return View(todosLesionados);
         }
 
 
@@ -125,22 +124,62 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Guid incidenteId, LesionadoViewModel model)
         {
+            foreach (var lesionado in model.Lesionados)
+            {
+                // Validar que la cédula no sea un número negativo
+                if (lesionado.Cedula < 0)
+                {
+                    return Json(new { success = false, message = "La cédula no puede contener números negativos." });
+                }
+                else if (lesionado.Cedula.Value.ToString().Length < 7 || lesionado.Cedula.Value.ToString().Length > 10)
+                {
+                    // Validar que la cédula tenga entre 7 y 10 dígitos
+                    return Json(new { success = false, message = "La cédula debe tener entre 7 y 10 dígitos." });
+                }
+
+                // Verificar si el lesionado ya está registrado como fallecido
+                var existingLesionado = await _context.Lesionados
+                    .FirstOrDefaultAsync(l => l.Cedula == lesionado.Cedula);
+
+                if (existingLesionado != null && existingLesionado.ConfimacionDefuncion==true)
+                {
+                    // Si el lesionado está muerto, no permitir el reporte en futuros incidentes
+                    return Json(new { success = false, message = $"El lesionado con cédula {lesionado.Cedula} está registrado como fallecido y no puede ser reportado en nuevos incidentes." });
+                }
+            }
+            // Validar cédulas duplicadas
+            var cedulas = model.Lesionados.Select(l => l.Cedula).ToList();
+            if (cedulas.Count != cedulas.Distinct().Count())
+            {
+                return Json(new { success = false, message = "El formulario contiene cédulas duplicadas." });
+            }
             if (ModelState.IsValid)
             {
                 foreach (var lesionado in model.Lesionados)
                 {
-                    lesionado.Id = Guid.NewGuid();
+                    // Verificar si el lesionado ya existe en la base de datos por cédula
+                    var existingLesionado = await _context.Lesionados
+                        .FirstOrDefaultAsync(l => l.Cedula == lesionado.Cedula);
 
-                    // Agregar el lesionado a la base de datos
-                    _context.Lesionados.Add(lesionado);
-                    await _context.SaveChangesAsync();
+                    if (existingLesionado != null)
+                    {
+                        // Si el lesionado ya existe, usar su ID
+                        lesionado.Id = existingLesionado.Id;
+                    }
+                    else
+                    {
+                        // Si el lesionado no existe, asignar un nuevo ID y agregarlo a la base de datos
+                        lesionado.Id = Guid.NewGuid();
+                        _context.Lesionados.Add(lesionado);
+                        await _context.SaveChangesAsync(); // Guardar el nuevo lesionado
+                    }
 
-                    // Crear una relación entre el incidente y el lesionado
+                    // Crear la relación entre el incidente y el lesionado
                     var incidenteLesionado = new IncidenteLesionado
                     {
                         Id = Guid.NewGuid(),
                         IncidenteId = incidenteId,
-                        LesionadoId = lesionado.Id,
+                        LesionadoId = lesionado.Id, // Usar el ID del lesionado, sea nuevo o existente
                         Defuncion = model.IncidenteLesionados.FirstOrDefault()?.Defuncion ?? false,
                         ActividadRealizada = model.IncidenteLesionados.FirstOrDefault()?.ActividadRealizada,
                         AsociadaProyecto = model.IncidenteLesionados.FirstOrDefault()?.AsociadaProyecto ?? false,
@@ -149,12 +188,37 @@ namespace Buildoc.Controllers
                         PrimerosAuxilios = model.IncidenteLesionados.FirstOrDefault()?.PrimerosAuxilios ?? false
                     };
 
+                    // **Aquí verificamos si Defuncion es true**
+                    if (incidenteLesionado.Defuncion)
+                    {
+                        // Actualizar el valor de ConfimacionDefuncion para el lesionado
+                        existingLesionado = await _context.Lesionados.FirstOrDefaultAsync(l => l.Id == lesionado.Id);
+
+                        if (existingLesionado != null)
+                        {
+                            existingLesionado.ConfimacionDefuncion = true;
+                            _context.Lesionados.Update(existingLesionado); // Actualizar lesionado
+                            await _context.SaveChangesAsync(); // Guardar cambios en la base de datos
+                        }
+                    }
+
                     // Agregar la relación a la base de datos
                     _context.IncidenteLesionados.Add(incidenteLesionado);
                 }
 
+                // Guardar todos los cambios en la base de datos
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+
+                TempData["SuccessMessage"] = "¡El lesionado se ha reportado exitosamente!";
+                return Json(new { success = true });
+            }
+            else
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
             }
 
             // Pasar el incidenteId de nuevo a la vista si hay un error

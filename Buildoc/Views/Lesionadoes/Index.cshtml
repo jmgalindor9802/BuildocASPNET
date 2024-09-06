@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Buildoc.Models.IncidenteLesionado>
+﻿@model IEnumerable<Buildoc.Models.Lesionado>
 
 @{
     ViewData["Title"] = "Index";
@@ -55,13 +55,7 @@
                     Nombre completo
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Lesionado.Cedula)
-                </th>
-                <th>
-                    Incidente
-                </th>
-                <th>
-                    Proyecto
+                    @Html.DisplayNameFor(model => model.Cedula)
                 </th>
                 <th></th>
             </tr>
@@ -71,16 +65,10 @@
             {
                 <tr>
                     <td>
-                        @item.Lesionado.Nombre @item.Lesionado.Apellido
+                        @item.Nombre @item.Apellido
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Lesionado.Cedula)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Incidente.Titulo)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Incidente.Proyecto.Nombre)
+                        @Html.DisplayFor(modelItem => item.Cedula)
                     </td>
                     <td>
                         <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Lesionadoes", new { id = item.Id })" data-title="Editar inspección" data-action="edit">

@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240905234839_AgregacionDeBoolIncidenteYLecionadoConfirmarCampos")]
+    partial class AgregacionDeBoolIncidenteYLecionadoConfirmarCampos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -194,11 +197,9 @@ namespace Buildoc.Data.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("InspectorId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Objetivo")
-                        .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
@@ -394,9 +395,6 @@ namespace Buildoc.Data.Migrations
 
                     b.Property<int>("EstadoRespuestaInspeccion")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("FechaEdicion")
-                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("FechaRespuesta")
                         .HasColumnType("datetime2");
@@ -750,8 +748,7 @@ namespace Buildoc.Data.Migrations
 
                     b.HasOne("Buildoc.Models.Inspeccion", "Inspeccion")
                         .WithMany("FileModels")
-                        .HasForeignKey("InspeccionId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("InspeccionId");
 
                     b.HasOne("Buildoc.Models.RespuestaInspeccion", "RespuestaInspeccion")
                         .WithMany("FileModels")
@@ -819,12 +816,10 @@ namespace Buildoc.Data.Migrations
                 {
                     b.HasOne("Buildoc.Models.Usuario", "Inspector")
                         .WithMany()
-                        .HasForeignKey("InspectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("InspectorId");
 
                     b.HasOne("Buildoc.Models.Proyecto", "Proyecto")
-                        .WithMany("Inspecciones")
+                        .WithMany()
                         .HasForeignKey("ProyectoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -996,8 +991,6 @@ namespace Buildoc.Data.Migrations
             modelBuilder.Entity("Buildoc.Models.Proyecto", b =>
                 {
                     b.Navigation("Incidentes");
-
-                    b.Navigation("Inspecciones");
                 });
 
             modelBuilder.Entity("Buildoc.Models.RespuestaInspeccion", b =>

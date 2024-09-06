@@ -21,6 +21,7 @@ namespace Buildoc.Models
         public string? CorreoElectronico { get; set; }
         [Display(Name = "Cédula")]
         public long? Cedula { get; set; }
+        public bool ConfimacionDefuncion { get; set; } = false;
 
         //Conexion con la tabla muchos a muchos
         public virtual ICollection<IncidenteLesionado> IncidenteLesionados { get; set; } = new List<IncidenteLesionado>();

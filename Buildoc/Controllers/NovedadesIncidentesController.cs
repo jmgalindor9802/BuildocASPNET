@@ -135,6 +135,14 @@ namespace Buildoc.Controllers
                 TempData["SuccessMessage"] = "¡La novedad del incidente se ha creado exitosamente!";
                 return Json(new { success = true });
             }
+            else
+            {
+                // Obtener errores de validación
+                var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                              .Select(e => e.ErrorMessage)
+                                              .ToList();
+                return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
+            }
 
             // Pasar los estados posibles a la vista si la validación falla
             ViewBag.Estados = new SelectList(Enum.GetValues(typeof(EstadoIncidenteEnum)));
