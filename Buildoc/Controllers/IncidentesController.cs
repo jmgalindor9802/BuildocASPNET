@@ -87,6 +87,22 @@ namespace Buildoc.Controllers
                 .Where(l => l.IncidenteLesionados.Any(il => todosIncidentes.Select(i => i.Id).Contains(il.IncidenteId)))
                 .CountAsync();
 
+            // Obtén los municipios asociados a los incidentes del usuario (sin duplicados)
+            var municipiosConIncidentes = todosIncidentes
+                .Select(i => i.Proyecto.Municipio)
+                .Distinct()
+                .ToList();
+
+            // Obtener los detalles de los incidentes
+            var detallesIncidentes = todosIncidentes
+                .Select(i => new
+                {
+                    i.Id,
+                    i.Estado,
+                    Municipio = i.Proyecto.Municipio
+                })
+                .ToList();
+
             // Filtrar incidentes activos 
             var incidentesActivos = todosIncidentes
                 .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
@@ -119,7 +135,8 @@ namespace Buildoc.Controllers
             ViewBag.CerradosIncidentes = cerradosIncidentes;
             ViewBag.VencidosIncidentes = vencidosIncidentes;
             ViewBag.TotalLesionados = totalLesionados;
-
+            ViewBag.MunicipiosConIncidentes = municipiosConIncidentes;
+            ViewBag.DetallesIncidentes = detallesIncidentes;
 
             // Retornar solo los incidentes activos para la vista Index
             return View(todosIncidentes);
