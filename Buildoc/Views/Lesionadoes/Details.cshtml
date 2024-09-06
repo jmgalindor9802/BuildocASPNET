@@ -1,77 +1,98 @@
-﻿@model Buildoc.Models.IncidenteLesionado
+﻿@model Buildoc.Models.Lesionado
 
 @{
     Layout = null;
 }
 
 <div class="row">
+    <!-- Card for project details -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del proyecto</h6>
-                <dl class="row mb-0 dl-horizontal">
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Nombre)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Nombre)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Departamento)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Departamento)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Municipio)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Municipio)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Direccion)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Direccion)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Cliente)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Cliente)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Proyecto.Descripcion)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Proyecto.Descripcion)</dd>
-                </dl>
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del Proyecto</h6>
+                @foreach (var incidenteLesionado in Model.IncidenteLesionados)
+                {
+                    <dl class="row mb-0 dl-horizontal">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Nombre)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Nombre)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Departamento)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Departamento)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Municipio)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Municipio)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Direccion)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Direccion)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Cliente)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Cliente)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Proyecto.Descripcion)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Proyecto.Descripcion)</dd>
+                    </dl>
+                    <hr />
+                }
             </div>
         </div>
     </div>
+
+    <!-- Card for incident details -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
                 <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del Incidente</h6>
-                <dl class="row mb-0 dl-horizontal">
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Titulo)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Titulo)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.FechaIncidente)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.FechaIncidente)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Incidente.Descripcion)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Incidente.Descripcion)</dd>
-                </dl>
+                @foreach (var incidenteLesionado in Model.IncidenteLesionados)
+                {
+                    <dl class="row mb-0 dl-horizontal">
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Titulo)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Titulo)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.FechaIncidente)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.FechaIncidente)</dd>
+
+                        <dt class="col-sm-4">@Html.DisplayNameFor(model => incidenteLesionado.Incidente.Descripcion)</dt>
+                        <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => incidenteLesionado.Incidente.Descripcion)</dd>
+                    </dl>
+                    <hr />
+
+                }
             </div>
         </div>
     </div>
+
+    <!-- Card for injured details -->
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del lecionado</h6>
+                <h6 class="text-primary"><i class="fas fa-info-circle"></i> Detalles del lesionado</h6>
                 <dl class="row mb-0 dl-horizontal">
                     <dt class="col-sm-4">Nombre completo</dt>
-                    <dd class="col-sm-8 text-muted">@Model.Lesionado.Nombre @Model.Lesionado.Apellido</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Lesionado.Cedula)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Lesionado.Cedula)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.ActividadRealizada)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.ActividadRealizada)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Defuncion)</dt>
+                    <dd class="col-sm-8 text-muted">@Model.Nombre @Model.Apellido</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Cedula)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.Cedula)</dd>
+                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.IncidenteLesionados.FirstOrDefault().ActividadRealizada)</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.IncidenteLesionados.FirstOrDefault().ActividadRealizada)</dd>
+                    <dt class="col-sm-4">Defunción</dt>
                     <dd class="col-sm-8 text-muted">
-                        @(Model.Defuncion ? "Sí" : "No")
+                        @(Model.IncidenteLesionados.FirstOrDefault().Defuncion ? "Sí" : "No")
                     </dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.AsociadaProyecto)</dt>
+                    <dt class="col-sm-4">Asociada al Proyecto</dt>
                     <dd class="col-sm-8 text-muted">
-                        @(Model.AsociadaProyecto ? "Sí" : "No")
+                        @(Model.IncidenteLesionados.FirstOrDefault().AsociadaProyecto ? "Sí" : "No")
                     </dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.GeneroAfectado)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.GeneroAfectado)</dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.Hospitalizado)</dt>
+                    <dt class="col-sm-4">Género Afectado</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.IncidenteLesionados.FirstOrDefault().GeneroAfectado)</dd>
+                    <dt class="col-sm-4">Hospitalización</dt>
                     <dd class="col-sm-8 text-muted">
-                        @(Model.Hospitalizado ? "Sí" : "No")
+                        @(Model.IncidenteLesionados.FirstOrDefault().Hospitalizado ? "Sí" : "No")
                     </dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.PrimerosAuxilios)</dt>
+                    <dt class="col-sm-4">Primeros Auxilios</dt>
                     <dd class="col-sm-8 text-muted">
-                        @(Model.PrimerosAuxilios ? "Sí" : "No")
+                        @(Model.IncidenteLesionados.FirstOrDefault().PrimerosAuxilios ? "Sí" : "No")
                     </dd>
-                    <dt class="col-sm-4">@Html.DisplayNameFor(model => model.FechaCreacion)</dt>
-                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.FechaCreacion)</dd>
+                    <dt class="col-sm-4">Fecha de creación</dt>
+                    <dd class="col-sm-8 text-muted">@Html.DisplayFor(model => model.IncidenteLesionados.FirstOrDefault().FechaCreacion)</dd>
                 </dl>
             </div>
         </div>

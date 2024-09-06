@@ -85,17 +85,17 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var incidenteslesionado = await _context.IncidenteLesionados
-                .Include(il => il.Lesionado)
-                .Include(il => il.Incidente)
-                    .ThenInclude(i => i.Proyecto)
+            var lesionados = await _context.Lesionados
+                .Include(l => l.IncidenteLesionados)
+                    .ThenInclude(il=> il.Incidente)
+                        .ThenInclude(i => i.Proyecto)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (incidenteslesionado == null)
+            if (lesionados == null)
             {
                 return NotFound();
             }
 
-            return PartialView(incidenteslesionado);
+            return PartialView(lesionados);
         }
 
         // GET: Lesionadoes/Create
