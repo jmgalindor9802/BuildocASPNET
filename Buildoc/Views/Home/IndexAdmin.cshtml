@@ -1,24 +1,187 @@
-﻿@{
-    ViewBag.Title = "Inicio - Panel de Administración";
-    var numeroInspeccionesPendientes = ViewBag.NumeroInspeccionesPendientes;
-}
+﻿@using Buildoc.ViewModels
+@model List<ProyectoHomeViewModel>
 
-<div class="container">
-    </br>
-    <h3>Bienvenido, @ViewBag.NombreUsuario</h3>
-
-
-    @if (numeroInspeccionesPendientes > 0)
-    {
-        <div class="alert alert-warning mt-4">
-            <strong>Tienes @numeroInspeccionesPendientes inspecciones pendientes de aprobación.</strong>
-            <a href="@Url.Action("Index", "Inspecciones")" class="btn btn-primary ml-3">Ver Inspecciones</a>
+<div class="container-page">
+    <div class="row mb-2 align-items-center text-white p-2" style=" background-color: #001f3f;">
+        <!-- Columna para Bienvenida y Panel Principal -->
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <h5 class="mb-0" style="font-weight: 200 !important;">Bienvenido, @ViewBag.NombreUsuario</h5>
+            <h1 class="mb-0 titulo-inspecciones">
+                <i class="fas fa-home"></i> Panel Principal
+            </h1>
         </div>
-    }
-    else
-    {
-        <div class="alert alert-success mt-4">
-            <strong>No tienes inspecciones pendientes de aprobación.</strong>
+
+        <!-- Columna para los botones -->
+        <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end">
+            <div class="d-flex">
+                @if (User.IsInRole("Administrador"))
+                {
+                    <!-- Botones sin enlaces para Administrador -->
+                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #17a2b8;">
+                        <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
+                        <i class="fas fa-project-diagram"></i> Proyectos activos
+                    </div>
+
+                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #28a745;">
+                        <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
+                        <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
+                    </div>
+
+                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #ffc107;">
+                        <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
+                        <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
+                    </div>
+
+                    <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #dc3545;">
+                        <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
+                        <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
+                    </div>
+                }
+                else
+                {
+                    <!-- Botones con enlaces para otros roles -->
+                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("Index", "Proyectos")" style="background-color: #17a2b8;">
+                        <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
+                        <i class="fas fa-project-diagram"></i> Proyectos activos
+                    </a>
+
+                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("Programadas", "Inspecciones")" style="background-color: #28a745;">
+                        <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
+                        <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
+                    </a>
+
+                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("PendientesRevision", "Inspecciones")" style="background-color: #ffc107;">
+                        <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
+                        <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
+                    </a>
+
+                    <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("IncidenteActivos", "Incidentes")" style="background-color: #dc3545;">
+                        <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
+                        <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
+                    </a>
+                }
+            </div>
         </div>
-    }
+    </div>
+
+    <br />
+
+    <div class="row">
+        <!-- Columna Izquierda: Gráfica -->
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <canvas id="myChart" width="409" height="375" style="direction: ltr; width: 100%; height: auto;"></canvas>
+        </div>
+
+        <!-- Columna Derecha: Tabla -->
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <table id="example1" class="table table-bordered table-striped" style="width: 100%;">
+                <colgroup>
+                    <col style="width: 55%;"> <!-- Columna de Proyectos Activos -->
+                    <col style="width: 15%;"> <!-- Columna de Inspecciones Programadas -->
+                    <col style="width: 15%;"> <!-- Columna de Inspecciones Pendientes -->
+                    <col style="width: 15%;"> <!-- Columna de Incidentes Activos -->
+                </colgroup>
+                <thead class="header-bg">
+                    <tr>
+                        <th><i class="fas fa-project-diagram"></i> Proyectos Activos (@Model.Count())</th>
+                        <th><i class="fas fa-calendar-check"></i> (@Model.Sum(p => p.NumeroInspeccionesProgramadas))</th>
+                        <th><i class="fas fa-exclamation-circle"></i> (@Model.Sum(p => p.NumeroInspeccionesPendientes))</th>
+                        <th><i class="fas fa-exclamation-triangle"></i> (@Model.Sum(p => p.NumeroIncidentesActivos))</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var proyecto in Model)
+                    {
+                        <tr>
+                            <td>@proyecto.ProyectoNombre</td>
+                            <td style="text-align: center;">@proyecto.NumeroInspeccionesProgramadas</td>
+                            <td style="text-align: center;">@proyecto.NumeroInspeccionesPendientes</td>
+                            <td style="text-align: center;">@proyecto.NumeroIncidentesActivos</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        </div>
+    </div>
 </div>
+
+<!-- Incluir Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Inicializa la DataTable con la configuración deseada
+        let table = $('#example1').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print', 'colvis'
+            ],
+            language: {
+                url: "/espanol.json" // Ruta al archivo JSON para la traducción en español
+            },
+            responsive: true,
+            lengthChange: false,
+            autoWidth: false,
+            paging: true,
+            ordering: true,
+            info: true,
+           
+        });
+    });
+
+    // Inicializar gráfica en el canvas
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Proyectos', 'Inspecciones Programadas', 'Inspecciones Pendientes', 'Incidentes Activos'],
+            datasets: [{
+                label: 'Datos',
+                data: [
+    @Model.Count(),
+    @Model.Sum(p => p.NumeroInspeccionesProgramadas),
+    @Model.Sum(p => p.NumeroInspeccionesPendientes),
+    @Model.Sum(p => p.NumeroIncidentesActivos)
+                    ],
+                backgroundColor: ['#17a2b8', '#28a745', '#ffc107', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+<style>
+    /* Definir ancho personalizado y aumentar altura para los botones */
+    .btn-custom-width {
+        width: 70px;
+        height: 70px; /* Aumentar la altura del botón */
+    }
+
+    /* Asegurar que los íconos y números en los botones estén centrados */
+    .btn-app .badge {
+        font-size: 1.8em; /* Tamaño más grande del número */
+        display: block;
+    }
+
+    .btn-app i {
+        display: block;
+        margin-bottom: 5px; /* Más espacio debajo del ícono */
+    }
+
+    /* Asegurar que el texto se divida en dos líneas si es necesario */
+    .btn-app {
+        white-space: normal;
+        padding: 10px 5px; /* Espaciado interno */
+        font-size: 9px; /* Ajustar tamaño de fuente */
+        text-align: center;
+        margin-top: 8px;
+    }
+</style>
