@@ -32,7 +32,7 @@ namespace Buildoc.Controllers
 		}
 
         // GET: Incidentes
-        public async Task<IActionResult> Index(Guid? proyectoId)
+        public async Task<IActionResult> Index()
         {
             // Obtener el usuario logueado
             var usuarioLogueado = await _userManager.GetUserAsync(User);
@@ -46,8 +46,15 @@ namespace Buildoc.Controllers
             var rolUsuario = roles.FirstOrDefault();
             
             List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
-                              
-            if (rolUsuario == "Coordinador")
+            if (rolUsuario == "Administrador")
+            {
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Coordinador")
             {
                 // Obtener los proyectos donde el usuario logueado es el coordinador
                 var proyectosDondeEsCoordinador = await _context.Proyectos
@@ -155,7 +162,15 @@ namespace Buildoc.Controllers
             var rolUsuario = roles.FirstOrDefault();
 
             List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
-            if (rolUsuario == "Coordinador")
+            if (rolUsuario == "Administrador")
+            {
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Coordinador")
             {
                 // Obtener los proyectos donde el usuario logueado es el coordinador
                 var proyectosDondeEsCoordinador = await _context.Proyectos
@@ -209,7 +224,15 @@ namespace Buildoc.Controllers
             var rolUsuario = roles.FirstOrDefault();
 
             List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
-            if (rolUsuario == "Coordinador")
+            if (rolUsuario == "Administrador")
+            {
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Coordinador")
             {
                 // Obtener los proyectos donde el usuario logueado es el coordinador
                 var proyectosDondeEsCoordinador = await _context.Proyectos
@@ -250,37 +273,6 @@ namespace Buildoc.Controllers
             return View(incidentesArchivados);
         }
 
-        public async Task<IActionResult> IncidenteVencidos()
-        {
-            // Obtener el usuario logueado
-            var usuarioLogueado = await _userManager.GetUserAsync(User);
-            if (usuarioLogueado == null)
-            {
-                return Unauthorized(); // Si no se puede obtener el usuario logueado, retorna no autorizado
-            }
-
-            // Obtener los proyectos donde el usuario logueado es el coordinador
-            var proyectosDondeEsCoordinador = await _context.Proyectos
-                .Where(p => p.CoordinadorId == usuarioLogueado.Id)
-                .Select(p => p.Id)
-                .ToListAsync();
-
-            // Obtener todos los incidentes asociados a esos proyectos
-            var todosIncidentes = await _context.Incidentes
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoIncidente)
-                .Include(i => i.Usuario)
-                .Where(i => proyectosDondeEsCoordinador.Contains(i.ProyectoId))
-                .ToListAsync();
-
-            // Filtrar incidentes archivados (estado false)
-            var incidentesArchivados = todosIncidentes
-                .Where(i => i.Estado == EstadoIncidenteEnum.Vencido)
-                .ToList();
-
-            // Retornar solo los incidentes activos para la vista Index
-            return View(incidentesArchivados);
-        }
         public async Task<IActionResult> IncidenteArchivados()
         {
             // Obtener el usuario logueado
@@ -294,7 +286,15 @@ namespace Buildoc.Controllers
             var rolUsuario = roles.FirstOrDefault();
 
             List<Incidente> todosIncidentes = new List<Incidente>(); // Declarar la variable fuera del if-else
-            if (rolUsuario == "Coordinador")
+            if (rolUsuario == "Administrador")
+            {
+                todosIncidentes = await _context.Incidentes
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoIncidente)
+                    .Include(i => i.Usuario)
+                    .ToListAsync();
+            }
+            else if (rolUsuario == "Coordinador")
             {
                 // Obtener los proyectos donde el usuario logueado es el coordinador
                 var proyectosDondeEsCoordinador = await _context.Proyectos
@@ -335,7 +335,6 @@ namespace Buildoc.Controllers
             return View(incidentesArchivados);
         }
 
-        [Authorize(Roles = "Coordinador,Residente")]
         // GET: Incidentes/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
@@ -375,6 +374,7 @@ namespace Buildoc.Controllers
 
 
         // GET: Incidentes/Create
+        [Authorize(Roles = "Coordinador,Residente")]
         public async Task<IActionResult> Create()
         {
             // Obtener el ID del usuario actual
@@ -469,6 +469,7 @@ namespace Buildoc.Controllers
         // POST: Incidentes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Coordinador,Residente")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(IncidenteViewModel model, bool switchAfectados, string CategoriaTipoIncidente)

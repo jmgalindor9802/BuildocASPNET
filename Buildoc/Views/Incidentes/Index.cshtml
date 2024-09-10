@@ -3,9 +3,8 @@
 @{
     ViewData["Title"] = "Index";
     var esCoordinador = User.IsInRole("Coordinador");
-    var proyectos = ViewBag.Proyectos != null && ((List<Buildoc.Models.Proyecto>)ViewBag.Proyectos).Any() ?
-        new SelectList(ViewBag.Proyectos as List<Buildoc.Models.Proyecto>, "Id", "Nombre") :
-        new SelectList(Enumerable.Empty<SelectListItem>());
+    var esAdministrador = User.IsInRole("Administrador");
+    var esResidente = User.IsInRole("Residente");
 }
 <style>
     /* Estilos para desactivar el color azul y el subrayado en a */
@@ -19,13 +18,24 @@
     <div class="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
         <div class="col-12 d-flex justify-content-between align-items-center">
             <h1 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Incidentes</h1>
-            <p class="mb-0">
-                <a href="#" id="createNewModal" class="create-new btn btn-light"
-                   data-url="@Url.Action("Create", "Incidentes")"
-                   data-title="Reportar incidente" data-action="create">
-                    <i class="fas fa-plus"></i> Reportar incidente
-                </a>
-            </p>
+            @if (esCoordinador || esResidente)
+            {
+                <p class="mb-0">
+                    <a href="#" id="createNewModal" class="create-new btn btn-light"
+                       data-url="@Url.Action("Create", "Incidentes")"
+                       data-title="Reportar incidente" data-action="create">
+                        <i class="fas fa-plus"></i> Reportar incidente
+                    </a>
+                </p>
+            }
+            else if (esAdministrador)
+            {
+                <p class="mb-0">
+                    <a asp-controller="TipoIncidentes" asp-action="Index" class="btn btn-light">
+                        Tipos de incidente
+                    </a>
+                </p>
+            }
         </div>
     </div>
 
@@ -197,21 +207,24 @@
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                                 <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
                             </svg>
-                        </a> |
+                        </a>
                         @if (item.Estado == EstadoIncidenteEnum.Activo)
                         {
-                            <a href="#" type="button" class="respond-item"
-                                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
-                                    data-title="Agregar Novedad"
-                                    data-action="respond">
-                                <i class="fas fa-info-circle"></i> |
-                            </a>
-                            <a href="#" type="button" class="respond-item"
-                                    data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = item.Id })"
-                                    data-title="Agregar Novedad"
-                                    data-action="respond">
-                                <i class="fas fa-user-injured"></i>
-                            </a>
+                            if(esCoordinador || esResidente)
+                            {
+                                <a href="#" type="button" class="respond-item"
+                                   data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
+                                   data-title="Agregar Novedad"
+                                   data-action="respond">
+                                    <i class="fas fa-info-circle"></i>
+                                </a>
+                                <a href="#" type="button" class="respond-item"
+                                   data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = item.Id })"
+                                   data-title="Agregar Novedad"
+                                   data-action="respond">
+                                    <i class="fas fa-user-injured"></i>
+                                </a>
+                            }
                         }
                     </td>
                 </tr>

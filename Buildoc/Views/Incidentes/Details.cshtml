@@ -1,8 +1,9 @@
 ﻿@model Buildoc.Models.Incidente
 
 @{
-    Layout = null;
     var esCoordinador = User.IsInRole("Coordinador");
+    var esAdministrador = User.IsInRole("Administrador");
+    var esResidente = User.IsInRole("Residente");
 }
 
 <div class="row">
@@ -173,7 +174,7 @@
                         </div>
                     }
                 </div>
-                @if (Model.Estado == EstadoIncidenteEnum.Activo)
+                @if (Model.Estado == EstadoIncidenteEnum.Activo && (esCoordinador || esResidente))
                 {
                     <button type="button" class="btn btn-primary respond-item"
                             data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = Model.Id })"
