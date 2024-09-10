@@ -21,6 +21,7 @@
                 </svg> Tipo de incidente
             </h1>
             <p class="mb-0">
+                <a asp-controller="Incidentes" asp-action="Index" class="btn btn-light">Volver</a>
                 <a href="#" id="createNewModal" class="create-new btn btn-light"
                    data-url="@Url.Action("Create", "TipoIncidentes")"
                    data-title="Crear tipo de incidente" data-action="create">
@@ -105,7 +106,7 @@
             {
                 <tr>
                     <td>
-                        @Html.DisplayFor(modelItem => item.Categoria)
+                        @Html.DisplayFor(modelItem => item.CategoriaDescripcion)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.Titulo)

@@ -403,8 +403,12 @@ namespace Buildoc.Controllers
                 proyectos = new List<Proyecto>();
             }
 
+            var tiposIncidentes = await _context.TipoIncidentes
+                .Where(ti => ti.Estado)
+                .ToListAsync();
+
             ViewData["ProyectoId"] = new SelectList(proyectos, "Id", "Nombre");
-            ViewData["TipoIncidenteId"] = new SelectList(_context.TipoIncidentes, "Id", "Titulo");
+            ViewData["TipoIncidenteId"] = new SelectList(tiposIncidentes, "Id", "Titulo");
             // Obtener todas las categorías del enum con sus descripciones
             var categoriasTotales = Enum.GetValues(typeof(Buildoc.Models.CategoriaEnum))
                 .Cast<Buildoc.Models.CategoriaEnum>()
