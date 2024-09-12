@@ -1,34 +1,64 @@
-﻿@model TipoInspeccion
+﻿    @model TipoInspeccion
 
-@{
-    ViewData["Title"] = "Delete";
+    @{
+        ViewData["Title"] = "Delete";
    
+    }
+<!-- Mostrar alerta con el mensaje de TempData -->
+@if (TempData["DeleteMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["DeleteMessage"]
+    </div>
 }
-
-
-
+<div>
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Nombre)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Nombre)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Categoria)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Categoria)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Descripcion)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
     </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Id" />    
-    </form>
 
+   
+</div>
+
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="Id" />
+</form>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Leer el valor de ViewBag.PuedeEliminarse
+        var puedeEliminarse = '@(ViewBag.PuedeEliminarse ?? false)';
+
+        // Verificar si se puede eliminar
+        if (puedeEliminarse === "True" || puedeEliminarse === "true") {
+            // Eliminar está permitido
+            console.log("Eliminar está permitido.");
+            $(".btn-delete").prop("disabled", false); // Asegurarse de que el botón no está deshabilitado
+        } else {
+            // No se puede eliminar
+            console.log("Eliminar no está permitido.");
+            $(".btn-delete").prop("disabled", true); // Deshabilitar el botón
+            $(".btn-delete").off('click'); // Evitar cualquier acción en el botón de eliminar
+        }
+    });
+</script>
+
+
+    

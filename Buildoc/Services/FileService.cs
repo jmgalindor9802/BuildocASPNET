@@ -66,6 +66,39 @@ namespace Buildoc.Services
             return file?.FilePath; // Devuelve la ruta del archivo
         }
 
+        public async Task<bool> Delete(string filePath)
+        {
+            try
+            {
+                // Obtiene el nombre del contenedor y el nombre del blob a partir del filePath
+                Uri uri = new Uri(filePath);
+                string blobName = Path.GetFileName(uri.LocalPath);
+
+                // Obtiene el contenedor de blobs (en este caso, asumimos que es "documents")
+                var containerInstance = _blobServiceClient.GetBlobContainerClient("documents");
+
+                // Obtiene el blob que se quiere eliminar
+                var blobInstance = containerInstance.GetBlobClient(blobName);
+
+                // Verifica si el blob existe antes de eliminarlo
+                var exists = await blobInstance.ExistsAsync();
+                if (!exists)
+                {
+                    return false; // El blob no existe
+                }
+
+                // Elimina el blob
+                await blobInstance.DeleteAsync();
+
+                return true; // Indica que la eliminación fue exitosa
+            }
+            catch (Exception ex)
+            {
+                // Registrar el error si es necesario
+                Console.WriteLine($"Error al eliminar archivo: {ex.Message}");
+                return false; // Hubo un error al eliminar el archivo
+            }
+        }
 
     }
 }

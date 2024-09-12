@@ -8,5 +8,7 @@ namespace Buildoc.Services
 
         Task<Stream> Get(string fileName);
         string GetFilePath(string fileName);
+
+        Task<bool> Delete(string filePath);  // Nuevo método para eliminar archivos
     }
 }
