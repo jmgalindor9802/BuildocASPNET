@@ -63,6 +63,7 @@ namespace Buildoc.Controllers
             }
 
             var tipoInspeccion = await _context.TipoInspeccion
+                     .Include(t => t.Archivos)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (tipoInspeccion == null)
             {
@@ -162,11 +163,26 @@ namespace Buildoc.Controllers
                 return NotFound();
             }
 
-            var tipoInspeccion = await _context.TipoInspeccion.FindAsync(id);
+            var tipoInspeccion = await _context.TipoInspeccion
+                   .Include(t => t.Archivos) // Incluir los archivos relacionados
+                   .FirstOrDefaultAsync(t => t.Id == id);
+
             if (tipoInspeccion == null)
             {
                 return NotFound();
             }
+
+            // Obtener las categorías desde el enum
+            var categorias = Enum.GetValues(typeof(CategoriaInspeccion))
+                .Cast<CategoriaInspeccion>()
+                .Select(c => new SelectListItem
+                {
+                    Value = ((int)c).ToString(),
+                    Text = c.GetDisplayName() // Suponiendo que usas un método para obtener el nombre de visualización
+                }).ToList();
+
+            ViewBag.Categorias = categorias;
+
             return PartialView("Edit",tipoInspeccion);
         }
 
@@ -175,26 +191,65 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Categoria,Descripcion")] TipoInspeccion tipoInspeccion)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Categoria,Descripcion")] TipoInspeccion tipoInspeccion, List<IFormFile> UploadedFiles)
         {
             if (id != tipoInspeccion.Id)
             {
                 return NotFound();
             }
+
             // Verificar si ya existe un tipo de inspección con el mismo nombre, excepto el actual
             var existingTipoInspeccion = await _context.TipoInspeccion
+                .Include(t => t.Archivos) // Incluir los archivos existentes
                 .FirstOrDefaultAsync(t => t.Nombre == tipoInspeccion.Nombre && t.Id != id);
 
             if (existingTipoInspeccion != null)
             {
                 return Json(new { success = false, message = "Ya existe un tipo de inspección con este nombre." });
             }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(tipoInspeccion);
+                    // Actualizar solo los datos del TipoInspeccion, no los archivos
+                    _context.Entry(tipoInspeccion).Property(t => t.Nombre).IsModified = true;
+                    _context.Entry(tipoInspeccion).Property(t => t.Categoria).IsModified = true;
+                    _context.Entry(tipoInspeccion).Property(t => t.Descripcion).IsModified = true;
                     await _context.SaveChangesAsync();
+
+                    // Manejo de archivos subidos
+                    if (UploadedFiles != null && UploadedFiles.Count > 0)
+                    {
+                        foreach (var file in UploadedFiles)
+                        {
+                            if (file.Length > 0)
+                            {
+                                // Cargar el archivo a Azure Blob Storage (solo para nuevos archivos)
+                                var fileUrl = await _fileService.Upload(file, "documents");
+
+                                _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
+
+                                // Crear el modelo de archivo para el nuevo archivo
+                                var fileModel = new FileModel
+                                {
+                                    Id = Guid.NewGuid(),
+                                    TipoInspeccionId = tipoInspeccion.Id,
+                                    FileName = Path.GetFileName(file.FileName),
+                                    FilePath = fileUrl,
+                                    ContentType = file.ContentType,
+                                    FileSize = file.Length
+                                };
+
+                                // Agregar el nuevo archivo al contexto
+                                _context.FileModels.Add(fileModel);
+                            }
+                        }
+                        await _context.SaveChangesAsync();
+                    }
+
+                    TempData["SuccessMessage"] = "¡El tipo de inspección se ha editado exitosamente!";
+                    return Json(new { success = true });
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -207,11 +262,11 @@ namespace Buildoc.Controllers
                         throw;
                     }
                 }
-                TempData["SuccessMessage"] = "¡El proyecto se ha editado exitosamente!";
-                return Json(new { success = true });
             }
-            return PartialView("Edit",tipoInspeccion);
+
+            return PartialView("Edit", tipoInspeccion);
         }
+
 
         // GET: TipoInspecciones/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -222,14 +277,30 @@ namespace Buildoc.Controllers
             }
 
             var tipoInspeccion = await _context.TipoInspeccion
+                .Include(t => t.Inspecciones) // Asegúrate de incluir las inspecciones relacionadas
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (tipoInspeccion == null)
             {
                 return NotFound();
             }
 
+            // Verificar si tiene inspecciones relacionadas
+            if (tipoInspeccion.Inspecciones.Any())
+            {
+                TempData["DeleteMessage"] = "No se puede eliminar este tipo de inspección porque tiene inspecciones relacionadas.";
+                ViewBag.PuedeEliminarse = false; // No se puede eliminar
+            }
+            else
+            {
+                TempData["DeleteMessage"] = "¿Está seguro de que desea eliminar este tipo de inspección?";
+                ViewBag.PuedeEliminarse = true; // Se puede eliminar
+            }
+
             return PartialView(tipoInspeccion);
         }
+
+
 
         // POST: TipoInspecciones/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -241,7 +312,7 @@ namespace Buildoc.Controllers
             {
                 _context.TipoInspeccion.Remove(tipoInspeccion);
             }
-            TempData["SuccessMessage"] = "¡El proyecto se ha archivado exitosamente!"; 
+            TempData["SuccessMessage"] = "¡El tipo de inspección se ha eliminado exitosamente!"; 
             await _context.SaveChangesAsync();
             return Json(new { success = true });
         }
@@ -250,5 +321,36 @@ namespace Buildoc.Controllers
         {
             return _context.TipoInspeccion.Any(e => e.Id == id);
         }
+
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteFile(Guid fileId)
+        {
+            var file = await _context.FileModels.FindAsync(fileId);
+
+            if (file == null)
+            {
+                return Json(new { success = false, message = "Archivo no encontrado." });
+            }
+
+            try
+            {
+                // Eliminar el archivo del almacenamiento en la nube (Azure Blob Storage)
+                await _fileService.Delete(file.FilePath);
+
+                // Eliminar el archivo de la base de datos
+                _context.FileModels.Remove(file);
+                await _context.SaveChangesAsync();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                // Manejar el error y devolver una respuesta adecuada
+                _logger.LogError($"Error al eliminar archivo: {ex.Message}");
+                return Json(new { success = false, message = "Hubo un error al eliminar el archivo." });
+            }
+        }
+
     }
 }

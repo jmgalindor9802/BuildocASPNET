@@ -27,5 +27,23 @@
             @Html.DisplayFor(model => model.Descripcion)
         </dd>
     </dl>
+
+    <!-- Mostrar archivos relacionados -->
+    <h6>Archivos relacionados</h6>
+    <ul class="list-group">
+        @if (Model.Archivos != null && Model.Archivos.Any())
+        {
+            @foreach (var archivo in Model.Archivos)
+            {
+                <li class="list-group-item">
+                    <a href="@archivo.FilePath" target="_blank">@archivo.FileName</a>
+                </li>
+            }
+        }
+        else
+        {
+            <li class="list-group-item">No hay archivos asociados.</li>
+        }
+    </ul>
 </div>
 
