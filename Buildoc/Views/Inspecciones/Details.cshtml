@@ -1,6 +1,7 @@
 ﻿@model Buildoc.Models.Inspeccion
 @{
     Layout = null;
+    var esAdmin = User.IsInRole("Administrador");
 }
 
 <div class="row">
@@ -199,13 +200,14 @@
                     }
 
                 </div>
+                @if (!esAdmin){
                 <button type="button" class="btn btn-primary respond-item"
                         data-url="@Url.Action("Create", "NovedadInspeccion", new { id = Model.Id })"
                         data-title="Agregar Novedad"
                         data-action="respond">
                     <i class="fas fa-plus-circle"></i> Añadir Novedad
                 </button>
-
+                }
             </div>
         </div>
     </div>
