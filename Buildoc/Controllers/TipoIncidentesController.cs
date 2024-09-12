@@ -45,6 +45,10 @@ namespace Buildoc.Controllers
                     Estado = ti.Estado
                 })
                 .ToList();
+
+            var tipoIncidentesVista = await _context.TipoIncidentes
+              .Include(ti => ti.Incidentes)
+              .ToListAsync();
             //Contadores
             var tipoIncidentesTotales = tipoIncidentes.Count;
             var tipoIncidentesActivos = tipoIncidentes.Count(ti => ti.Estado);
@@ -56,7 +60,7 @@ namespace Buildoc.Controllers
 			ViewBag.tipoIncidentesArchivados = tipoIncidentesArchivados;
 
 			// Retornar a la vista los tipos de incidentes activos
-			return View(tipoIncidentes);
+			return View(tipoIncidentesVista);
 		}
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Activos()
@@ -208,7 +212,7 @@ namespace Buildoc.Controllers
 
         // GET: TipoIncidentes/Delete/5
         [Authorize(Roles = "Administrador")]
-        public async Task<IActionResult> Delete(Guid? id)
+        public async Task<IActionResult> Deactivate(Guid? id)
         {
             if (id == null)
             {
@@ -226,10 +230,10 @@ namespace Buildoc.Controllers
         }
 
         // POST: TipoIncidentes/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost, ActionName("Deactivate")]
         [Authorize(Roles = "Administrador")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        public async Task<IActionResult> DeactivateConfirmed(Guid id)
         {
             var tipoIncidente = await _context.TipoIncidentes.FindAsync(id);
             if (tipoIncidente == null)
@@ -281,6 +285,45 @@ namespace Buildoc.Controllers
             _context.Update(tipoIncidente);
             await _context.SaveChangesAsync();
             TempData["SuccessMessage"] = "¡El tipo de incidente se ha restaurado exitosamente!";
+            return Json(new { success = true });
+        }
+
+        // GET: TipoIncidentes/Delete/5
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(Guid? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var tipoIncidente = await _context.TipoIncidentes
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (tipoIncidente == null)
+            {
+                return NotFound();
+            }
+
+            return PartialView(tipoIncidente);
+        }
+
+        // POST: TipoIncidentes/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [Authorize(Roles = "Administrador")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            var tipoIncidente = await _context.TipoIncidentes.FindAsync(id);
+            if (tipoIncidente == null)
+            {
+                return NotFound();
+            }
+
+            // Eliminar el tipo de incidente permanentemente
+            _context.TipoIncidentes.Remove(tipoIncidente);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = "¡El tipo de incidente se ha eliminado permanentemente!";
             return Json(new { success = true });
         }
 

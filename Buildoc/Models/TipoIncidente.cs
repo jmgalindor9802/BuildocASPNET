@@ -11,11 +11,11 @@ namespace Buildoc.Models
 		[Key]
 		public Guid Id { get; set; }
 		public CategoriaEnum Categoria { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 150")]
         [Display(Name = "Título")]
         public string Titulo { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [MaxLength(5000, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; }

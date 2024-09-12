@@ -9,27 +9,28 @@ namespace Buildoc.Models
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
-        [MaxLength(150, ErrorMessage = "El cambo debe tener un maximo de 150 caracteres")]
+        [Required(ErrorMessage = "Campo requerido")]
+        [MaxLength(255, ErrorMessage = "El cambo debe tener un maximo de 255 caracteres")]
         [Display(Name = "Incidente")]
         public string Titulo { get; set; }
         [Display(Name = "Fecha de creación")]
         public DateTime FechaCreacion { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [MaxLength(5000, ErrorMessage = "El cambo debe tener un maximo de 5000 caracteres")]
         [Display(Name = "Descripción")]
         public string Descripcion { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [Display(Name = "Fecha")]
         public DateOnly FechaIncidente { get; set; }
         [Display(Name = "Hora")]
         public TimeOnly? HoraIncidente { get; set; }
+        [Display(Name = "Cerrado por sistema")]
         public bool CierrePorServidor { get; set; } = false;
         public EstadoIncidenteEnum Estado { get; set; }
         [MaxLength(5000, ErrorMessage = "El cambo debe tener un maximo de 5000 caracteres")]
         [Display(Name = "Sugerencia")]
         public string? Sugerencia { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [Display(Name = "Proyecto")]
         public Guid ProyectoId { get; set; }
         public virtual Proyecto? Proyecto { get; set; }
