@@ -241,11 +241,11 @@ window.addEventListener('DOMContentLoaded', (event) => {
     function updateInspectionPoints(selectedEstado) {
         console.log("Actualizando puntos de inspección para el estado:", selectedEstado);
 
-        if (window.inspecciones) {
+ 
             g.selectAll("g").remove(); // Elimina los puntos anteriores
 
             window.inspecciones.forEach(function (inspeccion) {
-                if (inspeccion.estado == selectedEstado) {
+                if (selectedEstado === "all" || inspeccion.estado == selectedEstado) {
                     var found = false;
                     var normalizedMunicipio = normalizeName(inspeccion.municipio);
 
@@ -303,9 +303,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                     }
                 }
             });
-        } else {
-            console.log('No se encontraron inspecciones.');
-        }
+       
     }
 
     // Manejadores de eventos para los botones de zoom
