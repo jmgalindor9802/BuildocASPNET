@@ -155,148 +155,210 @@ namespace Buildoc.Controllers
         // GET: Inpsecciones Aprobadas
         public async Task<IActionResult> Aprobadas()
         {
-            // Obtén el ID del usuario logueado
             var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Verifica si el usuario es Coordinador
-            var esCoordinador = User.IsInRole("Coordinador");
-
-            // Inicializa la consulta base de inspecciones
-            IQueryable<Inspeccion> query = _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .Where(p => p.Estado == EstadoInspeccion.Aprobada);
-
-            if (esCoordinador)
+            if (User.IsInRole("Administrador"))
             {
-                // Si es Coordinador, filtra por los proyectos en los que es Coordinador
+                // Mostrar todas las inspecciones aprobadas para el Administrador
+                var inspeccionesAprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(p => p.Estado == EstadoInspeccion.Aprobada)
+                    .ToListAsync();
+
+                return View(inspeccionesAprobadas);
+            }
+
+            if (User.IsInRole("Coordinador"))
+            {
+                // Si es Coordinador, filtrar por proyectos en los que es coordinador
                 var proyectos = await _context.Proyectos
                                               .Where(p => p.CoordinadorId == usuarioId)
                                               .Select(p => p.Id)
                                               .ToListAsync();
-                query = query.Where(i => proyectos.Contains(i.ProyectoId));
-            }
-            else
-            {
-                // Si es Residente, filtra solo las inspecciones en las que es el Inspector asignado
-                query = query.Where(i => i.InspectorId == usuarioId);
+
+                var inspeccionesAprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(p => p.Estado == EstadoInspeccion.Aprobada && proyectos.Contains(p.ProyectoId))
+                    .ToListAsync();
+
+                return View(inspeccionesAprobadas);
             }
 
-            var inspeccionesAprobadas = await query.ToListAsync();
-            return View(inspeccionesAprobadas);
+            if (User.IsInRole("Residente"))
+            {
+                // Si es Residente, mostrar las inspecciones donde es el Inspector asignado
+                var inspeccionesAprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => i.InspectorId == usuarioId && i.Estado == EstadoInspeccion.Aprobada)
+                    .ToListAsync();
+
+                return View(inspeccionesAprobadas);
+            }
+
+            return Unauthorized();
         }
+
 
         // GET: Inpsecciones Desaprobadas
         public async Task<IActionResult> Desaprobadas()
         {
-            // Obtén el ID del usuario logueado
             var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Verifica si el usuario es Coordinador
-            var esCoordinador = User.IsInRole("Coordinador");
-
-            // Inicializa la consulta base de inspecciones
-            IQueryable<Inspeccion> query = _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .Where(p => p.Estado == EstadoInspeccion.Desaprobada);
-
-            if (esCoordinador)
+            if (User.IsInRole("Administrador"))
             {
-                // Si es Coordinador, filtra por los proyectos en los que es Coordinador
+                var inspeccionesDesaprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(p => p.Estado == EstadoInspeccion.Desaprobada)
+                    .ToListAsync();
+
+                return View(inspeccionesDesaprobadas);
+            }
+
+            if (User.IsInRole("Coordinador"))
+            {
                 var proyectos = await _context.Proyectos
                                               .Where(p => p.CoordinadorId == usuarioId)
                                               .Select(p => p.Id)
                                               .ToListAsync();
-                query = query.Where(i => proyectos.Contains(i.ProyectoId));
-            }
-            else
-            {
-                // Si es Residente, filtra solo las inspecciones en las que es el Inspector asignado
-                query = query.Where(i => i.InspectorId == usuarioId);
+
+                var inspeccionesDesaprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(p => p.Estado == EstadoInspeccion.Desaprobada && proyectos.Contains(p.ProyectoId))
+                    .ToListAsync();
+
+                return View(inspeccionesDesaprobadas);
             }
 
-            var inspeccionesDesaprobadas = await query.ToListAsync();
-            return View(inspeccionesDesaprobadas);
+            if (User.IsInRole("Residente"))
+            {
+                var inspeccionesDesaprobadas = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => i.InspectorId == usuarioId && i.Estado == EstadoInspeccion.Desaprobada)
+                    .ToListAsync();
+
+                return View(inspeccionesDesaprobadas);
+            }
+
+            return Unauthorized();
         }
+
 
 
         // GET: Inpsecciones Pendientes de Revision
         public async Task<IActionResult> PendientesRevision()
         {
-            // Obtén el ID del usuario logueado
             var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén el rol del usuario logueado (asumiendo que solo tiene un rol)
-            var roles = await _userManager.GetRolesAsync(await _userManager.FindByIdAsync(usuarioId));
-            var rolUsuario = roles.FirstOrDefault();
-
-            List<Inspeccion> inspeccionesPendientesRevision = new List<Inspeccion>();
-
-            if (rolUsuario == "Coordinador")
+            if (User.IsInRole("Administrador"))
             {
-                // Obtén los proyectos asociados al coordinador logueado
+                var inspeccionesPendientesRevision = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Include(i => i.Respuesta)
+                    .Where(i => i.Estado == EstadoInspeccion.PendientesDeRevision)
+                    .ToListAsync();
+
+                return View(inspeccionesPendientesRevision);
+            }
+
+            if (User.IsInRole("Coordinador"))
+            {
                 var proyectos = await _context.Proyectos
                                               .Where(p => p.CoordinadorId == usuarioId)
                                               .Select(p => p.Id)
                                               .ToListAsync();
 
-                // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-                inspeccionesPendientesRevision = await _context.Inspeccion
+                var inspeccionesPendientesRevision = await _context.Inspeccion
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
                     .Include(i => i.Respuesta)
                     .Where(i => proyectos.Contains(i.ProyectoId) && i.Estado == EstadoInspeccion.PendientesDeRevision)
                     .ToListAsync();
+
+                return View(inspeccionesPendientesRevision);
             }
-            else if (rolUsuario == "Residente")
+
+            if (User.IsInRole("Residente"))
             {
-                // Filtra las inspecciones en las que el usuario es el inspector y están pendientes de revisión
-                inspeccionesPendientesRevision = await _context.Inspeccion
+                var inspeccionesPendientesRevision = await _context.Inspeccion
                     .Include(i => i.Inspector)
                     .Include(i => i.Proyecto)
                     .Include(i => i.TipoInspeccion)
                     .Include(i => i.Respuesta)
                     .Where(i => i.InspectorId == usuarioId && i.Estado == EstadoInspeccion.PendientesDeRevision)
                     .ToListAsync();
+
+                return View(inspeccionesPendientesRevision);
             }
 
-            return View(inspeccionesPendientesRevision);
+            return Unauthorized();
         }
+
 
 
         // GET: Inpsecciones sin responder
         public async Task<IActionResult> SinResponder()
         {
+            var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // Obtén el ID del coordinador logueado
-            var coordinadorId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (User.IsInRole("Administrador"))
+            {
+                var inspeccionesSinResponder = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(p => p.Estado == EstadoInspeccion.SinResponder)
+                    .ToListAsync();
 
-            // Obtén los proyectos asociados al coordinador logueado
-            var proyectos = await _context.Proyectos
-                                          .Where(p => p.CoordinadorId == coordinadorId)
-                                          .Select(p => p.Id)
-                                          .ToListAsync();
+                return View(inspeccionesSinResponder);
+            }
 
+            if (User.IsInRole("Coordinador"))
+            {
+                var proyectos = await _context.Proyectos
+                                              .Where(p => p.CoordinadorId == usuarioId)
+                                              .Select(p => p.Id)
+                                              .ToListAsync();
 
+                var inspeccionesSinResponder = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => proyectos.Contains(i.ProyectoId) && i.Estado == EstadoInspeccion.SinResponder)
+                    .ToListAsync();
 
-            // Filtra las inspecciones basadas en los proyectos asociados al coordinador
-            var inspecciones = await _context.Inspeccion
-                .Include(i => i.Inspector)
-                .Include(i => i.Proyecto)
-                .Include(i => i.TipoInspeccion)
-                .Where(i => proyectos.Contains(i.ProyectoId))
-                .ToListAsync();
+                return View(inspeccionesSinResponder);
+            }
 
-            var inspeccionesSinResponder = await _context.Inspeccion
-                .Where(p => p.Estado == EstadoInspeccion.SinResponder)
-                .ToListAsync();
+            if (User.IsInRole("Residente"))
+            {
+                var inspeccionesSinResponder = await _context.Inspeccion
+                    .Include(i => i.Inspector)
+                    .Include(i => i.Proyecto)
+                    .Include(i => i.TipoInspeccion)
+                    .Where(i => i.InspectorId == usuarioId && i.Estado == EstadoInspeccion.SinResponder)
+                    .ToListAsync();
 
-            return View(inspeccionesSinResponder);
+                return View(inspeccionesSinResponder);
+            }
+
+            return Unauthorized();
         }
+
 
         // GET Inspecciones programadas
         public async Task<IActionResult> Programadas()
