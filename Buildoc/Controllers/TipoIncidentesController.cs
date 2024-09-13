@@ -66,9 +66,13 @@ namespace Buildoc.Controllers
         public async Task<IActionResult> Activos()
         {
             // Obtener todos los tipos de incidentes
-            var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
+            var tipoIncidentes = await _context.TipoIncidentes
+                .Include (ti => ti.Incidentes)
+                .ToListAsync();
             // Filtrar tipos de incidentes activos para mostrar en la vista
-            var tiposIncidentesActivosParaVista = tipoIncidentes.Where(ti => ti.Estado).ToList();
+            var tiposIncidentesActivosParaVista = tipoIncidentes
+                .Where(ti => ti.Estado)
+                .ToList();
             // Retornar a la vista los tipos de incidentes activos
             return View(tiposIncidentesActivosParaVista);
         }
@@ -245,7 +249,7 @@ namespace Buildoc.Controllers
             tipoIncidente.Estado = false;
             _context.Update(tipoIncidente);
             await _context.SaveChangesAsync();
-            TempData["SuccessMessage"] = "¡El tipo de incidente se ha eliminado exitosamente!";
+            TempData["SuccessMessage"] = "¡El tipo de incidente se ha desactivado exitosamente!";
             return Json(new { success = true });
         }
 
