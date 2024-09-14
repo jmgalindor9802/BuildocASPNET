@@ -35,10 +35,6 @@
     <PackageReference Include="QuestPDF" Version="2024.7.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Services\Inspecciones\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties wwwroot_4adminlte_4css_4alt_4adminlte_1core_1css_1map__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
