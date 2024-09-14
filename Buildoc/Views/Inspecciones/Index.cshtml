@@ -1,415 +1,414 @@
 ﻿
 
-@model IEnumerable<Buildoc.Models.Inspeccion>
+    @model IEnumerable<Buildoc.Models.Inspeccion>
 
 
 
-@{
-    ViewData["Title"] = "Inspecciones";
-    var esCoordinador = User.IsInRole("Coordinador");
-    var esAdmin= User.IsInRole("Administrador");
-    var usuarioId = ViewBag.UsuarioId as string;
-}
+    @{
+        ViewData["Title"] = "Inspecciones";
+        var esCoordinador = User.IsInRole("Coordinador");
+        var esAdmin= User.IsInRole("Administrador");
+        var usuarioId = ViewBag.UsuarioId as string;
+    }
 
 
 
-<div class="container-page">
+    <div class="container-page">
 
-    <div class ="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
-        <div class="col-12 d-flex justify-content-between align-items-center">
-            <h1 class="mb-0">
-                <i class="fas fa-paste"></i> Inspecciones
-            </h1><p class="mb-0">
+        <div class ="row mb-4 align-items-center text-white p-3" style="background-color: #001f3f;">
+            <div class="col-12 d-flex justify-content-between align-items-center">
+                <h1 class="mb-0">
+                    <i class="fas fa-paste"></i> Inspecciones
+                </h1><p class="mb-0">
 
-            @if (esAdmin)
-                {
-                    <a href="@Url.Action("Index", "TipoInspecciones")" class="btn btn-light">
-                        <i class="fas fa-clipboard-list"></i> Tipos de inspecciones
-                    </a>
+                @if (esAdmin)
+                    {
+                        <a href="@Url.Action("Index", "TipoInspecciones")" class="btn btn-light">
+                            <i class="fas fa-clipboard-list"></i> Tipos de inspecciones
+                        </a>
 
-                }
+                    }
 
-                @if (esCoordinador)
-                {
-                    <a href="#" id="createNewModal" class="create-new btn btn-light"
-                       data-url="@Url.Action("Create", "Inspecciones")"
-                       data-title="Crear nueva inspección" data-action="create">
-                        <i class="fas fa-calendar-plus"></i> Programar inspección
-                    </a>
-                }
-            </p>
-        </div>
-    </div>
-
-        <div class="row">
-            <!-- Caja de información para inspecciones programadas -->
-            <div class="col mb-1">
-                <div class="small-box bg-info">
-                    <div class="inner">
-                        <h3>@ViewBag.CountProgramadas</h3>
-                        <p >Programadas</p>
-                    </div>
-                    <div class="icon">
-                        <i class="far fa-clock" style="font-size:55px;"></i>
-                    </div>
-                    <a href="@Url.Action("Programadas", "Inspecciones")" class="small-box-footer">
-                        Ver detalles <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
+                    @if (esCoordinador)
+                    {
+                        <a href="#" id="createNewModal" class="create-new btn btn-light"
+                           data-url="@Url.Action("Create", "Inspecciones")"
+                           data-title="Crear nueva inspección" data-action="create">
+                            <i class="fas fa-calendar-plus"></i> Programar inspección
+                        </a>
+                    }
+                </p>
             </div>
+        </div>
+
+            <div class="row">
+                <!-- Caja de información para inspecciones programadas -->
+                <div class="col mb-1">
+                    <div class="small-box bg-info">
+                        <div class="inner">
+                            <h3>@ViewBag.CountProgramadas</h3>
+                            <p >Programadas</p>
+                        </div>
+                        <div class="icon">
+                            <i class="far fa-clock" style="font-size:55px;"></i>
+                        </div>
+                        <a href="@Url.Action("Programadas", "Inspecciones")" class="small-box-footer">
+                            Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </div>
          
-            <!-- Caja de información para inspecciones pendientes de revisión -->
+                <!-- Caja de información para inspecciones pendientes de revisión -->
+                <div class="col mb-1">
+                    <div class="small-box bg-warning">
+                        <div class="inner">
+                            <h3>@ViewBag.CountPendienteRevision</h3>
+                            <p >Por aprobar</p>
+                        </div>
+                        <div class="icon">
+                            <i class="far fa-flag" style="font-size:55px;"></i>
+                        </div>
+                        <a href="@Url.Action("PendientesRevision", "Inspecciones")" class="small-box-footer">
+                            Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
+                </div>
+            <!-- Caja de información para inspecciones sin responder -->
             <div class="col mb-1">
-                <div class="small-box bg-warning">
+                <div class="small-box bg-danger">
                     <div class="inner">
-                        <h3>@ViewBag.CountPendienteRevision</h3>
-                        <p >Por aprobar</p>
+                        <h3>@ViewBag.CountSinResponder</h3>
+                        <p>Sin responder</p>
+
                     </div>
                     <div class="icon">
                         <i class="far fa-flag" style="font-size:55px;"></i>
                     </div>
-                    <a href="@Url.Action("PendientesRevision", "Inspecciones")" class="small-box-footer">
+                    <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
                         Ver detalles <i class="fas fa-arrow-circle-right"></i>
                     </a>
                 </div>
             </div>
-        <!-- Caja de información para inspecciones sin responder -->
-        <div class="col mb-1">
-            <div class="small-box bg-danger">
-                <div class="inner">
-                    <h3>@ViewBag.CountSinResponder</h3>
-                    <p>Sin responder</p>
+                <!-- Caja de información para inspecciones sin responder -->
+                <div class="col mb-1">
+                    <div class="small-box bg-indigo">
+                        <div class="inner">
+                            <h3>@ViewBag.CountDesaprobadas</h3>
+                            <p >Desaprobadas</p>
 
+                        </div>
+                        <div class="icon">
+                        <i class="far fa-thumbs-down" style="font-size:55px;"></i>
+                        </div>
+                        <a href="@Url.Action("Desaprobadas", "Inspecciones")" class="small-box-footer">
+                            Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="icon">
-                    <i class="far fa-flag" style="font-size:55px;"></i>
+
+                <!-- Caja de información para inspecciones aprobadas -->
+                <div class="col mb-1">
+                    <div class="small-box bg-success">
+                        <div class="inner">
+                            <h3>@ViewBag.CountAprobadas</h3>
+                            <p>Aprobadas</p>
+                        </div>
+                        <div class="icon">
+                        <i class="far fa-check-circle" style="font-size:55px;"></i>
+                        </div>
+                        <a href="@Url.Action("Aprobadas", "Inspecciones")" class="small-box-footer">
+                            Ver detalles <i class="fas fa-arrow-circle-right"></i>
+                        </a>
+                    </div>
                 </div>
-                <a href="@Url.Action("SinResponder", "Inspecciones")" class="small-box-footer">
-                    Ver detalles <i class="fas fa-arrow-circle-right"></i>
-                </a>
             </div>
+
+
+        <div class="row">
+            @if (!esAdmin)
+            {
+                <!-- Columna con el mapa de Colombia -->
+                <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
+                    <div class="map-container">
+                        <!-- Contenedor para los controles del mapa -->
+                        <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
+                            <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
+                                <i class="fas fa-search-plus"></i>
+                            </button>
+                            <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
+                                <i class="fas fa-search-minus"></i>
+                            </button>
+                            <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+
+                        <!-- Filtro para inspecciones dentro del mapa -->
+                        <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
+                            <label for="filterEstado" class="form-label">Filtrar por estado:</label>
+                            <select id="filterEstado" class="form-control">
+                                <option value="all">Todos</option>
+                                <option value="0">Por aprobar</option>              
+                                <option value="2">Finalizada</option>
+                                <option value="3">Programada</option>
+                                <option value="4">Sin responder</option>
+                                <option value="5">Aprobada</option>
+                                <option value="6">Desaprobada</option>
+                            </select>
+                        </div>
+
+                        <!-- Mapa -->
+                        <div id="map"></div>
+                    </div>
+                </div>
+            }
         </div>
-            <!-- Caja de información para inspecciones sin responder -->
-            <div class="col mb-1">
-                <div class="small-box bg-indigo">
-                    <div class="inner">
-                        <h3>@ViewBag.CountDesaprobadas</h3>
-                        <p >Desaprobadas</p>
-
-                    </div>
-                    <div class="icon">
-                    <i class="far fa-thumbs-down" style="font-size:55px;"></i>
-                    </div>
-                    <a href="@Url.Action("Desaprobadas", "Inspecciones")" class="small-box-footer">
-                        Ver detalles <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Caja de información para inspecciones aprobadas -->
-            <div class="col mb-1">
-                <div class="small-box bg-success">
-                    <div class="inner">
-                        <h3>@ViewBag.CountAprobadas</h3>
-                        <p>Aprobadas</p>
-                    </div>
-                    <div class="icon">
-                    <i class="far fa-check-circle" style="font-size:55px;"></i>
-                    </div>
-                    <a href="@Url.Action("Aprobadas", "Inspecciones")" class="small-box-footer">
-                        Ver detalles <i class="fas fa-arrow-circle-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-
-
-    <div class="row">
-        @if (!esAdmin)
-        {
-            <!-- Columna con el mapa de Colombia -->
-            <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
-                <div class="map-container">
-                    <!-- Contenedor para los controles del mapa -->
-                    <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
-                        <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
-                            <i class="fas fa-search-plus"></i>
-                        </button>
-                        <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
-                            <i class="fas fa-search-minus"></i>
-                        </button>
-                        <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </div>
-
-                    <!-- Filtro para inspecciones dentro del mapa -->
-                    <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
-                        <label for="filterEstado" class="form-label">Filtrar por estado:</label>
-                        <select id="filterEstado" class="form-control">
-                            <option value="all">Todos</option>
-                            <option value="0">Por aprobar</option>
-                            <option value="1">En proceso</option>
-                            <option value="2">Finalizada</option>
-                            <option value="3">Programada</option>
-                            <option value="4">Sin responder</option>
-                            <option value="5">Aprobada</option>
-                            <option value="6">Desaprobada</option>
-                        </select>
-                    </div>
-
-                    <!-- Mapa -->
-                    <div id="map"></div>
-                </div>
-            </div>
-        }
-    </div>
 
 
         
-            <tr>
-        <div class ="row mt-3">
-                <div class="form-group mb-3 col-4">
-                    <label  class="control-label">Filtrar por proyecto</label>
-                    <select id="proyecto-filter" class="form-control">
-                    <option value="">Todos los proyectos</option>
-                    <!-- Las opciones se llenarán dinámicamente con los proyectos -->
-                </select>
-                </div>
-                   @if (esCoordinador)
-                        {
-        <div class="form-group mb-3 col-4">
-            <label class="control-label">Filtrar por inspector</label>
-            <select id="inspector-filter" class="form-control">
-                <option value="">Todos los inspectores</option>
-                <!-- Las opciones se llenarán dinámicamente con los proyectos -->
-            </select>
-        </div>
-                        }
+                <tr>
+            <div class ="row mt-3">
+                    <div class="form-group mb-3 col-4">
+                        <label  class="control-label">Filtrar por proyecto</label>
+                        <select id="proyecto-filter" class="form-control">
+                        <option value="">Todos los proyectos</option>
+                        <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                    </select>
+                    </div>
+                       @if (esCoordinador)
+                            {
             <div class="form-group mb-3 col-4">
-                <label class="control-label">Filtrar por tipo de inspección</label>
-                <select id="tipo-filter" class="form-control">
-                    <option value="">Todos los tipos</option>
+                <label class="control-label">Filtrar por inspector</label>
+                <select id="inspector-filter" class="form-control">
+                    <option value="">Todos los inspectores</option>
                     <!-- Las opciones se llenarán dinámicamente con los proyectos -->
                 </select>
             </div>
-        </div>
-            </tr>
+                            }
+                <div class="form-group mb-3 col-4">
+                    <label class="control-label">Filtrar por tipo de inspección</label>
+                    <select id="tipo-filter" class="form-control">
+                        <option value="">Todos los tipos</option>
+                        <!-- Las opciones se llenarán dinámicamente con los proyectos -->
+                    </select>
+                </div>
+            </div>
+                </tr>
       
  
-    <table id="example1" class="table table-bordered table-striped">
-        <thead class="header-bg">
-            <tr>
-                      <th>@Html.DisplayNameFor(model => model.FechaProgramacion)</th>
-                <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
-                <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
-                <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
-                <th>@Html.DisplayNameFor(model => model.Inspector)</th>
-                <th>@Html.DisplayNameFor(model => model.Estado)</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+        <table id="example1" class="table table-bordered table-striped">
+            <thead class="header-bg">
                 <tr>
-                    <td>@Html.DisplayFor(modelItem => item.FechaProgramacion)</td>
-                    <td>@Html.DisplayFor(modelItem => item.FechaInspeccion)</td>
-                    <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Nombre)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Inspector.NombreCompleto)</td>
-                   
-                <td>
-                    <span class="badge @(item.Estado == EstadoInspeccion.Programada ? "badge-programada" :
-                                          item.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
-                                          item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
-                                             item.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
-                                          item.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
-                        @Html.DisplayFor(modelItem => item.Estado)
-                    </span>
-                </td>
-                    <td>
-                      
-                        <a href="#" class="details-view" data-url="@Url.Action("Details", "Inspecciones", new { id = item.Id })" data-title="Detalles de la inspección" data-action="details">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                            </svg>
-                        </a>
-                    @if (item.Estado == EstadoInspeccion.Programada)
-                    {
-                            @if (esCoordinador)
-                            {
-                        <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Inspecciones", new { id = item.Id })" data-title="Editar inspección" data-action="edit">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                            </svg>
-                        </a>
-                        <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Inspecciones", new { id = item.Id })" data-title="Eliminar inspección" data-action="delete">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                            </svg>
-                        </a>
-                        }
-                            @if (usuarioId == item.InspectorId) // Compara el ID del usuario actual con el ID del inspector asignado
-                            {
-                    
-                        <a href="#" class="respond-item" data-url="@Url.Action("Create", "RespuestaInspeccion", new { inspeccionId = item.Id })" data-title="Responder inspección" data-action="respond">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                <path d="M2 10h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1m9-9h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 9a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zm0-10a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM2 9a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2zm7 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2zM0 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.354.854a.5.5 0 1 0-.708-.708L3 3.793l-.646-.647a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0z" />
-                            </svg>
-                        </a>
-                           }
-                    }
-
-                </td>
+                          <th>@Html.DisplayNameFor(model => model.FechaProgramacion)</th>
+                    <th>@Html.DisplayNameFor(model => model.FechaInspeccion)</th>
+                    <th>@Html.DisplayNameFor(model => model.TipoInspeccion)</th>
+                    <th>@Html.DisplayNameFor(model => model.Proyecto)</th>
+                    <th>@Html.DisplayNameFor(model => model.Inspector)</th>
+                    <th>@Html.DisplayNameFor(model => model.Estado)</th>
+                    <th>Acciones</th>
                 </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.FechaProgramacion)</td>
+                        <td>@Html.DisplayFor(modelItem => item.FechaInspeccion)</td>
+                        <td>@Html.DisplayFor(modelItem => item.TipoInspeccion.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Proyecto.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Inspector.NombreCompleto)</td>
+                   
+                    <td>
+                        <span class="badge @(item.Estado == EstadoInspeccion.Programada ? "badge-programada" :
+                                              item.Estado == EstadoInspeccion.PendientesDeRevision ? "badge-pendiente-revision" :
+                                              item.Estado == EstadoInspeccion.SinResponder ? "badge-sin-responder" :
+                                                 item.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
+                                              item.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" : "")">
+                            @Html.DisplayFor(modelItem => item.Estado)
+                        </span>
+                    </td>
+                        <td>
+                      
+                            <a href="#" class="details-view" data-url="@Url.Action("Details", "Inspecciones", new { id = item.Id })" data-title="Detalles de la inspección" data-action="details">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+                                </svg>
+                            </a>
+                        @if (item.Estado == EstadoInspeccion.Programada)
+                        {
+                                @if (esCoordinador)
+                                {
+                            <a href="#" class="edit-item" data-url="@Url.Action("Edit", "Inspecciones", new { id = item.Id })" data-title="Editar inspección" data-action="edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                </svg>
+                            </a>
+                            <a href="#" class="delete-item" data-url="@Url.Action("Delete", "Inspecciones", new { id = item.Id })" data-title="Eliminar inspección" data-action="delete">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            </a>
+                            }
+                                @if (usuarioId == item.InspectorId) // Compara el ID del usuario actual con el ID del inspector asignado
+                                {
+                    
+                            <a href="#" class="respond-item" data-url="@Url.Action("Create", "RespuestaInspeccion", new { inspeccionId = item.Id })" data-title="Responder inspección" data-action="respond">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path d="M2 10h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1m9-9h3a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1m0 9a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1zm0-10a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zM2 9a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h3a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2zm7 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-3a2 2 0 0 1-2-2zM0 2a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm5.354.854a.5.5 0 1 0-.708-.708L3 3.793l-.646-.647a.5.5 0 1 0-.708.708l1 1a.5.5 0 0 0 .708 0z" />
+                                </svg>
+                            </a>
+                               }
+                        }
+
+                    </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    @{
+        var municipiosConInspecciones = ViewBag.MunicipiosConInspecciones as List<string>;
+    }
+    <script src="~/js/datatable-config.js"></script>
+    <script src="/espanol.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Inicializa la DataTable con la configuración deseada
+            let table = $('#example1').DataTable();
+
+            // Función para obtener proyectos únicos del DataTable
+            function getProyectos() {
+                const proyectos = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const proyecto = data[3]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!proyectos.includes(proyecto)) {
+                        proyectos.push(proyecto);
+                    }
+                });
+                return proyectos;
             }
-        </tbody>
-    </table>
-</div>
-@{
-    var municipiosConInspecciones = ViewBag.MunicipiosConInspecciones as List<string>;
-}
-<script src="~/js/datatable-config.js"></script>
-<script src="/espanol.js"></script>
-<script>
-    $(document).ready(function () {
-        // Inicializa la DataTable con la configuración deseada
-        let table = $('#example1').DataTable();
 
-        // Función para obtener proyectos únicos del DataTable
-        function getProyectos() {
-            const proyectos = [];
-            table.rows().every(function () {
-                const data = this.data();
-                const proyecto = data[3]; // Asume que la columna de proyecto es la 3ra (índice 2)
-                if (!proyectos.includes(proyecto)) {
-                    proyectos.push(proyecto);
-                }
-            });
-            return proyectos;
-        }
-
-        // Función para obtener inspectores únicos del DataTable
-        function getInspectores() {
-            const inspectores = [];
-            table.rows().every(function () {
-                const data = this.data();
-                const inspector = data[4]; // Asume que la columna de proyecto es la 3ra (índice 2)
-                if (!inspectores.includes(inspector)) {
-                    inspectores.push(inspector);
-                }
-            });
-            return inspectores;
-        }
-
-        // Función para obtener tipos de inspeccion únicos del DataTable
-        function getTipos() {
-            const tipos = [];
-            table.rows().every(function () {
-                const data = this.data();
-                const tipo = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
-                if (!tipos.includes(tipo)) {
-                    tipos.push(tipo);
-                }
-            });
-            return tipos;
-        }
-
-
-        // Llenar el select con las opciones de proyecto
-        function fillProyectoSelect() {
-            const proyectoFilterEl = $('#proyecto-filter');
-            proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
-            proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
-            const proyectos = getProyectos();
-            proyectos.forEach(proyecto => {
-                const option = $('<option></option>').val(proyecto).text(proyecto);
-                proyectoFilterEl.append(option);
-            });
-        }
-
-        // Llenar el select con las opciones de inspectores
-        function fillInspectorSelect() {
-            const inspectorFilterEl = $('#inspector-filter');
-            inspectorFilterEl.empty(); // Limpiar el select antes de llenarlo
-            inspectorFilterEl.append('<option value="">Todos los inspectores</option>'); // Opción predeterminada
-            const inspectores = getInspectores();
-            inspectores.forEach(inspector => {
-                const option = $('<option></option>').val(inspector).text(inspector);
-                inspectorFilterEl.append(option);
-            });
-        }
-
-
-        // Llenar el select con las opciones de inspectores
-        function fillTipoSelect() {
-            const tipoFilterEl = $('#tipo-filter');
-            tipoFilterEl.empty(); // Limpiar el select antes de llenarlo
-            tipoFilterEl.append('<option value="">Todos los tipos de inspecciones</option>'); // Opción predeterminada
-            const tipos = getTipos();
-            tipos.forEach(tipo => {
-                const option = $('<option></option>').val(tipo).text(tipo);
-                tipoFilterEl.append(option);
-            });
-        }
-
-        // Inicializa el select con proyectos
-        fillProyectoSelect();
-
-        // Inicializa el select con inspectores
-        fillInspectorSelect();
-
-        // Inicializa el select con tipos
-        fillTipoSelect();
-
-        // Agregar evento de cambio al select para filtrar la tabla
-        $('#proyecto-filter').on('change', function () {
-            const proyectoFilter = $(this).val();
-            table.column(3).search(proyectoFilter).draw(); // Filtra la columna de proyectos
-        });
-
-        // Agregar evento de cambio al select para filtrar la tabla
-        $('#inspector-filter').on('change', function () {
-            const inspectorFilter = $(this).val();
-            table.column(4).search(inspectorFilter).draw(); // Filtra la columna de proyectos
-        });
-
-        // Agregar evento de cambio al select para filtrar la tabla
-        $('#tipo-filter').on('change', function () {
-            const tipoFilter = $(this).val();
-            table.column(2).search(tipoFilter).draw(); // Filtra la columna de proyectos
-        });
-
-        // Agregar función de búsqueda personalizada si es necesario
-        $.fn.dataTable.ext.search.push(
-            function (settings, data, dataIndex) {
-                const proyectoFilter = $('#proyecto-filter').val();
-                const proyecto = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
-                return proyectoFilter === "" || proyecto === proyectoFilter;
+            // Función para obtener inspectores únicos del DataTable
+            function getInspectores() {
+                const inspectores = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const inspector = data[4]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!inspectores.includes(inspector)) {
+                        inspectores.push(inspector);
+                    }
+                });
+                return inspectores;
             }
-        );
+
+            // Función para obtener tipos de inspeccion únicos del DataTable
+            function getTipos() {
+                const tipos = [];
+                table.rows().every(function () {
+                    const data = this.data();
+                    const tipo = data[2]; // Asume que la columna de proyecto es la 3ra (índice 2)
+                    if (!tipos.includes(tipo)) {
+                        tipos.push(tipo);
+                    }
+                });
+                return tipos;
+            }
+
+
+            // Llenar el select con las opciones de proyecto
+            function fillProyectoSelect() {
+                const proyectoFilterEl = $('#proyecto-filter');
+                proyectoFilterEl.empty(); // Limpiar el select antes de llenarlo
+                proyectoFilterEl.append('<option value="">Todos los proyectos</option>'); // Opción predeterminada
+                const proyectos = getProyectos();
+                proyectos.forEach(proyecto => {
+                    const option = $('<option></option>').val(proyecto).text(proyecto);
+                    proyectoFilterEl.append(option);
+                });
+            }
+
+            // Llenar el select con las opciones de inspectores
+            function fillInspectorSelect() {
+                const inspectorFilterEl = $('#inspector-filter');
+                inspectorFilterEl.empty(); // Limpiar el select antes de llenarlo
+                inspectorFilterEl.append('<option value="">Todos los inspectores</option>'); // Opción predeterminada
+                const inspectores = getInspectores();
+                inspectores.forEach(inspector => {
+                    const option = $('<option></option>').val(inspector).text(inspector);
+                    inspectorFilterEl.append(option);
+                });
+            }
+
+
+            // Llenar el select con las opciones de inspectores
+            function fillTipoSelect() {
+                const tipoFilterEl = $('#tipo-filter');
+                tipoFilterEl.empty(); // Limpiar el select antes de llenarlo
+                tipoFilterEl.append('<option value="">Todos los tipos de inspecciones</option>'); // Opción predeterminada
+                const tipos = getTipos();
+                tipos.forEach(tipo => {
+                    const option = $('<option></option>').val(tipo).text(tipo);
+                    tipoFilterEl.append(option);
+                });
+            }
+
+            // Inicializa el select con proyectos
+            fillProyectoSelect();
+
+            // Inicializa el select con inspectores
+            fillInspectorSelect();
+
+            // Inicializa el select con tipos
+            fillTipoSelect();
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#proyecto-filter').on('change', function () {
+                const proyectoFilter = $(this).val();
+                table.column(3).search(proyectoFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#inspector-filter').on('change', function () {
+                const inspectorFilter = $(this).val();
+                table.column(4).search(inspectorFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar evento de cambio al select para filtrar la tabla
+            $('#tipo-filter').on('change', function () {
+                const tipoFilter = $(this).val();
+                table.column(2).search(tipoFilter).draw(); // Filtra la columna de proyectos
+            });
+
+            // Agregar función de búsqueda personalizada si es necesario
+            $.fn.dataTable.ext.search.push(
+                function (settings, data, dataIndex) {
+                    const proyectoFilter = $('#proyecto-filter').val();
+                    const proyecto = data[3]; 
+                    return proyectoFilter === "" || proyecto === proyectoFilter;
+                }
+            );
 
      
-    });
+        });
 
 
-</script>
+    </script>
 
 
-<script>
-    // Convertir el ViewBag en una variable JavaScript global
-    var municipiosConInspecciones = @Html.Raw(Json.Serialize(ViewBag.MunicipiosConInspecciones));
-    window.municipiosConInspecciones = municipiosConInspecciones;
+    <script>
+        // Convertir el ViewBag en una variable JavaScript global
+        var municipiosConInspecciones = @Html.Raw(Json.Serialize(ViewBag.MunicipiosConInspecciones));
+        window.municipiosConInspecciones = municipiosConInspecciones;
 
-    // Verificar el contenido de ViewBag.DetallesInspecciones
-    var detallesInspecciones = @Html.Raw(Json.Serialize(ViewBag.DetallesInspecciones));
-    console.log('Detalles de Inspecciones:', detallesInspecciones);
+        // Verificar el contenido de ViewBag.DetallesInspecciones
+        var detallesInspecciones = @Html.Raw(Json.Serialize(ViewBag.DetallesInspecciones));
+        console.log('Detalles de Inspecciones:', detallesInspecciones);
 
-    window.inspecciones = detallesInspecciones;
-    console.log('Inspecciones:', window.inspecciones);
-</script>
+        window.inspecciones = detallesInspecciones;
+        console.log('Inspecciones:', window.inspecciones);
+    </script>
 
 
 
