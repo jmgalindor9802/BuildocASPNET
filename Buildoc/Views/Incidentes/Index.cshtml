@@ -170,13 +170,13 @@
                     @Html.DisplayNameFor(model => model.FechaIncidente)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Proyecto)
+                    Proyecto Asociado
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.TipoIncidente)
+                    Tipo de Incidente
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Estado)
+                    Estado Actual
                 </th>
                 <th></th>
             </tr>
@@ -219,7 +219,7 @@
                                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
                                    data-title="Agregar Novedad"
                                    data-action="respond">
-                                    <i class="fas fa-info-circle"></i>
+                                    <i class="fas fa-plus-circle"></i>
                                 </a>
                                 <a href="#" type="button" class="respond-item"
                                    data-url="@Url.Action("Create", "Lesionadoes", new { incidenteId = item.Id })"

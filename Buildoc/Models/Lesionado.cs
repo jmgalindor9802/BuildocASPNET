@@ -8,17 +8,18 @@ namespace Buildoc.Models
         [Key]
         public Guid Id { get; set; }
         //Datos de informacion general
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Nombres")]
         public string Nombre { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Campo requerido")]
         [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Apellidos")]
         public string Apellido { get; set; }
         [MaxLength(150, ErrorMessage = "El campo debe terner un maximo de 5000")]
         [Display(Name = "Correo electrónico")]
         public string? CorreoElectronico { get; set; }
+        [Required(ErrorMessage = "Campo requerido")]
         [Display(Name = "Cédula")]
         public long? Cedula { get; set; }
         public bool ConfimacionDefuncion { get; set; } = false;
