@@ -44,15 +44,15 @@ namespace Buildoc.Models
 
     public enum CategoriaEnum
 	{
-        [Description("Seguridad, logistica y convivencia")]
+        [Description("Seguridad, logística y convivencia")]
         SeguridadConvivenciaLogistica,
-		[Description("Caidas, tropiezos y resbalones")]
+        [Description("Caídas, tropiezos y resbalones")]
         CaidasTropiezosYResbalones,
         [Description("Accidentes operando maquinaria")]
         AccidentesOperandoMaquinaria,
-        [Description("Exposicion a sustancias quimicas y toxinas")]
+        [Description("Exposición a sustancias químicas y toxinas")]
         ExposicionASustanciasQuimicasYToxinas,
-        [Description("Electrocucion, incendios y exposiones")]
+        [Description("Electrocución, incendios y explosiones")]
         ElectrocucionIncendiosYExplosiones,
         [Description("Derrumbes")]
         DerrumbesDelSuelo

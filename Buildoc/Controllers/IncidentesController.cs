@@ -436,7 +436,7 @@ namespace Buildoc.Controllers
         {
             var categoria = (CategoriaEnum)categoriaId;
             var tipos = await _context.TipoIncidentes
-                .Where(t => t.Categoria == categoria && !string.IsNullOrEmpty(t.Titulo))
+                .Where(t => t.Categoria == categoria && !string.IsNullOrEmpty(t.Titulo) && t.Estado)
                 .Select(t => new { id = t.Id, nombre = t.Titulo })
                 .ToListAsync();
             return Json(tipos);
