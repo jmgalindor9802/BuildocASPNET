@@ -95,6 +95,8 @@ namespace Buildoc.Controllers
                     .ThenInclude(il=> il.Incidente)
                         .ThenInclude(i => i.Proyecto)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
+
             if (lesionados == null)
             {
                 return NotFound();
