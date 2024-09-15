@@ -107,6 +107,7 @@ namespace Buildoc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
         {
+          
             if (ModelState.IsValid)
             {
                 respuestaInspeccion.EstadoRespuestaInspeccion = EstadoRespuestaInspeccion.Respondida;

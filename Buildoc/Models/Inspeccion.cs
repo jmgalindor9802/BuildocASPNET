@@ -27,10 +27,12 @@ namespace Buildoc.Models
 
 		[Display(Name = "Tipo de Inspección")]
 		[Required(ErrorMessage = "El tipo de inspección es obligatorio.")]
-		public int TipoInspeccionId { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un tipo de inspección válido.")]
+        public int TipoInspeccionId { get; set; }
 
 		[Display(Name = "Tipo")]
-		public TipoInspeccion TipoInspeccion { get; set; }
+
+        public TipoInspeccion TipoInspeccion { get; set; }
 
 		[Display(Name = "Proyecto")]
 		[Required(ErrorMessage = "El proyecto es obligatorio.")]

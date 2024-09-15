@@ -7,6 +7,7 @@ using System.Globalization;
 using Buildoc.Services.Proyectos;
 using Buildoc.Services.Incidentes;
 using Azure.Storage.Blobs;
+using Buildoc.Services.Inspecciones;
 
 var builder = WebApplication.CreateBuilder(args);
 var cultureInfo = new CultureInfo("es-CO");
@@ -33,6 +34,8 @@ builder.Services.AddDefaultIdentity<Usuario>(options => options.SignIn.RequireCo
     .AddEntityFrameworkStores<ApplicationDbContext>();
 
 builder.Services.AddRazorPages();
+builder.Services.AddScoped<IInspeccionService, InspeccionService>();
+builder.Services.AddHostedService<InspeccionBackgroundService>();
 
 // A�adir SignInManager y UserManager
 builder.Services.AddScoped<SignInManager<Usuario>>();

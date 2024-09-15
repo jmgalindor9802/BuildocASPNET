@@ -138,6 +138,18 @@ namespace Buildoc.Controllers
                 })
                 .ToList();
 
+            // Cálculo del tiempo restante o indicar si la inspección no ha comenzado
+            var inspeccionesConTiempo = inspecciones.Select(i => new
+            {
+                i.Id,
+                i.Objetivo,
+                i.FechaInspeccion,
+                i.Estado,
+                TiempoRestante = (i.FechaInspeccion <= DateTime.Now && i.DuracionHoras.HasValue)
+                    ? i.FechaInspeccion.AddHours(i.DuracionHoras.Value) - DateTime.Now
+                    : (TimeSpan?)null
+            }).ToList();
+
             // Pasa los datos a la vista
             ViewBag.UsuarioId = usuarioId;
             ViewBag.CountProgramadas = countProgramadas;
@@ -147,6 +159,7 @@ namespace Buildoc.Controllers
             ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
             ViewBag.DetallesInspecciones = detallesInspecciones;
             ViewBag.CountDesaprobadas = countDesaprobadas;
+            ViewBag.InspeccionesConTiempo = inspeccionesConTiempo;
             return View(inspecciones);
         }
 
@@ -385,7 +398,19 @@ namespace Buildoc.Controllers
             }
 
             var inspeccionesProgramadas = await query.ToListAsync();
+            // Cálculo del tiempo restante o indicar si la inspección no ha comenzado
+            var inspeccionesConTiempo = inspeccionesProgramadas.Select(i => new
+            {
+                i.Id,
+                i.Objetivo,
+                i.FechaInspeccion,
+                i.Estado,
+                TiempoRestante = (i.FechaInspeccion <= DateTime.Now && i.DuracionHoras.HasValue)
+                    ? i.FechaInspeccion.AddHours(i.DuracionHoras.Value) - DateTime.Now
+                    : (TimeSpan?)null
+            }).ToList();
             ViewBag.UsuarioId = userId;
+            ViewBag.InspeccionesConTiempo = inspeccionesConTiempo;
             return View(inspeccionesProgramadas);
         }
 
@@ -537,6 +562,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         {
             var inspeccion = model.Inspeccion;
 
+         
             if (!ModelState.IsValid)
             {
                 // Obtener errores de validación
@@ -660,7 +686,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
 			return Json(new { success = true });
 		}
 
-
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
