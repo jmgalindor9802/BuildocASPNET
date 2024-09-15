@@ -562,11 +562,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         {
             var inspeccion = model.Inspeccion;
 
-            // Validar si la fecha de la inspección ya ha llegado
-            if (inspeccion.FechaInspeccion > DateTime.Now)
-            {
-                return Json(new { success = false, message = "No puedes responder la inspección antes de la fecha y hora programadas." });
-            }
+         
             if (!ModelState.IsValid)
             {
                 // Obtener errores de validación
@@ -690,7 +686,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
 			return Json(new { success = true });
 		}
 
-
+        [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)

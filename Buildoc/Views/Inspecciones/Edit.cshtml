@@ -75,10 +75,18 @@
                     <!-- Archivos de la inspección -->
                     <h6 class="text-primary"><i class="fas fa-file-alt"></i> Archivos adicionales</h6>
                     <ul id="archivosInspeccion" class="list-unstyled">
-                        @foreach (var file in Model.Inspeccion.FileModels)
+                        @if (Model.Inspeccion.TipoInspeccion != null && Model.Inspeccion.TipoInspeccion.Archivos != null)
                         {
-                            <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                            @foreach (var file in Model.Inspeccion.TipoInspeccion.Archivos)
+                            {
+                                <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                            }
                         }
+                        else
+                        {
+                            <p>No hay archivos disponibles.</p>
+                        }
+
                     </ul>
 
                         <label for="UploadedFiles">Subir nuevos archivos</label>
@@ -110,9 +118,16 @@
                 <!-- Archivos del tipo de inspección -->
                 <h6 class="text-primary"><i class="fas fa-file-alt"></i> Archivos plantilla</h6>
                 <ul id="archivosTipoInspeccion" class="list-unstyled">
-                    @foreach (var file in Model.Inspeccion.TipoInspeccion.Archivos)
+                    @if (Model.Inspeccion.TipoInspeccion != null && Model.Inspeccion.TipoInspeccion.Archivos != null)
                     {
-                        <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                        @foreach (var file in Model.Inspeccion.TipoInspeccion.Archivos)
+                        {
+                            <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                        }
+                    }
+                    else
+                    {
+                        <p>No hay archivos disponibles.</p>
                     }
                 </ul>
                    
