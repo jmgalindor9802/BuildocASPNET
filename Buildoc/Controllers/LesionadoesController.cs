@@ -52,6 +52,9 @@ namespace Buildoc.Controllers
 
                 // Obtener todos los lesionados asociados a esos incidentes
                 todosLesionados = await _context.Lesionados
+                    .Include(l => l.IncidenteLesionados)
+                        .ThenInclude(il=> il.Incidente)
+                            .ThenInclude(i=> i.Proyecto)
                     .Where(l => l.IncidenteLesionados.Any(il => incidentes.Contains(il.IncidenteId)))
                     .ToListAsync();
             }
@@ -65,6 +68,8 @@ namespace Buildoc.Controllers
 
                 // Obtener todos los lesionados asociados a esos incidentes
                 todosLesionados = await _context.Lesionados
+                    .Include(l => l.IncidenteLesionados)
+                        .ThenInclude(il => il.Incidente)
                     .Where(l => l.IncidenteLesionados.Any(il => incidentes.Contains(il.IncidenteId)))
                     .ToListAsync();
             }
