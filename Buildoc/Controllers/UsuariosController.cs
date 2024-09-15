@@ -485,6 +485,27 @@ namespace Buildoc.Controllers
                         await _userManager.RemoveFromRolesAsync(usuarioToUpdate, currentRoles);
                         await _userManager.AddToRoleAsync(usuarioToUpdate, viewModel.Role);
 
+                        // Preparar el asunto y el cuerpo del correo en formato HTML
+                        var subject = "Actualización de tus datos en el sistema";
+
+                        var htmlMessage = $@"
+                            <p>Hola <strong>{usuarioToUpdate.Nombres}</strong>,</p>
+                            <p>Un administrador ha realizado cambios en tu perfil dentro del sistema. Si no reconoces esta acción, por favor contáctanos de inmediato.</p>
+                            <p><strong>Detalles de la actualización:</strong></p>
+                            <ul>
+                                <li><strong>Nombre:</strong> {usuarioToUpdate.Nombres} {usuarioToUpdate.Apellidos}</li>
+                                <li><strong>Correo electrónico:</strong> {usuarioToUpdate.Email}</li>
+                                <li><strong>Cédula:</strong> {usuarioToUpdate.Cedula}</li>
+                                <li><strong>Teléfono:</strong> {usuarioToUpdate.Telefono}</li>
+                                <li><strong>Dirección:</strong> {usuarioToUpdate.Direccion}, {usuarioToUpdate.Municipio}, {usuarioToUpdate.Departamento}</li>
+                            </ul>
+                            <p>Gracias por usar nuestro sistema.</p>
+                            <p>Saludos cordiales,</p>
+                            <p><strong>Equipo de Soporte</strong></p>";
+
+                        // Llamar al servicio de correo para enviar el mensaje en formato HTML
+                        await _emailSender.SendEmailAsync(usuarioToUpdate.Email, subject, htmlMessage);
+
                         TempData["SuccessMessage"] = "¡El usuario se ha editado exitosamente!";
                         return Json(new { success = true });
                     }
@@ -580,6 +601,17 @@ namespace Buildoc.Controllers
 
                 if (result.Succeeded)
                 {
+                    // Preparar el asunto y el cuerpo del correo en formato HTML
+                    var subject = "Notificación de Desactivación de Cuenta";
+                    var htmlMessage = $@"
+                        <p>Hola <strong>{usuario.Nombres}</strong>,</p>
+                        <p>Te informamos que tu cuenta en nuestro sistema ha sido desactivada por un administrador.</p>
+                        <p>Si crees que esto es un error o necesitas más información, por favor contáctanos a la brevedad.</p>
+                        <p>Gracias,</p>
+                        <p><strong>Equipo de Soporte</strong></p>";
+
+                    // Enviar el correo de notificación
+                    await _emailSender.SendEmailAsync(usuario.Email, subject, htmlMessage);
                     TempData["SuccessMessage"] = "¡El usuario se ha desactivado exitosamente!";
                     return Json(new { success = true });
                 }
@@ -684,7 +716,17 @@ namespace Buildoc.Controllers
 
                 if (result.Succeeded)
                 {
-                    TempData["SuccessMessage"] = "¡El usuario se ha desactivado exitosamente!";
+					// Preparar el asunto y el cuerpo del correo en formato HTML
+					var subject = "Notificación de Reactivación de Cuenta";
+					var htmlMessage = $@"
+                        <p>Hola <strong>{usuario.Nombres}</strong>,</p>
+                        <p>Nos complace informarte que tu cuenta en nuestro sistema ha sido reactivada con éxito.</p>
+                        <p>Gracias por usar nuestro sistema.</p>
+                        <p><strong>Equipo de Soporte</strong></p>";
+
+					// Enviar el correo de notificación
+					await _emailSender.SendEmailAsync(usuario.Email, subject, htmlMessage);
+					TempData["SuccessMessage"] = "¡El usuario se ha desactivado exitosamente!";
                     return Json(new { success = true });
                 }
                 else
