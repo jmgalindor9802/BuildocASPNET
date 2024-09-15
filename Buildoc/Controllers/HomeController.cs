@@ -81,8 +81,13 @@ namespace Buildoc.Controllers
             return View("Index");
         }
 
+        public IActionResult ManuealIncidentes() => View();
 
+        public IActionResult ManuealProyectos() => View();
 
+        public IActionResult ManuealInspecciones() => View();
+
+        public IActionResult ManuealUsuarios() => View();
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
