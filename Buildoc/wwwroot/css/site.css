@@ -604,11 +604,7 @@ h6,
     }
 
 
-    /* Estilos para el borde del municipio seleccionado */
-    .municipio-selected {
-        stroke-width: 0.5px; /* Grosor aumentado para el municipio seleccionado */
-        stroke: #001f3f; /* Color del borde del municipio seleccionado */
-    }
+   
 
     /* Estilo para la sombra */
     .filter-shadow {

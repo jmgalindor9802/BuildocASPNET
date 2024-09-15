@@ -47,16 +47,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
     d3.json("/js/municipios.json").then(function (data) {
         var departamentos = topojson.feature(data, data.objects.MGN_ANM_DPTOS);
         var municipios = topojson.feature(data, data.objects.MGN_ANM_MPIOS);
-
-        g.selectAll("path.departamento")
-            .data(departamentos.features)
-            .enter()
-            .append("path")
-            .attr("class", "departamento")
-            .attr("d", path)
-            .attr("fill", "#e0e0e0")
-            .attr("stroke", "#000000")
-            .attr("stroke-width", 1);
+     
 
         g.selectAll("path.municipio")
             .data(municipios.features)
@@ -64,9 +55,21 @@ window.addEventListener('DOMContentLoaded', (event) => {
             .append("path")
             .attr("class", "municipio")
             .attr("d", path)
-            .attr("fill", "none")
+            .attr("fill", "#dedede")
             .attr("stroke", "#c2c2c2")
             .attr("stroke-width", 0.5);
+
+        // Agregamos los departamentos después, pero sin relleno, solo el borde.
+        g.selectAll("path.departamento")
+            .data(departamentos.features)
+            .enter()
+            .append("path")
+            .attr("class", "departamento")
+            .attr("d", path)
+            .attr("fill", "none") // Sin relleno
+            .attr("stroke", "#adacac") // Solo borde
+            .attr("stroke-width", 1)
+            .raise(); 
 
         textGroup.selectAll("text.departamento-name")
             .data(departamentos.features)
@@ -127,6 +130,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         var centroid = d3.geoCentroid(d);
                         var lat = centroid[1];
                         var lng = centroid[0];
+                        d3.select(this)
+                            .style("fill", "#001f3f")
+                            .raise(); // Eleva el municipio en el orden de renderizado
 
                         console.log('Municipio:', inspeccion.municipio);
                         console.log('Coordenadas:', [lat, lng]);
@@ -166,7 +172,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             </svg>`;
 
                         g.append("g")
-                            .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
+                            .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 25})`)
                             .html(iconSvg);
                     }
                 });
@@ -225,7 +231,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                             </svg>`;
 
                         g.append("g")
-                            .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
+                            .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 25})`)
                             .html(iconSvg);
                     }
                 });
@@ -293,7 +299,7 @@ window.addEventListener('DOMContentLoaded', (event) => {
                                 </svg>`;
 
                             g.append("g")
-                                .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 12})`)
+                                .attr("transform", `translate(${projection([lng, lat])[0] - 12}, ${projection([lng, lat])[1] - 25})`)
                                 .html(iconSvg);
                         }
                     });
