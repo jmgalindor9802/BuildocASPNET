@@ -32,20 +32,6 @@ namespace Buildoc.Controllers
 			// Obtener todos los tipos de incidentes
 			var tipoIncidentes = await _context.TipoIncidentes.ToListAsync();
 
-            // Filtrar tipos de incidentes activos para mostrar en la vista
-            var tiposIncidentesActivosParaVista = tipoIncidentes
-                .Where(ti => ti.Estado)
-                .Select(ti => new TipoIncidenteViewModel
-                {
-                    Id = ti.Id,
-                    Categoria = ti.Categoria.GetDescription(),
-                    Titulo = ti.Titulo,
-                    Descripcion = ti.Descripcion,
-                    Gravedad = ti.Gravedad,
-                    Estado = ti.Estado
-                })
-                .ToList();
-
             var tipoIncidentesVista = await _context.TipoIncidentes
               .Include(ti => ti.Incidentes)
               .ToListAsync();

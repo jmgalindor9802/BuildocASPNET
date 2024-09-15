@@ -9,6 +9,7 @@ namespace Buildoc.Models
             FechaNacimiento = DateOnly.FromDateTime(DateTime.Now);
         }
         [Required(ErrorMessage = "Campo requerido")]
+        [MaxLength(255, ErrorMessage = "La longitud maxima es de 255 caracteres")]
         [Display(Name = "Apellidos")]
         public string Apellidos { get; set; }
 
@@ -21,6 +22,7 @@ namespace Buildoc.Models
         public string? ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]
+        [MaxLength(255, ErrorMessage = "La longitud maxima es de 255 caracteres")]
         [Display(Name = "Nombres")]
         public string Nombres { get; set; }
 
