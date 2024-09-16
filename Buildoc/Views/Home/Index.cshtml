@@ -1,710 +1,523 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    Layout = null;
 }
 @* Carrucel *@
 
-<style>
-    .team-item {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Buildoc</title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
 
-    .team-img {
-        position: relative;
-        width: 100%;
-        padding-top: 100%; /* Esto hace que el contenedor sea cuadrado */
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .team-img img {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 100%;
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="~/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/lib/animate/animate.min.css" rel="stylesheet" />
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Buildoc.styles.css" asp-append-version="true" />
+    <style>
+        .team-item {
             height: 100%;
-            object-fit: cover;
-            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-    .team-social {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 10px;
-    }
-</style>
+        .team-img {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* Esto hace que el contenedor sea cuadrado */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-</style>
-<div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-			<img class="w-100" src="~/imgcarrucel1.jpg" alt="Image">
-            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                <div class="p-3" style="max-width: 900px;">
-                    <h5 class="text-white text-uppercase mb-3 animated slideInDown">Transformación Digital</h5>
-                    <h1 class="display-1 text-white mb-md-4 animated zoomIn">Innovación en Gestión Documental de inspecciones e incidentes para Construcción</h1>
-                    <p class="text-white mb-4 animated slideInUp">Centraliza la información, optimiza la administración de inspecciones e incidentes, y mejora la comunicación entre los actores del proyecto.</p>
-                    <a href="quote.html" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Solicitar Cotización</a>
-                    <a href="" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Contáctanos</a>
-                </div>
-            </div>
-        </div>
-        <div class="carousel-item">
-			<img class="w-100" src="~/imgcarrucel2.jpg" alt="Image">
-            <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
-                <div class="p-3" style="max-width: 900px;">
-                    <h5 class="text-white text-uppercase mb-3 animated slideInDown">Eficiencia y Seguridad</h5>
-                    <h1 class="display-1 text-white mb-md-4 animated zoomIn">>Optimización en la Gestión de Proyectos de Construcción</h1>
-                    <p class="text-white mb-4 animated slideInUp">Nuestro sistema BUILDOC asegura la integridad y disponibilidad de los documentos críticos, mejorando la eficiencia y reduciendo errores.</p>
-                    <a href="quote.html" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Solicitar Cotización</a>
-                    <a href="" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Contáctanos</a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel"
-            data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-    </button>
-    <button class="carousel-control-next" type="button" data-bs-target="#header-carousel"
-            data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-    </button>
-</div>
-@* Fin del carrucel *@
+            .team-img img {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                transform: translate(-50%, -50%);
+            }
 
-<!-- Facts Start -->
-<div class="container-fluid facts py-5 pt-lg-0">
-    <div class="container py-5 pt-lg-0">
+        .team-social {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Topbar Start -->
+    <div class="container-fluid bg-dark px-5 d-none d-lg-block">
         <div class="row gx-0">
-            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.1s">
-                <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
-                    <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
-                        <i class="fa fa-users text-primary"></i>
-                    </div>
-                    <div class="ps-4">
-                        <h5 class="text-white mb-0">Happy Clients</h5>
-                        <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
-                    </div>
+            <div class="col-lg-8 text-center text-lg-start mb-2 mb-lg-0">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    <small class="me-3 text-light"><i class="fa fa-map-marker-alt me-2"></i>Kr 13 # 65 - 15, Bogotá D.C, Colombia</small>
+                    <small class="me-3 text-light"><i class="fa fa-phone-alt me-2"></i>3134541985</small>
+                    <small class="text-light"><i class="fa fa-envelope-open me-2"></i>buildoc2@gmail.com</small>
                 </div>
             </div>
-            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.3s">
-                <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
-                    <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
-                        <i class="fa fa-check text-white"></i>
-                    </div>
-                    <div class="ps-4">
-                        <h5 class="text-primary mb-0">Projects Done</h5>
-                        <h1 class="mb-0" data-toggle="counter-up">12345</h1>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s">
-                <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
-                    <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
-                        <i class="fa fa-award text-primary"></i>
-                    </div>
-                    <div class="ps-4">
-                        <h5 class="text-white mb-0">Win Awards</h5>
-                        <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
-                    </div>
+            <div class="col-lg-4 text-center text-lg-end">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-twitter fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-facebook-f fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-linkedin-in fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle me-2" href=""><i class="fab fa-instagram fw-normal"></i></a>
+                    <a class="btn btn-sm btn-outline-light btn-sm-square rounded-circle" href=""><i class="fab fa-youtube fw-normal"></i></a>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Facts Start -->
+    <!-- Topbar End -->
+    <!-- Navbar & Carousel Start -->
+    <div class="container-fluid position-relative p-0">
+        <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0">
+            <a href="@Url.Action("Index", "Home")" class="navbar-brand p-0">
+                <img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style=" width: 120px; height: auto;">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                <span class="fa fa-bars"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <div class="navbar-nav ms-auto py-0">
+                    <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Inicio</a>
+                    <a href="#aboaut" class="nav-item nav-link">Nosotros</a>
+                    <a href="#eligenos" class="nav-item nav-link">Por qué elegirnos</a>
+                    <a href="#nuestrosServicios" class="nav-item nav-link">Servicios</a>
+                    <a href="#Team" class="nav-item nav-link">Equipo de trabajo</a>
+                </div>
+                <butaton type="button" class="btn text-primary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></butaton>
+                <partial name="_LoginPartial" />
+            </div>
+        </nav>
+    </div>
+    <div id="header-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img class="w-100" src="~/imgcarrucel1.jpg" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 900px;">
+                        <h5 class="text-white text-uppercase mb-3 animated slideInDown">Transformación Digital</h5>
+                        <h1 class="display-1 text-white mb-md-4 animated zoomIn">Innovación en Gestión Documental de inspecciones e incidentes para Construcción</h1>
+                        <p class="text-white mb-4 animated slideInUp">Centraliza la información, optimiza la administración de inspecciones e incidentes, y mejora la comunicación entre los actores del proyecto.</p>
+                        <a href="quote.html" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Solicitar Cotización</a>
+                        <a href="" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Contáctanos</a>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img class="w-100" src="~/imgcarrucel2.jpg" alt="Image">
+                <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                    <div class="p-3" style="max-width: 900px;">
+                        <h5 class="text-white text-uppercase mb-3 animated slideInDown">Eficiencia y Seguridad</h5>
+                        <h1 class="display-1 text-white mb-md-4 animated zoomIn">>Optimización en la Gestión de Proyectos de Construcción</h1>
+                        <p class="text-white mb-4 animated slideInUp">Nuestro sistema BUILDOC asegura la integridad y disponibilidad de los documentos críticos, mejorando la eficiencia y reduciendo errores.</p>
+                        <a href="quote.html" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Solicitar Cotización</a>
+                        <a href="" class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Contáctanos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#header-carousel"
+                data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+    @* Fin del carrucel *@
 
-<!-- About Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-lg-7">
-                <div class="section-title position-relative pb-3 mb-5">
-                    <h5 class="fw-bold text-primary text-uppercase">Nosotros</h5>
-                    <h1 class="mb-0">Transformamos la Gestión de Proyectos de Construcción</h1>
-                </div>
-                <p class="mb-4">En SERVINCO INGENIERÍA SAS, nos dedicamos a mejorar la eficiencia y efectividad en la planificación, supervisión y documentación de proyectos de construcción a través de nuestra solución BUILDOC. Nuestro sistema de gestión documental y de inspecciones está diseñado para centralizar la información, optimizar la administración y mejorar la comunicación entre todos los actores involucrados en un proyecto. Con más de una década de experiencia en la industria, nuestro objetivo es ofrecer una plataforma que garantice la seguridad de la información, la accesibilidad y la integridad de los datos, enfrentando las deficiencias actuales en la gestión documental.</p>
-                <div class="row g-0 mb-3">
-                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.2s">
-                        <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Innovación Continua</h5>
-                        <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Soluciones Personalizadas</h5>
-                    </div>
-                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.4s">
-                        <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Compromiso con la Calidad</h5>
-                        <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Atención Personalizada</h5>
+    <!-- Facts Start -->
+    <div class="container-fluid facts py-5 pt-lg-0">
+        <div class="container py-5 pt-lg-0">
+            <div class="row gx-0">
+                <div class="col-lg-4 wow zoomIn" data-wow-delay="0.1s">
+                    <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                        <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                            <i class="fa fa-users text-primary"></i>
+                        </div>
+                        <div class="ps-4">
+                            <h5 class="text-white mb-0">Happy Clients</h5>
+                            <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex align-items-center mb-4 wow fadeIn" data-wow-delay="0.6s">
-                    <div class="bg-primary d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 60px;">
-                        <i class="fa fa-phone-alt text-white"></i>
-                    </div>
-                    <div class="ps-4">
-                        <h5 class="mb-2">Para cualquier consulta</h5>
-                        <h4 class="text-primary mb-0">+57 (302) 394-3920</h4>
+                <div class="col-lg-4 wow zoomIn" data-wow-delay="0.3s">
+                    <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                        <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                            <i class="fa fa-check text-white"></i>
+                        </div>
+                        <div class="ps-4">
+                            <h5 class="text-primary mb-0">Projects Done</h5>
+                            <h1 class="mb-0" data-toggle="counter-up">12345</h1>
+                        </div>
                     </div>
                 </div>
-                <a href="quote.html" class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" data-wow-delay="0.9s">Solicitar Cotización</a>
-            </div>
-            <div class="col-lg-5" style="min-height: 500px;">
-                <div class="position-relative h-100">
-					<img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.9s" src="~/about.jpg" style="object-fit: cover;">
+                <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s">
+                    <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                        <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                            <i class="fa fa-award text-primary"></i>
+                        </div>
+                        <div class="ps-4">
+                            <h5 class="text-white mb-0">Win Awards</h5>
+                            <h1 class="text-white mb-0" data-toggle="counter-up">12345</h1>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- About End -->
-<!-- Features Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Por Qué Elegirnos</h5>
-            <h1 class="mb-0">Impulsa la Eficiencia y Seguridad en tus Proyectos de Construcción</h1>
-        </div>
-        <div class="row g-5">
-            <div class="col-lg-4">
-                <div class="row g-5">
-                    <div class="col-12 wow zoomIn" data-wow-delay="0.2s">
-                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <i class="fa fa-cubes text-white"></i>
-                        </div>
-                        <h4>Innovación Continua</h4>
-                        <p class="mb-0">>Nuestro sistema se actualiza constantemente para ofrecer las últimas funcionalidades en gestión documental y control de proyectos.</p>
+    <!-- Facts Start -->
+    <!-- About Start -->
+    <div id="aboaut" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <div class="col-lg-7">
+                    <div class="section-title position-relative pb-3 mb-5">
+                        <h5 class="fw-bold text-primary text-uppercase">Nosotros</h5>
+                        <h1 class="mb-0">Transformamos la Gestión de Proyectos de Construcción</h1>
                     </div>
-                    <div class="col-12 wow zoomIn" data-wow-delay="0.6s">
-                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <i class="fa fa-award text-white"></i>
+                    <p class="mb-4">En SERVINCO INGENIERÍA SAS, nos dedicamos a mejorar la eficiencia y efectividad en la planificación, supervisión y documentación de proyectos de construcción a través de nuestra solución BUILDOC. Nuestro sistema de gestión documental y de inspecciones está diseñado para centralizar la información, optimizar la administración y mejorar la comunicación entre todos los actores involucrados en un proyecto. Con más de una década de experiencia en la industria, nuestro objetivo es ofrecer una plataforma que garantice la seguridad de la información, la accesibilidad y la integridad de los datos, enfrentando las deficiencias actuales en la gestión documental.</p>
+                    <div class="row g-0 mb-3">
+                        <div class="col-sm-6 wow zoomIn" data-wow-delay="0.2s">
+                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Innovación Continua</h5>
+                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Soluciones Personalizadas</h5>
                         </div>
-                        <h4>Seguridad de Datos</h4>
-                        <p class="mb-0">Implementamos medidas de seguridad avanzadas para proteger la integridad y confidencialidad de tu información crítica.</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4  wow zoomIn" data-wow-delay="0.9s" style="min-height: 350px;">
-                <div class="position-relative h-100">
-					<img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.1s" src="~/features.jpg" style="object-fit: cover;">
-                </div>
-            </div>
-            <div class="col-lg-4">
-                <div class="row g-5">
-                    <div class="col-12 wow zoomIn" data-wow-delay="0.4s">
-                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
-                            <i class="fa fa-users-cog text-white"></i>
+                        <div class="col-sm-6 wow zoomIn" data-wow-delay="0.4s">
+                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Compromiso con la Calidad</h5>
+                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Atención Personalizada</h5>
                         </div>
-                        <h4>Soporte Personalizado</h4>
-                        <p class="mb-0">Nuestro equipo de soporte está disponible para resolver tus dudas y asegurarse de que obtengas el máximo provecho del sistema.</p>
                     </div>
-                    <div class="col-12 wow zoomIn" data-wow-delay="0.8s">
-                        <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                    <div class="d-flex align-items-center mb-4 wow fadeIn" data-wow-delay="0.6s">
+                        <div class="bg-primary d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 60px;">
                             <i class="fa fa-phone-alt text-white"></i>
                         </div>
-                        <h4>Soluciones Personalizadas</h4>
-                        <p class="mb-0">Ofrecemos soluciones a medida para satisfacer las necesidades específicas de cada proyecto y cliente.</p>
+                        <div class="ps-4">
+                            <h5 class="mb-2">Para cualquier consulta</h5>
+                            <h4 class="text-primary mb-0">+57 (302) 394-3920</h4>
+                        </div>
+                    </div>
+                    <a href="quote.html" class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" data-wow-delay="0.9s">Solicitar Cotización</a>
+                </div>
+                <div class="col-lg-5" style="min-height: 500px;">
+                    <div class="position-relative h-100">
+                        <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.9s" src="~/about.jpg" style="object-fit: cover;">
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Features Start -->
-<!-- Service Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Our Services</h5>
-            <h1 class="mb-0">Custom IT Solutions for Your Successful Business</h1>
-        </div>
-        <div class="row g-5">
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
-                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
-                    <div class="service-icon">
-                        <i class="fa fa-shield-alt text-white"></i>
-                    </div>
-                    <h4 class="mb-3">Cyber Security</h4>
-                    <p class="m-0">Amet justo dolor lorem kasd amet magna sea stet eos vero lorem ipsum dolore sed</p>
-                    <a class="btn btn-lg btn-primary rounded" href="">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
+    <!-- About End -->
+    <!-- Features Start -->
+    <div id="eligenos" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                <h5 class="fw-bold text-primary text-uppercase">Por Qué Elegirnos</h5>
+                <h1 class="mb-0">Impulsa la Eficiencia y Seguridad en tus Proyectos de Construcción</h1>
             </div>
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
-                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
-                    <div class="service-icon">
-                        <i class="fa fa-chart-pie text-white"></i>
-                    </div>
-                    <h4 class="mb-3">Data Analytics</h4>
-                    <p class="m-0">Amet justo dolor lorem kasd amet magna sea stet eos vero lorem ipsum dolore sed</p>
-                    <a class="btn btn-lg btn-primary rounded" href="">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
-                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
-                    <div class="service-icon">
-                        <i class="fa fa-code text-white"></i>
-                    </div>
-                    <h4 class="mb-3">Web Development</h4>
-                    <p class="m-0">Amet justo dolor lorem kasd amet magna sea stet eos vero lorem ipsum dolore sed</p>
-                    <a class="btn btn-lg btn-primary rounded" href="">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
-                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
-                    <div class="service-icon">
-                        <i class="fab fa-android text-white"></i>
-                    </div>
-                    <h4 class="mb-3">Apps Development</h4>
-                    <p class="m-0">Amet justo dolor lorem kasd amet magna sea stet eos vero lorem ipsum dolore sed</p>
-                    <a class="btn btn-lg btn-primary rounded" href="">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
-                <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
-                    <div class="service-icon">
-                        <i class="fa fa-search text-white"></i>
-                    </div>
-                    <h4 class="mb-3">SEO Optimization</h4>
-                    <p class="m-0">Amet justo dolor lorem kasd amet magna sea stet eos vero lorem ipsum dolore sed</p>
-                    <a class="btn btn-lg btn-primary rounded" href="">
-                        <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
-                <div class="position-relative bg-primary rounded h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
-                    <h3 class="text-white mb-3">Call Us For Quote</h3>
-                    <p class="text-white mb-3">Clita ipsum magna kasd rebum at ipsum amet dolor justo dolor est magna stet eirmod</p>
-                    <h2 class="text-white mb-0">+012 345 6789</h2>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Service End -->
-<!-- Pricing Plan Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Pricing Plans</h5>
-            <h1 class="mb-0">We are Offering Competitive Prices for Our Clients</h1>
-        </div>
-        <div class="row g-0">
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
-                <div class="bg-light rounded">
-                    <div class="border-bottom py-4 px-5 mb-4">
-                        <h4 class="text-primary mb-1">Basic Plan</h4>
-                        <small class="text-uppercase">For Small Size Business</small>
-                    </div>
-                    <div class="p-5 pt-0">
-                        <h1 class="display-5 mb-3">
-                            <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>49.00<small class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Month</small>
-                        </h1>
-                        <div class="d-flex justify-content-between mb-3"><span>HTML5 & CSS3</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Bootstrap v5</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Responsive Layout</span><i class="fa fa-times text-danger pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Cross-browser Support</span><i class="fa fa-times text-danger pt-1"></i></div>
-                        <a href="" class="btn btn-primary py-2 px-4 mt-4">Order Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
-                <div class="bg-white rounded shadow position-relative" style="z-index: 1;">
-                    <div class="border-bottom py-4 px-5 mb-4">
-                        <h4 class="text-primary mb-1">Standard Plan</h4>
-                        <small class="text-uppercase">For Medium Size Business</small>
-                    </div>
-                    <div class="p-5 pt-0">
-                        <h1 class="display-5 mb-3">
-                            <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>99.00<small class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Month</small>
-                        </h1>
-                        <div class="d-flex justify-content-between mb-3"><span>HTML5 & CSS3</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Bootstrap v5</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Responsive Layout</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Cross-browser Support</span><i class="fa fa-times text-danger pt-1"></i></div>
-                        <a href="" class="btn btn-primary py-2 px-4 mt-4">Order Now</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
-                <div class="bg-light rounded">
-                    <div class="border-bottom py-4 px-5 mb-4">
-                        <h4 class="text-primary mb-1">Advanced Plan</h4>
-                        <small class="text-uppercase">For Large Size Business</small>
-                    </div>
-                    <div class="p-5 pt-0">
-                        <h1 class="display-5 mb-3">
-                            <small class="align-top" style="font-size: 22px; line-height: 45px;">$</small>149.00<small class="align-bottom" style="font-size: 16px; line-height: 40px;">/ Month</small>
-                        </h1>
-                        <div class="d-flex justify-content-between mb-3"><span>HTML5 & CSS3</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Bootstrap v5</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-3"><span>Responsive Layout</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <div class="d-flex justify-content-between mb-2"><span>Cross-browser Support</span><i class="fa fa-check text-primary pt-1"></i></div>
-                        <a href="" class="btn btn-primary py-2 px-4 mt-4">Order Now</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Pricing Plan End -->
-<!-- Quote Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="row g-5">
-            <div class="col-lg-7">
-                <div class="section-title position-relative pb-3 mb-5">
-                    <h5 class="fw-bold text-primary text-uppercase">Request A Quote</h5>
-                    <h1 class="mb-0">Need A Free Quote? Please Feel Free to Contact Us</h1>
-                </div>
-                <div class="row gx-3">
-                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.2s">
-                        <h5 class="mb-4"><i class="fa fa-reply text-primary me-3"></i>Reply within 24 hours</h5>
-                    </div>
-                    <div class="col-sm-6 wow zoomIn" data-wow-delay="0.4s">
-                        <h5 class="mb-4"><i class="fa fa-phone-alt text-primary me-3"></i>24 hrs telephone support</h5>
-                    </div>
-                </div>
-                <p class="mb-4">Eirmod sed tempor lorem ut dolores. Aliquyam sit sadipscing kasd ipsum. Dolor ea et dolore et at sea ea at dolor, justo ipsum duo rebum sea invidunt voluptua. Eos vero eos vero ea et dolore eirmod et. Dolores diam duo invidunt lorem. Elitr ut dolores magna sit. Sea dolore sanctus sed et. Takimata takimata sanctus sed.</p>
-                <div class="d-flex align-items-center mt-2 wow zoomIn" data-wow-delay="0.6s">
-                    <div class="bg-primary d-flex align-items-center justify-content-center rounded" style="width: 60px; height: 60px;">
-                        <i class="fa fa-phone-alt text-white"></i>
-                    </div>
-                    <div class="ps-4">
-                        <h5 class="mb-2">Call to ask any question</h5>
-                        <h4 class="text-primary mb-0">+012 345 6789</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5">
-                <div class="bg-primary rounded h-100 d-flex align-items-center p-5 wow zoomIn" data-wow-delay="0.9s">
-                    <form>
-                        <div class="row g-3">
-                            <div class="col-xl-12">
-                                <input type="text" class="form-control bg-light border-0" placeholder="Your Name" style="height: 55px;">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="row g-5">
+                        <div class="col-12 wow zoomIn" data-wow-delay="0.2s">
+                            <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-cubes text-white"></i>
                             </div>
-                            <div class="col-12">
-                                <input type="email" class="form-control bg-light border-0" placeholder="Your Email" style="height: 55px;">
+                            <h4>Innovación Continua</h4>
+                            <p class="mb-0">>Nuestro sistema se actualiza constantemente para ofrecer las últimas funcionalidades en gestión documental y control de proyectos.</p>
+                        </div>
+                        <div class="col-12 wow zoomIn" data-wow-delay="0.6s">
+                            <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-award text-white"></i>
                             </div>
-                            <div class="col-12">
-                                <select class="form-select bg-light border-0" style="height: 55px;">
-                                    <option selected>Select A Service</option>
-                                    <option value="1">Service 1</option>
-                                    <option value="2">Service 2</option>
-                                    <option value="3">Service 3</option>
-                                </select>
+                            <h4>Seguridad de Datos</h4>
+                            <p class="mb-0">Implementamos medidas de seguridad avanzadas para proteger la integridad y confidencialidad de tu información crítica.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4  wow zoomIn" data-wow-delay="0.9s" style="min-height: 350px;">
+                    <div class="position-relative h-100">
+                        <img class="position-absolute w-100 h-100 rounded wow zoomIn" data-wow-delay="0.1s" src="~/features.jpg" style="object-fit: cover;">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="row g-5">
+                        <div class="col-12 wow zoomIn" data-wow-delay="0.4s">
+                            <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-users-cog text-white"></i>
                             </div>
-                            <div class="col-12">
-                                <textarea class="form-control bg-light border-0" rows="3" placeholder="Message"></textarea>
+                            <h4>Soporte Personalizado</h4>
+                            <p class="mb-0">Nuestro equipo de soporte está disponible para resolver tus dudas y asegurarse de que obtengas el máximo provecho del sistema.</p>
+                        </div>
+                        <div class="col-12 wow zoomIn" data-wow-delay="0.8s">
+                            <div class="bg-primary rounded d-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                                <i class="fa fa-phone-alt text-white"></i>
                             </div>
-                            <div class="col-12">
-                                <button class="btn btn-dark w-100 py-3" type="submit">Request A Quote</button>
-                            </div>
+                            <h4>Soluciones Personalizadas</h4>
+                            <p class="mb-0">Ofrecemos soluciones a medida para satisfacer las necesidades específicas de cada proyecto y cliente.</p>
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Quote End -->
-<!-- Testimonial Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-4 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Testimonial</h5>
-            <h1 class="mb-0">What Our Clients Say About Our Digital Services</h1>
-        </div>
-        <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.6s">
-            <div class="testimonial-item bg-light my-4">
-                <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
-                    <img class="img-fluid rounded" src="img/testimonial-1.jpg" style="width: 60px; height: 60px;">
-                    <div class="ps-4">
-                        <h4 class="text-primary mb-1">Client Name</h4>
-                        <small class="text-uppercase">Profession</small>
-                    </div>
-                </div>
-                <div class="pt-4 pb-5 px-5">
-                    Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam
-                </div>
-            </div>
-            <div class="testimonial-item bg-light my-4">
-                <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
-                    <img class="img-fluid rounded" src="img/testimonial-2.jpg" style="width: 60px; height: 60px;">
-                    <div class="ps-4">
-                        <h4 class="text-primary mb-1">Client Name</h4>
-                        <small class="text-uppercase">Profession</small>
-                    </div>
-                </div>
-                <div class="pt-4 pb-5 px-5">
-                    Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam
-                </div>
-            </div>
-            <div class="testimonial-item bg-light my-4">
-                <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
-                    <img class="img-fluid rounded" src="img/testimonial-3.jpg" style="width: 60px; height: 60px;">
-                    <div class="ps-4">
-                        <h4 class="text-primary mb-1">Client Name</h4>
-                        <small class="text-uppercase">Profession</small>
-                    </div>
-                </div>
-                <div class="pt-4 pb-5 px-5">
-                    Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam
-                </div>
-            </div>
-            <div class="testimonial-item bg-light my-4">
-                <div class="d-flex align-items-center border-bottom pt-5 pb-4 px-5">
-                    <img class="img-fluid rounded" src="img/testimonial-4.jpg" style="width: 60px; height: 60px;">
-                    <div class="ps-4">
-                        <h4 class="text-primary mb-1">Client Name</h4>
-                        <small class="text-uppercase">Profession</small>
-                    </div>
-                </div>
-                <div class="pt-4 pb-5 px-5">
-                    Dolor et eos labore, stet justo sed est sed. Diam sed sed dolor stet amet eirmod eos labore diam
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!-- Testimonial End -->
-<!-- Team Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Equipo de desarrollo</h5>
-            <h1 class="mb-0">Un equipo sumergido en la locura</h1>
-        </div>
-        <div class="row g-4">
-            <!-- Juan Manuel Galindo Rojas -->
-            <div class="col-lg-6 col-md-6">
-                <div class="team-item bg-light rounded overflow-hidden">
-                    <div class="team-img">
-                        <img src="~/TeamJuanManuel.jpg" alt="Juan Manuel Galindo Rojas">
-                        <div class="team-social">
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center py-4">
-                        <h4 class="text-primary">Juan Manuel Galindo Rojas</h4>
-                        <p class="text-uppercase m-0">Un profesional comprometido con el aprendizaje continuo, experto en múltiples disciplinas y siempre en busca de nuevos desafíos.</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Luis Nicolas Arevalo Chiquiza -->
-            <div class="col-lg-6 col-md-6">
-                <div class="team-item bg-light rounded overflow-hidden">
-                    <div class="team-img">
-                        <img src="~/TeamLuisNicolas.jpg" alt="Luis Nicolas Arevalo Chiquiza">
-                        <div class="team-social">
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
-                        </div>
-                    </div>
-                    <div class="text-center py-4">
-                        <h4 class="text-primary">Luis Nicolas Arevalo Chiquiza</h4>
-                        <p class="text-uppercase m-0">Apasionado por la literatura y el arte, combinando su amor por el anime con una aguda comprensión de la tecnología y la ingeniería.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-<!-- Team End -->
-<!-- Blog Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5">
-        <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
-            <h5 class="fw-bold text-primary text-uppercase">Latest Blog</h5>
-            <h1 class="mb-0">Read The Latest Articles from Our Blog Post</h1>
-        </div>
-        <div class="row g-5 col-12" >
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.3s">
-                <div class="blog-item bg-light rounded overflow-hidden">
-                    <div class="blog-img position-relative overflow-hidden">
-                        <img class="img-fluid" src="img/blog-1.jpg" alt="">
-                        <a class="position-absolute top-0 start-0 bg-primary text-white rounded-end mt-5 py-2 px-4" href="">Web Design</a>
-                    </div>
-                    <div class="p-4">
-                        <div class="d-flex mb-3">
-                            <small class="me-3"><i class="far fa-user text-primary me-2"></i>John Doe</small>
-                            <small><i class="far fa-calendar-alt text-primary me-2"></i>01 Jan, 2045</small>
-                        </div>
-                        <h4 class="mb-3">How to build a website</h4>
-                        <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
-                        <a class="text-uppercase" href="">Read More <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.6s">
-                <div class="blog-item bg-light rounded overflow-hidden">
-                    <div class="blog-img position-relative overflow-hidden">
-                        <img class="img-fluid" src="img/blog-2.jpg" alt="">
-                        <a class="position-absolute top-0 start-0 bg-primary text-white rounded-end mt-5 py-2 px-4" href="">Web Design</a>
-                    </div>
-                    <div class="p-4">
-                        <div class="d-flex mb-3">
-                            <small class="me-3"><i class="far fa-user text-primary me-2"></i>John Doe</small>
-                            <small><i class="far fa-calendar-alt text-primary me-2"></i>01 Jan, 2045</small>
-                        </div>
-                        <h4 class="mb-3">How to build a website</h4>
-                        <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
-                        <a class="text-uppercase" href="">Read More <i class="bi bi-arrow-right"></i></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 wow slideInUp" data-wow-delay="0.9s">
-                <div class="blog-item bg-light rounded overflow-hidden">
-                    <div class="blog-img position-relative overflow-hidden">
-                        <img class="img-fluid" src="img/blog-3.jpg" alt="">
-                        <a class="position-absolute top-0 start-0 bg-primary text-white rounded-end mt-5 py-2 px-4" href="">Web Design</a>
-                    </div>
-                    <div class="p-4">
-                        <div class="d-flex mb-3">
-                            <small class="me-3"><i class="far fa-user text-primary me-2"></i>John Doe</small>
-                            <small><i class="far fa-calendar-alt text-primary me-2"></i>01 Jan, 2045</small>
-                        </div>
-                        <h4 class="mb-3">How to build a website</h4>
-                        <p>Dolor et eos labore stet justo sed est sed sed sed dolor stet amet</p>
-                        <a class="text-uppercase" href="">Read More <i class="bi bi-arrow-right"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
-<!-- Blog Start -->
-<!-- Vendor Start -->
-<div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
-    <div class="container py-5 mb-5">
-        <div class="bg-white">
-            <div class="owl-carousel vendor-carousel">
-                <img src="img/vendor-1.jpg" alt="">
-                <img src="img/vendor-2.jpg" alt="">
-                <img src="img/vendor-3.jpg" alt="">
-                <img src="img/vendor-4.jpg" alt="">
-                <img src="img/vendor-5.jpg" alt="">
-                <img src="img/vendor-6.jpg" alt="">
-                <img src="img/vendor-7.jpg" alt="">
-                <img src="img/vendor-8.jpg" alt="">
-                <img src="img/vendor-9.jpg" alt="">
+    <!-- Features Start -->
+    <!-- Service Start -->
+    <div id="nuestrosServicios" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                <h5 class="fw-bold text-primary text-uppercase">Nuestros servicios</h5>
+                <h1 class="mb-0">Soluciones de TI personalizadas para el éxito</h1>
             </div>
-        </div>
-    </div>
-</div>
-<!-- Vendor End -->
-<footer>
-    <!-- Footer Start -->
-    <div class="container-fluid bg-dark text-light mt-5 wow fadeInUp" data-wow-delay="0.1s">
-        <div class="container">
-            <div class="row gx-5">
-                <div class="col-lg-4 col-md-6 footer-about">
-                    <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 bg-primary p-4">
-                        <a href="index.html" class="navbar-brand">
-                            <h1 class="m-0 text-white"><i class="fa fa-user-tie me-2"></i>Startup</h1>
+            <div class="row g-5">
+                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                    <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-users text-white"></i>
+                        </div>
+                        <h4 class="mb-3">Gestion de usuarios</h4>
+                        <p class="m-0">Buildoc facilita la gestión de usuarios, permitiendo al administrador crear y desactivar cuentas fácilmente.</p>
+                        <a class="btn btn-lg btn-primary rounded" asp-action="ManuealUsuarios">
+                            <i class="bi bi-arrow-right"></i>
                         </a>
-                        <p class="mt-3 mb-4">Lorem diam sit erat dolor elitr et, diam lorem justo amet clita stet eos sit. Elitr dolor duo lorem, elitr clita ipsum sea. Diam amet erat lorem stet eos. Diam amet et kasd eos duo.</p>
-                        <form action="">
-                            <div class="input-group">
-                                <input type="text" class="form-control border-white p-3" placeholder="Your Email">
-                                <button class="btn btn-dark">Sign Up</button>
-                            </div>
-                        </form>
                     </div>
                 </div>
-                <div class="col-lg-8 col-md-6">
-                    <div class="row gx-5">
-                        <div class="col-lg-4 col-md-12 pt-5 mb-5">
-                            <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                                <h3 class="text-light mb-0">Get In Touch</h3>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-geo-alt text-primary me-2"></i>
-                                <p class="mb-0">123 Street, New York, USA</p>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-envelope-open text-primary me-2"></i>
-                                <p class="mb-0">info@example.com</p>
-                            </div>
-                            <div class="d-flex mb-2">
-                                <i class="bi bi-telephone text-primary me-2"></i>
-                                <p class="mb-0">+012 345 67890</p>
-                            </div>
-                            <div class="d-flex mt-4">
-                                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-twitter fw-normal"></i></a>
-                                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
-                                <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
-                                <a class="btn btn-primary btn-square" href="#"><i class="fab fa-instagram fw-normal"></i></a>
-                            </div>
+                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.6s">
+                    <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-building text-white"></i>
                         </div>
-                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
-                            <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                                <h3 class="text-light mb-0">Quick Links</h3>
-                            </div>
-                            <div class="link-animated d-flex flex-column justify-content-start">
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Home</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>About Us</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Our Services</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Meet The Team</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Latest Blog</a>
-                                <a class="text-light" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Contact Us</a>
-                            </div>
+                        <h4 class="mb-3">Gestion de proyectos</h4>
+                        <p class="m-0">Buildoc permite a los coordinadores crear proyectos de construcción fácilmente. Descubre más.</p>
+                        <a class="btn btn-lg btn-primary rounded" asp-action="ManuealProyectos">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
+                    <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-exclamation-triangle text-white"></i>
                         </div>
-                        <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
-                            <div class="section-title section-title-sm position-relative pb-3 mb-4">
-                                <h3 class="text-light mb-0">Popular Links</h3>
-                            </div>
-                            <div class="link-animated d-flex flex-column justify-content-start">
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Home</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>About Us</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Our Services</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Meet The Team</a>
-                                <a class="text-light mb-2" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Latest Blog</a>
-                                <a class="text-light" href="#"><i class="bi bi-arrow-right text-primary me-2"></i>Contact Us</a>
-                            </div>
+                        <h4 class="mb-3">Gestion de incidentes</h4>
+                        <p class="m-0">Buildoc ofrece una forma sencilla e intuitiva de reportar incidentes, con funciones ajustadas según el rol del usuario.</p>
+                        <a class="btn btn-lg btn-primary rounded" asp-action="ManuealIncidentes">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.3s">
+                    <div class="service-item bg-light rounded d-flex flex-column align-items-center justify-content-center text-center">
+                        <div class="service-icon">
+                            <i class="fas fa-paste text-white"></i>
                         </div>
+                        <h4 class="mb-3">Gestion de inspecciones</h4>
+                        <p class="m-0">Buildoc ofrece una forma sencilla e intuitiva de programar y/o reponder inspecciones, con funciones ajustadas según el rol del usuario.</p>
+                        <a class="btn btn-lg btn-primary rounded" asp-action="ManuealInspecciones">
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 wow zoomIn" data-wow-delay="0.9s">
+                    <div class="position-relative bg-primary rounded h-100 d-flex flex-column align-items-center justify-content-center text-center p-5">
+                        <h3 class="text-white mb-3">Call Us For Quote</h3>
+                        <p class="text-white mb-3">Clita ipsum magna kasd rebum at ipsum amet dolor justo dolor est magna stet eirmod</p>
+                        <h2 class="text-white mb-0">+012 345 6789</h2>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fluid text-white" style="background: #061429;">
-        <div class="container text-center">
-            <div class="row justify-content-end">
-                <div class="col-lg-8 col-md-6">
-                    <div class="d-flex align-items-center justify-content-center" style="height: 75px;">
-                        <p class="mb-0">
-                            &copy; <a class="text-white border-bottom" href="#">Your Site Name</a>. All Rights Reserved.
+    <!-- Service End -->
+    
+    <!-- Team Start -->
+    <div id="Team" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                <h5 class="fw-bold text-primary text-uppercase">Equipo de desarrollo</h5>
+                <h1 class="mb-0">Un equipo sumergido en la locura</h1>
+            </div>
+            <div class="row g-4">
+                <!-- Juan Manuel Galindo Rojas -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="team-item bg-light rounded overflow-hidden">
+                        <div class="team-img">
+                            <img src="~/TeamJuanManuel.jpg" alt="Juan Manuel Galindo Rojas">
+                            <div class="team-social">
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            <h4 class="text-primary">Juan Manuel Galindo Rojas</h4>
+                            <p class="text-uppercase m-0">Un profesional comprometido con el aprendizaje continuo, experto en múltiples disciplinas y siempre en busca de nuevos desafíos.</p>
+                        </div>
+                    </div>
+                </div>
 
-                            <!--/*** This template is free as long as you keep the footer author’s credit link/attribution link/backlink. If you'd like to use the template without the footer author’s credit link/attribution link/backlink, you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". Thank you for your support. ***/-->
-                            Designed by <a class="text-white border-bottom" href="https://htmlcodex.com">HTML Codex</a>
-                        </p>
-                        <br>Distributed By: <a class="border-bottom" href="https://themewagon.com" target="_blank">ThemeWagon</a>
+                <!-- Luis Nicolas Arevalo Chiquiza -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="team-item bg-light rounded overflow-hidden">
+                        <div class="team-img">
+                            <img src="~/TeamLuisNicolas.jpg" alt="Luis Nicolas Arevalo Chiquiza">
+                            <div class="team-social">
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                <a class="btn btn-lg btn-primary btn-lg-square rounded" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                            </div>
+                        </div>
+                        <div class="text-center py-4">
+                            <h4 class="text-primary">Luis Nicolas Arevalo Chiquiza</h4>
+                            <p class="text-uppercase m-0">Apasionado por la literatura y el arte, combinando su amor por el anime con una aguda comprensión de la tecnología y la ingeniería.</p>
+                        </div>
                     </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Team End -->
+    
+    <!-- Vendor Start -->
+    <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5 mb-5">
+            <div class="section-title text-center position-relative pb-3 mb-5 mx-auto" style="max-width: 600px;">
+                <h5 class="fw-bold text-primary text-uppercase">Tecnologias usadas</h5>
+            </div>
+            <div class="bg-white">
+                <div class="owl-carousel vendor-carousel">
+                    <img src="~/azure sql.png" alt="">
+                    <img src="~/azure app service -codefari.com.png" />
+                    <img src="~/azure-blob-storage-1024x416.png" />
+                    <img src="~/brief-introduction-c-sharp.png" />
+                    <img src="~/adminlte.png" />
+                    <img src="~/asp.net-logo.png" />
+                    <img src="~/0_08bsuxgq5yglofxo.png" />
                 </div>
             </div>
         </div>
     </div>
-    <!-- Footer End -->
-</footer>
+    <!-- Vendor End -->
+    <footer>
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-light mt-5 wow fadeInUp" data-wow-delay="0.1s">
+            <div class="container">
+                <div class="row gx-5">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <div class="d-flex flex-column align-items-center justify-content-center text-center h-100 bg-primary p-4">
+                            <a href="index.html" class="navbar-brand">
+                                <h1 class="m-0 text-white"><img src="~/logo_buildoc_icono_blanco.png" width="100" height="100"/></h1>
+                            </a>
+                            <p class="mt-3 mb-4">Lorem diam sit erat dolor elitr et, diam lorem justo amet clita stet eos sit. Elitr dolor duo lorem, elitr clita ipsum sea. Diam amet erat lorem stet eos. Diam amet et kasd eos duo.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-8 col-md-6">
+                        <div class="row gx-5">
+                            <div class="col-lg-4 col-md-12 pt-5 mb-5">
+                                <div class="section-title section-title-sm position-relative pb-3 mb-4">
+                                    <h3 class="text-light mb-0">Contáctenos</h3>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i class="bi bi-geo-alt text-primary me-2"></i>
+                                    <p class="mb-0">Kr 13 # 65 - 15, Bogotá D.C, Colombia</p>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i class="bi bi-envelope-open text-primary me-2"></i>
+                                    <p class="mb-0">buildoc2@gmail.com</p>
+                                </div>
+                                <div class="d-flex mb-2">
+                                    <i class="bi bi-telephone text-primary me-2"></i>
+                                    <p class="mb-0">+57 3134541985</p>
+                                </div>
+                                <div class="d-flex mt-4">
+                                    <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-twitter fw-normal"></i></a>
+                                    <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-facebook-f fw-normal"></i></a>
+                                    <a class="btn btn-primary btn-square me-2" href="#"><i class="fab fa-linkedin-in fw-normal"></i></a>
+                                    <a class="btn btn-primary btn-square" href="#"><i class="fab fa-instagram fw-normal"></i></a>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-12 pt-0 pt-lg-5 mb-5">
+                                <div class="section-title section-title-sm position-relative pb-3 mb-4">
+                                    <h3 class="text-light mb-0">Enlaces rápidos</h3>
+                                </div>
+                                <div class="link-animated d-flex flex-column justify-content-start">
+                                    <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Inicio</a>
+                                    <a href="#aboaut" class="nav-item nav-link">Nosotros</a>
+                                    <a href="#eligenos" class="nav-item nav-link">Por qué elegirnos</a>
+                                    <a href="#nuestrosServicios" class="nav-item nav-link">Servicios</a>
+                                    <a href="#Team" class="nav-item nav-link">Equipo de trabajo</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid text-white" style="background: #061429;">
+            <div class="container text-center">
+                <div class="row justify-content-end">
+                    <div class="col-lg-8 col-md-6">
+                        <div class="d-flex align-items-center justify-content-center" style="height: 75px;">
+                            <p class="mb-0">
+                                &copy; <a class="text-white border-bottom" href="#">BuilDoc</a>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/wow/wow.min.js"></script>
+    <script src="~/lib/easing/easing.min.js"></script>
+    <script src="~/lib/waypoints/waypoints.min.js"></script>
+    <script src="~/lib/counterup/counterup.min.js"></script>
+    <script src="~/lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/indexPeincipal.js"></script>
+</body>
+</html>
