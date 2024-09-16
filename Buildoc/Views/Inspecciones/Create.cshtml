@@ -7,7 +7,7 @@
 
 <div class=" mb-4">
     <!-- Margen inferior para el formulario -->
-    <form asp-action="Create" class="ml-3 mr-3" enctype="multipart/form-data">
+    <form asp-action="Create" class="ml-3 mr-3" method="post"  enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
         <div class="row">
             <div class="col-lg-8">
@@ -243,7 +243,8 @@
     });
 </script>
 
-
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
 
 

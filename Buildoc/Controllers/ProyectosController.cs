@@ -375,7 +375,6 @@ namespace Buildoc.Controllers
             return PartialView("Edit", proyecto);
         }
 
-
         // GET: Proyectos/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
@@ -385,14 +384,30 @@ namespace Buildoc.Controllers
             }
 
             var proyecto = await _context.Proyectos
+                .Include(p => p.Inspecciones)  // Incluir las inspecciones relacionadas
+                .Include(p => p.Incidentes)    // Incluir los incidentes relacionados
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (proyecto == null)
             {
                 return NotFound();
             }
 
-            return PartialView("Delete",proyecto);
+            // Verificar si tiene inspecciones o incidentes relacionados
+            if (proyecto.Inspecciones.Any() || proyecto.Incidentes.Any())
+            {
+                TempData["DeleteMessage"] = "No se puede eliminar este proyecto porque tiene inspecciones o incidentes relacionados.";
+                ViewBag.PuedeEliminarse = false; // No permitir la eliminación
+            }
+            else
+            {
+                TempData["DeleteMessage"] = "¿Está seguro de que desea eliminar este proyecto?";
+                ViewBag.PuedeEliminarse = true; // Permitir la eliminación
+            }
+
+            return PartialView("Delete", proyecto);
         }
+
 
         // POST: Proyectos/Delete/5
         [HttpPost, ActionName("Delete")]
