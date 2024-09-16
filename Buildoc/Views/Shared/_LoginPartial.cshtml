@@ -13,33 +13,41 @@
         {
             @if (User.IsInRole("Administrador"))
             {
-               // <li class="nav-item">
-               //     <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Index">Usuarios</a>
-               // </li>
-               
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">ADMINISTRADOR</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-user-cog d-inline d-md-none"></i> <!-- Ícono visible solo en móvil -->
+                        <span class="d-none d-md-inline">ADMINISTRADOR</span> <!-- Texto visible solo en pantallas medianas en adelante -->
+                    </a>
                 </li>
             }
             else if (User.IsInRole("Coordinador"))
             {
-               
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@nombreCompleto </a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-user d-inline d-md-none"></i> <!-- Ícono visible solo en móvil -->
+                        <span class="d-none d-md-inline">@nombreCompleto</span> <!-- Texto visible solo en pantallas medianas en adelante -->
+                    </a>
                 </li>
             }
             else if (User.IsInRole("Residente"))
             {
-              
                 <li class="nav-item">
-                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">@nombreCompleto</a>
+                    <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
+                        <i class="fas fa-user d-inline d-md-none"></i> <!-- Ícono visible solo en móvil -->
+                        <span class="d-none d-md-inline">@nombreCompleto</span> <!-- Texto visible solo en pantallas medianas en adelante -->
+                    </a>
                 </li>
             }
 
+
             <li class="nav-item ml-auto">
-                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                    <button id="logout" type="submit" class="btn btn-primary">Cerrar sesión</button>
+                <form id="logoutForm" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-light">
+                        <i class="fas fa-sign-out-alt"></i> <!-- Ícono para el botón de cerrar sesión -->
+                        <span class="d-none d-md-inline">Cerrar sesión</span> <!-- Texto oculto en pantallas móviles -->
+                    </button>
                 </form>
+
             </li>
         }
 }

@@ -5,63 +5,80 @@
     <div class="row mb-2 align-items-center text-white p-2" style=" background-color: #001f3f;">
         <!-- Columna para Bienvenida y Panel Principal -->
         <div class="col-lg-6 col-md-6 col-sm-12">
-            <h5 class="mb-0" style="font-weight: 200 !important;">Bienvenido, @ViewBag.NombreUsuario</h5>
+            <h5 class="mb-0 d-none d-md-inline" style="font-weight: 200 !important;">Bienvenido, @ViewBag.NombreUsuario</h5>
             <h1 class="mb-0 titulo-inspecciones">
-                <i class="fas fa-home"></i> Panel Principal
+                <i class="fas fa-home d-none d-md-inline"></i> Panel Principal
             </h1>
         </div>
 
         <!-- Columna para los botones -->
-        <div class="col-lg-6 col-md-6 col-sm-12 d-flex justify-content-end">
-            <div class="d-flex">
+        <div class="container col-lg-6 col-md-6 col-sm-12 d-flex justify-content-center justify-content-md-end">
+            <div class="row w-100">
                 @if (User.IsInRole("Administrador"))
                 {
                     <!-- Botones sin enlaces para Administrador -->
-                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #17a2b8;">
-                        <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
-                        <i class="fas fa-project-diagram"></i> Proyectos activos
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #17a2b8;">
+                            <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
+                            <i class="fas fa-project-diagram"></i> Proyectos activos
+                        </div>
                     </div>
 
-                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #28a745;">
-                        <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
-                        <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #28a745;">
+                            <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
+                            <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
+                        </div>
                     </div>
 
-                    <div class="btn btn-app bg-secondary btn-custom-width mr-2" style="background-color: #ffc107;">
-                        <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
-                        <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #ffc107;">
+                            <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
+                            <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
+                        </div>
                     </div>
 
-                    <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #dc3545;">
-                        <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
-                        <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <div class="btn btn-app bg-secondary btn-custom-width" style="background-color: #dc3545;">
+                            <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
+                            <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
+                        </div>
                     </div>
                 }
                 else
                 {
                     <!-- Botones con enlaces para otros roles -->
-                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("Index", "Proyectos")" style="background-color: #17a2b8;">
-                        <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
-                        <i class="fas fa-project-diagram"></i> Proyectos activos
-                    </a>
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("Index", "Proyectos")" style="background-color: #17a2b8;">
+                            <span class="badge bg-success" style="font-size: 1.5em;">@Model.Count()</span>
+                            <i class="fas fa-project-diagram"></i> Proyectos activos
+                        </a>
+                    </div>
 
-                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("Programadas", "Inspecciones")" style="background-color: #28a745;">
-                        <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
-                        <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
-                    </a>
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("Programadas", "Inspecciones")" style="background-color: #28a745;">
+                            <span class="badge bg-primary" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesProgramadas)</span>
+                            <i class="fas fa-calendar-check"></i> Inspecciones<br />Programadas
+                        </a>
+                    </div>
 
-                    <a class="btn btn-app bg-secondary btn-custom-width mr-2" href="@Url.Action("PendientesRevision", "Inspecciones")" style="background-color: #ffc107;">
-                        <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
-                        <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
-                    </a>
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("PendientesRevision", "Inspecciones")" style="background-color: #ffc107;">
+                            <span class="badge bg-warning" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroInspeccionesPendientes)</span>
+                            <i class="fas fa-exclamation-circle"></i> Inspecciones<br />Pendientes
+                        </a>
+                    </div>
 
-                    <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("IncidenteActivos", "Incidentes")" style="background-color: #dc3545;">
-                        <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
-                        <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
-                    </a>
+                    <div class="col-6 col-md-auto mb-2 d-flex justify-content-center">
+                        <a class="btn btn-app bg-secondary btn-custom-width" href="@Url.Action("IncidenteActivos", "Incidentes")" style="background-color: #dc3545;">
+                            <span class="badge bg-danger" style="font-size: 1.5em;">@Model.Sum(p => p.NumeroIncidentesActivos)</span>
+                            <i class="fas fa-exclamation-triangle"></i> Incidentes<br />Activos
+                        </a>
+                    </div>
                 }
             </div>
         </div>
+
     </div>
 
     <br />
