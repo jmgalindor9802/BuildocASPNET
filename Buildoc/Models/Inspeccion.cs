@@ -47,7 +47,7 @@ namespace Buildoc.Models
 		public virtual Usuario Inspector { get; set; }
 
 		[Display(Name = "Duración en horas")]
-		[Range(0, 24, ErrorMessage = "La duración debe estar entre 0 y 24 horas.")]
+		[Range(1, 24, ErrorMessage = "La duración debe estar entre 1 y 24 horas.")]
 		public int? DuracionHoras { get; set; }
 
 		[Display(Name = "Inspección de todo el día")]
