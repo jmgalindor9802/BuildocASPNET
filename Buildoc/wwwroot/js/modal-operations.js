@@ -41,6 +41,7 @@ $(document).ready(function () {
         } else if (action === 'delete') {
             console.log('Mostrando botón de eliminar');
             $('.btn-delete').show(); // Mostrar el botón de eliminar
+            $('.btn-deactivate').hide();
         } else if (action === 'restore') {
             console.log('Mostrando botón de restaurar');
             $('.btn-restore').show(); // Mostrar el botón de restaurar
