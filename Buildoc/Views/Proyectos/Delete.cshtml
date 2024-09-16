@@ -4,9 +4,21 @@
     ViewData["Title"] = "Delete";
 }
 
+<style>
+    .text-wrap {
+        word-wrap: break-word;
+        white-space: normal;
+    }
+</style>
 
 
-<h3>¿Está seguro de archivar este proyecto?</h3>
+<!-- Mostrar alerta con el mensaje de TempData -->
+@if (TempData["DeleteMessage"] != null)
+{
+    <div class="alert alert-warning">
+        @TempData["DeleteMessage"]
+    </div>
+}
 
     <dl class="row">
         <dt class = "col-sm-2">
@@ -39,3 +51,21 @@
         <input type="hidden" asp-for="Id" />     
     </form>
 </>
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Leer el valor de ViewBag.PuedeEliminarse
+        var puedeEliminarse = '@(ViewBag.PuedeEliminarse ?? false)';
+
+        // Verificar si se puede eliminar
+        if (puedeEliminarse === "True" || puedeEliminarse === "true") {
+            // Eliminar está permitido
+            console.log("Eliminar está permitido.");
+            $(".btn-delete").prop("disabled", false); // Asegurarse de que el botón no está deshabilitado
+        } else {
+            // No se puede eliminar
+            console.log("Eliminar no está permitido.");
+            $(".btn-delete").prop("disabled", true); // Deshabilitar el botón
+            $(".btn-delete").off('click'); // Evitar cualquier acción en el botón de eliminar
+        }
+    });
+</script>
