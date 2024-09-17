@@ -578,6 +578,15 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                 return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
             }
 
+            // Obtener el proyecto relacionado con la inspección
+
+            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
+{
+    return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
+}
+
+
             // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
             var inspeccionesExistentes = await _context.Inspeccion
                 .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada)
@@ -656,7 +665,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             }
             // Obtener el inspector y proyecto asignados
             var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            
 
             // Preparar el mensaje de correo electrónico en formato HTML para el inspector
             var subject = "Nueva Inspección Asignada";
@@ -743,7 +752,17 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                               .GetCustomAttributes(typeof(DisplayAttribute), false)
                               .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
                 }).ToList();
-
+            // Obtener las categorías que tienen al menos un tipo de inspección
+            var categoriasConTipos = await _context.TipoInspeccion
+                .GroupBy(t => t.Categoria)
+                .Where(g => g.Any())  // Filtra solo las categorías que tienen tipos de inspección
+                .Select(g => new SelectListItem
+                {
+                    Value = g.Key.ToString(),
+                    Text = GetEnumDisplayName(g.Key)
+                })
+                .ToListAsync();
+            ViewData["CategoriasInspeccion"] = categoriasConTipos;
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
@@ -777,6 +796,12 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             {
                 // Enviar mensaje de error como JSON
                 return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
+            }
+            // Obtener el proyecto relacionado con la inspección
+            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
+            {
+                return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
             }
 
             var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
@@ -877,7 +902,6 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                     // Obtener el inspector original y el nuevo inspector
                     var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
                     var inspectorNuevo = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-                    var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
 
                     // Preparar y enviar el correo si hay cambios
                     if (inspeccionOriginal.FechaInspeccion != inspeccion.FechaInspeccion ||
@@ -1097,7 +1121,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             return Json(residentes);
         }
 
-
+      
 
 
     }
