@@ -9,6 +9,7 @@ namespace Buildoc.Models
             FechaNacimiento = DateOnly.FromDateTime(DateTime.Now);
         }
         [Required(ErrorMessage = "Campo requerido")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "El apellido no debe contener números.")]
         [MaxLength(255, ErrorMessage = "La longitud maxima es de 255 caracteres")]
         [Display(Name = "Apellidos")]
         public string Apellidos { get; set; }
@@ -22,6 +23,7 @@ namespace Buildoc.Models
         public string? ConfirmPassword { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]
+        [RegularExpression(@"^[a-zA-Z\s]+$", ErrorMessage = "El nombre no debe contener números.")]
         [MaxLength(255, ErrorMessage = "La longitud maxima es de 255 caracteres")]
         [Display(Name = "Nombres")]
         public string Nombres { get; set; }
@@ -47,9 +49,11 @@ namespace Buildoc.Models
         public string Arl { get; set; }
 
         [Required(ErrorMessage = "Campo requerido")]
+        [RegularExpression(@"^\d{7,10}$", ErrorMessage = "El número de teléfono debe tener 10 dígitos.")]
         [Display(Name = "Cédula")]
         public long Cedula { get; set; }
         [Required(ErrorMessage = "Campo requerido")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "El número de teléfono debe tener 10 dígitos.")]
         [Display(Name = "Teléfono")]
         public long Telefono { get; set; }
 

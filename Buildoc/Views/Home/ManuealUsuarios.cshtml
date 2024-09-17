@@ -1,18 +1,41 @@
 ﻿
+@{
 
-<body>   
+}
+<body>
     <!-- About Start -->
     <div id="aboaut" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
         <div class="container py-5">
             <div class="row g-5">
-                <div class="col-lg-12">
+                <!-- Tabla de contenido Start -->
+                <div class="col-lg-3">
+                    <div class="bg-light p-4 rounded">
+                        <h4 class="text-primary mb-4">Tabla de Contenido</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#crear-incidente">¿Como crear usuario en BuilDoc?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#editar-incidente">¿Como editar usuarios?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#desactivar-incidente">¿Como desactivar un usuario?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#reactivar-incidente">¿Como reactivar un usuario?</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Tabla de contenido End -->
+                <div class="col-lg-9">
                     <div class="section-title position-relative pb-3 mb-5">
                         <h5 class="fw-bold text-primary text-uppercase">Manual de usuario</h5>
                         <h1 class="mb-0">Preguntas frecuentes de gestion de usuario</h1>
                     </div>
                     <div class="accordion" id="accordionExample">
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
+                            <h2 class="accordion-header" id="crear-incidente">
                                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                     ¿Como crear usuario en BuilDoc?
                                 </button>
@@ -23,13 +46,13 @@
                                     <p>Es importante destacar que todos los campos deben ser completados. Además, el usuario debe ser mayor de 18 años, y el número de cédula debe tener entre 7 y 10 dígitos. Una vez que hayas ingresado todos los datos correctamente, haz clic en el botón "Guardar". Si el proceso se completa exitosamente, recibirás un mensaje de confirmación, y el nuevo usuario recibirá un correo electrónico con sus credenciales de acceso y un enlace para autenticarse en el sistema.</p>
                                     <!-- Contenedor para hacer responsivo el iframe -->
                                     <div class="video-responsive">
-                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/EM9U_2grkW8?si=CcQ01g-euMkOeqmi" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/pknjS3bysBA?si=9zyOUv6vNOydUSa9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
+                            <h2 class="accordion-header" id="editar-incidente">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                     ¿Como editar usuarios?
                                 </button>
@@ -45,14 +68,32 @@
                             </div>
                         </div>
                         <div class="accordion-item">
-                            <h2 class="accordion-header">
+                            <h2 class="accordion-header" id="desactivar-incidente">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                    Accordion Item #3
+                                    ¿Como desactivar un usuario?
                                 </button>
                             </h2>
                             <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
                                 <div class="accordion-body">
-                                    <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                    <p>En este video, explicaremos cómo desactivar un usuario en el software BUILDOC. Esta acción solo está disponible para usuarios con el rol de administrador. Para desactivar un usuario, primero debemos ir a la sección de "Usuarios" y, en la tabla principal, buscar al usuario que deseamos desactivar. Luego, hacemos clic en el ícono de la papelera, lo que abrirá un modal de confirmación donde se mostrarán los detalles del usuario seleccionado. Si confirmamos la acción presionando el botón "Desactivar", aparecerá un mensaje de éxito, y el estado del usuario cambiará a "Desactivado". Además, el usuario recibirá un correo electrónico notificando que su cuenta ha sido desactivada.</p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/xsEOKs3Tsjs?si=MAuKhFUJXoYWoX8S" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="reactivar-incidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    ¿Como reactivar un usuario?
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>En este video, explicaremos cómo reactivar un usuario en el software BUILDOC. Esta acción solo está disponible para usuarios con el rol de administrador. Para desactivar un usuario, primero debemos ir a la sección de "Usuarios" y, en la tabla principal, buscar al usuario que deseamos reactivar. Luego, hacemos clic en el texto reactivar, lo que abrirá un modal de confirmación donde se mostrarán los detalles del usuario seleccionado. Si confirmamos la acción presionando el botón "Reactivar", aparecerá un mensaje de éxito, y el estado del usuario cambiará a "Activo". Además, el usuario recibirá un correo electrónico notificando que su cuenta ha sido reactivada.</p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/9yeJTr7dH2U?si=f2T8rc8t_nHo0_74" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><iframe width="560" height="315" src="https://www.youtube.com/embed/xsEOKs3Tsjs?si=MAuKhFUJXoYWoX8S" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
                                 </div>
                             </div>
                         </div>
