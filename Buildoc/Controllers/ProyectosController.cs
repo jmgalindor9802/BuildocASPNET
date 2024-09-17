@@ -156,6 +156,7 @@ namespace Buildoc.Controllers
             {
                 proyecto.Id = Guid.NewGuid();
                 proyecto.Estado = Proyecto.EstadoProyecto.EnCurso;
+                proyecto.FechaCreacion = DateTime.Now;
                 if (proyecto.FechaFinalizacion < DateTime.Now)
                 {
                     return Json(new { success = false, message = "La fecha de finalización no puede ser menor a la fecha actual." });

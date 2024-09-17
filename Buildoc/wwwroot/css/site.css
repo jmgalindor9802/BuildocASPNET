@@ -822,3 +822,15 @@ h6,
     text-overflow: ellipsis; /* Muestra puntos suspensivos (...) si el texto es demasiado largo */
     max-width: 100%; /* Asegura que el texto no exceda el contenedor */
 }
+
+
+@media (max-width: 576px) {
+    .small-box .inner p {
+        font-size: 1.1rem !important; /* Forzar el cambio de tamaño */
+    }
+
+    .small-box .inner h3 {
+        font-size: 1.3rem !important; /* Reducir el tamaño del número */
+    }
+}
+

@@ -85,6 +85,7 @@
                 <div id="archivosRelacionados" class="mt-3">
                     <h6 class="text-primary"><i class="fas fa-file-alt"></i> Archivos relacionados</h6>
                     <ul id="listaArchivos" class="list-unstyled"></ul>
+
                 </div>
             </div>
 
@@ -93,6 +94,9 @@
         <div class="form-group">
             <label for="UploadedFiles">Subir Archivos</label>
             <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
+            </br>
+            <span id="fileSizeError" class="text-danger"></span> <!-- Este elemento mostrará el mensaje de error -->
+
         </div>
     </form>
 </div>
@@ -246,5 +250,30 @@
 <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 
+<script>
+    document.getElementById("UploadedFiles").addEventListener("change", function (event) {
+        const maxFileSize = 25 * 1024 * 1024; // 25MB en bytes
+        const files = event.target.files;
+        let hasLargeFile = false;
 
+        // Limpiar mensajes de error previos
+        document.getElementById("fileSizeError").textContent = "";
 
+        // Verificar el tamaño de cada archivo
+        for (let i = 0; i < files.length; i++) {
+            if (files[i].size > maxFileSize) {
+                hasLargeFile = true;
+                break;
+            }
+        }
+
+        if (hasLargeFile) {
+            // Mostrar mensaje de error al usuario
+            alert("Uno o más archivos superan el límite permitido de 25MB.");
+            // Limpiar el input de archivos
+            event.target.value = "";
+        }
+    });
+
+</script>
+<script src="/js/tamanoArchivos.js"></script>

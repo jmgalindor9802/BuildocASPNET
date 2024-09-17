@@ -89,10 +89,11 @@
 
                     </ul>
 
-                        <label for="UploadedFiles">Subir nuevos archivos</label>
-                        <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
-                        <small class="form-text text-muted">Solo sube nuevos archivos si es necesario.</small>
+                    <div class="form-group">
+                        <label for="UploadedFiles">Subir Archivos</label>
+                        <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />                      
                     </div>
+                </div>
             </div>
 
                 <div class="col-lg-4 " >
@@ -136,52 +137,8 @@
         </div>       
     </form>
 </div>
-    <script>
-        $(document).ready(function () {
-            $('#ProyectoId').change(function () {
-                var proyectoId = $(this).val();
-                var $inspectorSelect = $('#InspectorId');
-                $inspectorSelect.empty(); // Limpia el select antes de llenarlo
-
-                if (proyectoId) {
-                    $.getJSON('@Url.Action("GetInspectoresByProyecto")', { proyectoId: proyectoId }, function (data) {
-                        if (data.length > 0) {
-                            $.each(data, function (index, item) {
-                                $inspectorSelect.append($('<option>', {
-                                    value: item.id,
-                                    text: item.nombreCompleto
-                                }));
-                            });
-                        } else {
-                            // Añadir una opción indicando que no hay residentes asignados
-                            $inspectorSelect.append($('<option>', {
-                                value: '',
-                                text: 'No hay residentes asignados a este proyecto',
-                                disabled: true
-                            }));
-                        }
-                    });
-                } else {
-                    // Opción predeterminada si no se ha seleccionado ningún proyecto
-                    $inspectorSelect.append($('<option>', {
-                        value: '',
-                        text: 'Selecciona un proyecto primero',
-                        disabled: true
-                    }));
-                }
-            });         
-
-        });
 
 
-
-    </script>
-
+<script src="/js/tamanoArchivos.js"></script>
     <script src="/js/detalleTipoInspeccion.js"></script>
     <script src="/js/toggleDuracionHoras.js"></script>
-
-@section Scripts {
-    <script src="/AdminLTE/plugins/jquery-validation/jquery.validate.min.js"></script>
-    <script src="/AdminLTE/plugins/jquery-validation/additional-methods.min.js"></script>
-    <script src="/js/edit.js"></script>
-}

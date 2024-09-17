@@ -20,6 +20,16 @@ namespace Buildoc.Services
 
         public async Task<string> Upload(IFormFile file, string containerName)
         {
+            // Definir el tamaño máximo permitido en bytes (25 MB)
+            const long MaxFileSize = 25 * 1024 * 1024; // 25 MB
+
+            // Verificar si el archivo excede el tamaño máximo permitido
+            if (file.Length > MaxFileSize)
+            {
+                throw new InvalidOperationException("El tamaño del archivo excede el límite permitido de 25MB.");
+            }
+
+
             // Obtiene el cliente del contenedor de blobs
             var containerInstance = _blobServiceClient.GetBlobContainerClient(containerName);
 

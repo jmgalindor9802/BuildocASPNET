@@ -90,7 +90,12 @@
 			width: 100%; /* Asegura que ocupe el mismo ancho */
 		}
 
-
+		 /* Reducir el tamaño del título en pantallas pequeñas */
+    @@media (max-width: 576px) {
+        h1 {
+            font-size: 1.5rem; /* Ajusta el tamaño del título en móviles */
+        }
+    }
 
 
 	</style>
@@ -396,7 +401,7 @@
 		<script src="/js/modal-operations.js"></script>
 		<script src="/js/departamentos.js"></script>
 		<script src="~/js/scriptincidentecreate.js"></script>
-
+		<script src="/js/tamanoArchivos.js"></script>
 		<!-- Spinner para carga -->
 		<div id="loadingSpinner" class="modal" style="display: none; background-color: rgba(0, 0, 0, 0.5); z-index: 1050;">
 			<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
