@@ -41,7 +41,7 @@
 
 
             <li class="nav-item ml-auto">
-                <form id="logoutForm" asp-action="Logout" method="post" class="d-inline">
+                <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                     <button type="submit" class="btn btn-light">
                         <i class="fas fa-sign-out-alt"></i> <!-- Ícono para el botón de cerrar sesión -->
                         <span class="d-none d-md-inline">Cerrar sesión</span> <!-- Texto oculto en pantallas móviles -->
