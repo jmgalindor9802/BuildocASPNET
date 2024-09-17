@@ -1,5 +1,237 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<body>
+    <!-- About Start -->
+    <div id="aboaut" class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="container py-5">
+            <div class="row g-5">
+                <!-- Tabla de contenido Start -->
+                <div class="col-lg-3">
+                    <div class="bg-light p-4 rounded">
+                        <h4 class="text-primary mb-4">Tabla de Contenido</h4>
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="#crear-tipoIncidente">¿Como crear un tipo de incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#editar-tipoIncidente">¿Como editar un tipo de incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#desactivar-tipoIncidente">¿Como desactivar o eliminar un tipo de incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#reactivar-tipoIncidente">¿Como reactivar un tipo de incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#crear-incidente">¿Como reportar un incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#crear-novedadIncidente">¿Como añadir una novedad a un incidente?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#cambiar-estadoIncidenteA">¿Como cambiar el estado a un incidente activo?</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#cambiar-estadoIncidenteB">¿Como cambiar el estado a un incidente cerrado?</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Tabla de contenido End -->
+                <div class="col-lg-9">
+                    <div class="section-title position-relative pb-3 mb-5">
+                        <h5 class="fw-bold text-primary text-uppercase">Manual de usuario</h5>
+                        <h1 class="mb-0">Preguntas frecuentes de gestion de usuario</h1>
+                    </div>
+                    <div class="accordion" id="accordionExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="crear-tipoIncidente">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    ¿Como crear un tipo de incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>
+                                        En este video, explicaremos cómo crear un tipo de incidente en el software BUILDOC. Esta acción está disponible únicamente para los usuarios con rol de administrador.
+                                    </p>
+                                    <p>
+                                        Para crear un tipo de incidente, primero debemos acceder a la sección de "Incidentes", la cual se encuentra en el menú lateral izquierdo. Luego, presionamos el botón en la parte superior que dice "Tipos de Incidentes", lo que nos llevará a la vista donde se gestionan los diferentes tipos de incidentes.
+                                        A continuación, hacemos clic en el botón "Crear Tipo de Incidente", lo que abrirá un formulario con varios campos. En este formulario, deberemos completar la siguiente información: el nombre del tipo de incidente, la categoría, el nivel de gravedad (que determinará si se envían correos electrónicos en función de su severidad), y una descripción del incidente.
+                                    </p>
+                                    <p>
+                                        Una vez que hayamos completado todos los campos, presionamos el botón "Guardar". Si el proceso se completa exitosamente, aparecerá un mensaje de confirmación y el nuevo tipo de incidente se mostrará en la tabla de tipos disponibles. A partir de ese momento, el tipo de incidente que hemos creado podrá ser utilizado para reportar y categorizar incidentes en el sistema.
+                                    </p>
+                                    <!-- Contenedor para hacer responsivo el iframe -->
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/fzQ2y1fg7so?si=H22sxuYAHtI4u54H" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><iframe width="560" height="315" src="https://www.youtube.com/embed/pknjS3bysBA?si=9zyOUv6vNOydUSa9" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="editar-tipoIncidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    ¿Como editar un tipo de incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>En este video, explicaremos cómo editar un tipo de incidente en el software BUILDOC. Esta acción está disponible únicamente para los usuarios con rol de administrador.</p>
+                                    <p>
+                                        Para crear un tipo de incidente, primero debemos acceder a la sección de "Incidentes", la cual se encuentra en el menú lateral izquierdo. Luego, presionamos el botón en la parte superior que dice "Tipos de Incidentes", lo que nos llevará a la vista donde se gestionan los diferentes tipos de incidentes.
+                                        A continuación, buscamos en la tabla el tipo de incidente que deseamos editar y presionamos el icono de editar, lo que abrirá un formulario con varios campos. En este formulario, deberemos completar la siguiente información: el nombre del tipo de incidente, la categoría, el nivel de gravedad (que determinará si se envían correos electrónicos en función de su severidad), y una descripción del incidente.
+                                    </p>
+                                    <p>
+                                        Una vez que hayamos completado todos los campos, presionamos el botón "Guardar". Si el proceso se completa exitosamente, aparecerá un mensaje de confirmación y el tipo de incidente que hayamos editado se mostrará en la tabla de tipos disponibles.
+                                    </p>
+                                    <!-- Contenedor para hacer responsivo el iframe -->
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/cbuB372PKcw?si=uyS7zreGbIIITu2_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="desactivar-tipoIncidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    ¿Como desactivar o eliminar un tipo de incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>En este video, explicaremos cómo eliminar o desactivar un tipo de incidente en el software BUILDOC. Estas acciones están disponibles únicamente para los usuarios con rol de administrador.</p>
+                                    <p>
+                                        Para eliminar o desactivar un tipo de incidente, primero debemos acceder a la sección de "Incidentes", la cual se encuentra en el menú lateral izquierdo. Luego, presionamos el botón en la parte superior que dice "Tipos de Incidentes", lo que nos llevará a la vista donde se gestionan los diferentes tipos de incidentes.
+                                        Una vez en esta vista, buscamos en la tabla el tipo de incidente que deseamos eliminar o desactivar. Al presionar el ícono de la papelera, pueden ocurrir dos situaciones:
+                                    </p>
+                                    <ol>
+                                        <li>
+                                            Si el tipo de incidente está asociado a algún incidente existente, el sistema solo permitirá desactivar el tipo de incidente, es decir, no podrá eliminarse.
+                                        </li>
+                                        <li>
+                                            Si el tipo de incidente no tiene ningún incidente asociado, el sistema permitirá eliminarlo por completo.
+                                        </li>
+                                    </ol>
+                                    <p>
+                                        Después de seleccionar la opción correspondiente, aparecerá un modal de confirmación preguntando si estamos seguros de realizar esta acción. Si confirmamos, el proceso se completará exitosamente, mostrándonos un mensaje de confirmación. El tipo de incidente cambiará su estado a "Desactivado" o será eliminado, dependiendo de la situación.
+                                    </p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/a87am3jPk_4?si=pcKNzNK81xFi4Rn_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="reactivar-incidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                    ¿Como reactivar un tipo de incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>En este video, explicaremos cómo reactivar un usuario en el software BUILDOC. Esta acción solo está disponible para usuarios con el rol de administrador. Para desactivar un usuario, primero debemos ir a la sección de "Usuarios" y, en la tabla principal, buscar al usuario que deseamos reactivar. Luego, hacemos clic en el texto reactivar, lo que abrirá un modal de confirmación donde se mostrarán los detalles del usuario seleccionado. Si confirmamos la acción presionando el botón "Reactivar", aparecerá un mensaje de éxito, y el estado del usuario cambiará a "Activo". Además, el usuario recibirá un correo electrónico notificando que su cuenta ha sido reactivada.</p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/9yeJTr7dH2U?si=f2T8rc8t_nHo0_74" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe><iframe width="560" height="315" src="https://www.youtube.com/embed/xsEOKs3Tsjs?si=MAuKhFUJXoYWoX8S" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="crear-incidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                    ¿Como reportar un incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>
+                                        En este video explicaremos cómo reportar un incidente en el software BUILDOC, una funcionalidad disponible para los roles de coordinador y residente.
+                                        Para comenzar, accedemos a la sección "Incidentes" desde el menú lateral izquierdo. A continuación, hacemos clic en el botón "Reportar incidente", lo que abrirá un formulario con todos los campos necesarios para registrar un nuevo incidente. En este formulario, deberemos completar información como: un resumen breve del incidente, el proyecto asociado, la fecha y hora del incidente (si se conoce), una descripción detallada, la posibilidad de adjuntar archivos relacionados, la categoría y el tipo de incidente, y un checkbox opcional para reportar lesionados.
+                                    </p>
+                                    <p>
+                                        Una vez que hayamos completado correctamente todos los campos, presionamos el botón "Guardar". Si el reporte se registra con éxito, se mostrará un mensaje de confirmación y el incidente aparecerá en la tabla de incidentes. Dependiendo de la gravedad del incidente o si se ha reportado un lesionado, se notificará al coordinador del proyecto.
+                                    </p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/cHmXaB3xi0Q?si=luoCiUIqTFGP-YXK" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="crear-novedadIncidente">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                    ¿Como añadir una novedad a un incidente?
+                                </button>
+                            </h2>
+                            <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>
+                                        En este video explicaremos cómo añadir una novedad a un incidente previamente reportado en el software BUILDOC. Esta funcionalidad está disponible para los roles de coordinador y residente..
+                                    </p>
+                                    <p>
+                                        Para comenzar, accede a la sección "Incidentes" desde el menú lateral izquierdo. Luego, busca en la tabla un incidente que tenga un estado activo. Podrás añadir la novedad utilizando el botón de acción o desde los detalles del incidente. Esto abrirá un formulario en el que podrás escribir una descripción de la novedad y adjuntar archivos que ayuden a comprender mejor los acontecimientos posteriores al incidente.
+                                    </p>
+                                    <p>
+                                        Una vez que hayas completado todos los campos correctamente, presiona el botón "Guardar". Si el registro se realiza con éxito, verás un mensaje de confirmación, y la novedad aparecerá en la línea de tiempo del incidente.
+                                    </p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/CctnY58SIn4?si=2Zij9Vs0FssrO2Sp" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="cambiar-estadoIncidenteA">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSeven" aria-expanded="false" aria-controls="collapseSeven">
+                                    ¿Como cambiar el estado a un incidente activo?
+                                </button>
+                            </h2>
+                            <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>
+                                        En este video explicaremos cómo cambiar el estado de un incidente previamente reportado en el software BUILDOC. Esta funcionalidad está disponible exclusivamente para el rol de coordinador.
+                                    </p>
+                                    <p>
+                                        Para comenzar, accede a la sección "Incidentes" desde el menú lateral izquierdo. A continuación, busca en la tabla un incidente con estado activo o navega directamente a la vista de incidentes activos. Luego, selecciona el incidente y accede al formulario de añadir novedad. En este formulario, tendrás la opción de cambiar el estado del incidente activando el checkbox "¿Desea cambiar el estado del incidente?". Al activarlo, se desplegará una lista con las opciones para cambiar el estado a "Solucionado" o "Cerrado"..
+                                    </p>
+                                    <p>
+                                        La decisión del nuevo estado dependerá del coordinador: selecciona "Solucionado" si el incidente ha sido resuelto, o elige "Cerrado" si se ha decidido continuar con el proyecto sin poder resolver el incidente. Además, podrás añadir una descripción detallada de la novedad y adjuntar archivos relevantes.
+                                        Una vez que hayas completado todos los campos correctamente, presiona el botón "Guardar". Si el proceso es exitoso, se mostrará un mensaje de confirmación, la novedad aparecerá en la línea de tiempo del incidente, y su estado se actualizará según lo seleccionado.
+                                    </p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/1Yiq8CunBaA?si=8OuYf2fQIc4AR9pG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="cambiar-estadoIncidenteB">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEight" aria-expanded="false" aria-controls="collapseEight">
+                                    ¿Como cambiar el estado a un incidente cerrado?
+                                </button>
+                            </h2>
+                            <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <p>
+                                        En este video explicaremos cómo cambiar el estado de un incidente con estado cerrado en el software BUILDOC. Esta funcionalidad está disponible exclusivamente para el rol de coordinador.
+                                    </p>
+                                    <p>
+                                        Para comenzar, accede a la sección "Incidentes" desde el menú lateral izquierdo. A continuación, busca en la tabla un incidente con estado cerrado o navega directamente a la vista de incidentes cerrados. Luego, selecciona el incidente y accede al formulario de añadir novedad. En este formulario, tendrás la opción de cambiar el estado del incidente activando el checkbox "¿Desea cambiar el estado del incidente?". Al activarlo, se desplegará una lista con las opciones para cambiar el estado a "Solucionado" o "Activo".
+                                    </p>
+                                    <p>
+                                        La decisión del nuevo estado dependerá del coordinador: selecciona "Solucionado" si el incidente ha sido resuelto y se puede continuar con la obra, o elige "Activo" si considera que es necesario detener parcial o completamente el proyecto para solucionar el incidente. Además, podrás añadir una descripción detallada de la novedad y adjuntar archivos relevantes.
+                                    </p>
+                                    <p>
+                                        Una vez que hayas completado todos los campos correctamente, presiona el botón "Guardar". Si el proceso es exitoso, se mostrará un mensaje de confirmación, la novedad aparecerá en la línea de tiempo del incidente, y su estado se actualizará según lo seleccionado.
+                                    </p>
+                                    <div class="video-responsive">
+                                        <iframe width="560" height="315" src="https://www.youtube.com/embed/-YCG9qNEneU?si=Y-rLCwl190nojLtR" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

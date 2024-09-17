@@ -1,0 +1,112 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Perfil de usuario";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+<div class="card card-outline card-primary">
+    <div class="card-header text-center">
+        <h3>@ViewData["Title"]</h3>
+    </div>
+    <div class="card-body">
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
+        <div class="row justify-content-center mb-4">
+            <div class="col-md-12">
+                <form id="profile-form" class="ml-3 mr-3" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Nombres"></label>
+                                <input asp-for="Input.Nombres" class="form-control" />
+                                <span asp-validation-for="Input.Nombres" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Apellidos"></label>
+                                <input asp-for="Input.Apellidos" class="form-control" />
+                                <span asp-validation-for="Input.Apellidos" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Cedula"></label>
+                                <input asp-for="Input.Cedula" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Cedula" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Telefono"></label>
+                                <input asp-for="Input.Telefono" class="form-control" />
+                                <span asp-validation-for="Input.Telefono" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.FechaNacimiento"></label>
+                                <input asp-for="Input.FechaNacimiento" class="form-control" type="date" />
+                                <span asp-validation-for="Input.FechaNacimiento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Email"></label>
+                                <input asp-for="Input.Email" class="form-control" disabled />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Departamento"></label>
+                                <input asp-for="Input.Departamento" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Departamento" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Municipio"></label>
+                                <input asp-for="Input.Municipio" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Municipio" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Direccion"></label>
+                                <input asp-for="Input.Direccion" class="form-control" />
+                                <span asp-validation-for="Input.Direccion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Eps"></label>
+                                <input asp-for="Input.Eps" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Eps" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Arl"></label>
+                                <input asp-for="Input.Arl" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Arl" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" asp-for="Input.Profesion"></label>
+                                <input asp-for="Input.Profesion" class="form-control" readonly/>
+                                <span asp-validation-for="Input.Profesion" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6"></div>
+                    </div>
+                    <button id="update-profile-button" type="submit" class="btn btn-primary">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
