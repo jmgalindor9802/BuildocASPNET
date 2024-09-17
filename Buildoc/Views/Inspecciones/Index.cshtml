@@ -240,7 +240,8 @@
                             @Html.DisplayFor(modelItem => item.Estado)
                         </span>
                     </td>
-                    <td data-endtime="@(item.DuracionHoras.HasValue ? item.FechaInspeccion.AddHours(item.DuracionHoras.Value).ToString("yyyy-MM-ddTHH:mm:ss") : "No aplica")">
+<td data-endtime="@(item.FechaInspeccion.ToString("yyyy-MM-ddTHH:mm:ss"))">
+
 
 
 
@@ -440,28 +441,34 @@
             var respondButton = row.querySelector('.respond-item'); // Selecciona el botón de responder
             var estadoCell = row.querySelector("td:nth-child(6)"); // Ajusta el índice si es necesario para el estado
 
+            // Asegúrate de que el atributo data-endtime tenga un valor
             if (tiempoRestanteCell && tiempoRestanteCell.dataset.endtime) {
                 var endTime = new Date(tiempoRestanteCell.dataset.endtime);
                 var now = new Date();
                 var timeDiff = endTime - now;  // Diferencia de tiempo en milisegundos
                 var estado = estadoCell ? estadoCell.textContent.trim() : "";
 
-                console.log('Tiempo restante en milisegundos:', timeDiff);
-                console.log('Estado actual:', estado);
-
                 if (estado === "Programada") { // Solo modificar si está en estado Programada
                     if (timeDiff > 0) {
                         // Si aún no ha llegado la fecha/hora, calcular el tiempo restante
-                        var hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                        var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                        tiempoRestanteCell.innerText = `${hours}h ${minutes}m restantes`;
+
+                        if (days > 0) {
+                            tiempoRestanteCell.innerText = `${days}d ${hours}h restantes`;
+                        } else if (hours > 0) {
+                            tiempoRestanteCell.innerText = `${hours}h ${minutes}m restantes`;
+                        } else {
+                            tiempoRestanteCell.innerText = `${minutes}m restantes`;
+                        }
 
                         // Deshabilitar el botón ya que aún no ha llegado la hora de la inspección
                         if (respondButton) {
                             respondButton.classList.add('disabled');
                         }
                     } else {
-                        // Si ya ha pasado la fecha/hora, mostrar "Por responder" con la clase de badge personalizada
+                        // Si ya ha pasado la fecha/hora, mostrar "Por responder"
                         tiempoRestanteCell.innerHTML = `<span class="badge badge-sin-responder">Por responder</span>`;
 
                         // Habilitar el botón si la inspección ya pasó
@@ -471,9 +478,9 @@
                     }
                 } else {
                     // Si el estado no es Programada, no mostrar ningún texto en esta celda
-                    tiempoRestanteCell.innerText = "";
+                    tiempoRestanteCell.innerText = "No aplica";
 
-                    // Si no aplica el tiempo, deshabilitar el botón
+                    // Deshabilitar el botón si no aplica
                     if (respondButton) {
                         respondButton.classList.add('disabled');
                     }
@@ -494,6 +501,7 @@
 
     // Llamar a la función una vez al cargar la página
     updateTimeRemaining();
+
 
 </script>
 
