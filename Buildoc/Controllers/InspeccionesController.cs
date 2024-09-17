@@ -618,25 +618,34 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             {
                 foreach (var file in model.UploadedFiles)
                 {
-                    if (file.Length > 0)
+                    try
                     {
-                        var fileUrl = await _fileService.Upload(file, "documents");
-                        _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
-                        var fileModel = new FileModel
+                        if (file.Length > 0)
                         {
-                            Id = Guid.NewGuid(),
-                            InspeccionId = inspeccion.Id,
-                            FileName = Path.GetFileName(file.FileName),
-                            FilePath = fileUrl,
-                            ContentType = file.ContentType,
-                            FileSize = file.Length
-                        };
+                            // Subir archivo y manejar la excepción si excede el límite de tamaño
+                            var fileUrl = await _fileService.Upload(file, "documents");
+                            _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                InspeccionId = inspeccion.Id,
+                                FileName = Path.GetFileName(file.FileName),
+                                FilePath = fileUrl,
+                                ContentType = file.ContentType,
+                                FileSize = file.Length
+                            };
 
-                        _context.FileModels.Add(fileModel);
+                            _context.FileModels.Add(fileModel);
+                        }
+                        else
+                        {
+                            _logger.LogWarning($"Archivo {file.FileName} tiene longitud cero.");
+                        }
                     }
-                    else
+                    catch (InvalidOperationException ex)
                     {
-                        _logger.LogWarning($"Archivo {file.FileName} tiene longitud cero.");
+                        // Manejar la excepción cuando el archivo excede el tamaño permitido
+                        return Json(new { success = false, message = ex.Message });
                     }
                 }
                 await _context.SaveChangesAsync();
@@ -831,20 +840,34 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                     {
                         foreach (var file in model.UploadedFiles)
                         {
-                            if (file.Length > 0)
+                            try
                             {
-                                var fileUrl = await _fileService.Upload(file, "documents");  // Supone que tienes un servicio para manejar la subida
-                                var fileModel = new FileModel
+                                if (file.Length > 0)
                                 {
-                                    Id = Guid.NewGuid(),
-                                    InspeccionId = inspeccion.Id,
-                                    FileName = Path.GetFileName(file.FileName),
-                                    FilePath = fileUrl,
-                                    ContentType = file.ContentType,
-                                    FileSize = file.Length
-                                };
+                                    // Subir archivo y manejar la excepción si excede el límite de tamaño
+                                    var fileUrl = await _fileService.Upload(file, "documents");
+                                    _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
+                                    var fileModel = new FileModel
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        InspeccionId = inspeccion.Id,
+                                        FileName = Path.GetFileName(file.FileName),
+                                        FilePath = fileUrl,
+                                        ContentType = file.ContentType,
+                                        FileSize = file.Length
+                                    };
 
-                                _context.FileModels.Add(fileModel);  // Asegúrate de tener un modelo `FileModel`
+                                    _context.FileModels.Add(fileModel);
+                                }
+                                else
+                                {
+                                    _logger.LogWarning($"Archivo {file.FileName} tiene longitud cero.");
+                                }
+                            }
+                            catch (InvalidOperationException ex)
+                            {
+                                // Manejar la excepción cuando el archivo excede el tamaño permitido
+                                return Json(new { success = false, message = ex.Message });
                             }
                         }
 
