@@ -161,7 +161,7 @@
                             <select id="filterEstado" class="form-control">
                                 <option value="all">Todos</option>
                                 <option value="0">Por aprobar</option>              
-                                <option value="2">Finalizada</option>
+                            
                                 <option value="3">Programada</option>
                                 <option value="4">Sin responder</option>
                                 <option value="5">Aprobada</option>
@@ -281,6 +281,13 @@
                                 </a>
                                 }
                         }
+                            @if (item.Estado == EstadoInspeccion.PendientesDeRevision && !esAdmin)
+                            {
+                            <a href="#" class="respond-item" data-url="@Url.Action("Create", "NovedadInspeccion", new { id = item.Id })" data-title="Agregar Novedad" data-action="respond">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                            }
+
 
                     </td>
                     </tr>
