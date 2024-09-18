@@ -105,7 +105,7 @@ namespace Buildoc.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
+        public async Task<IActionResult> Create([Bind("Id,InspeccionId,Resultado,Observaciones,FechaRespuesta,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,RecomendacionesFuturas,RecomendacionesFuturasList,InspeccionAdicionalId,EstadoRespuesta")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
         {
           
             if (ModelState.IsValid)
@@ -262,7 +262,7 @@ namespace Buildoc.Controllers
         // POST: RespuestaInspeccion/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,InspeccionId,Resultado,Observaciones,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,DocumentacionCompleta,RecomendacionesFuturas,RecomendacionesFuturasList")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,InspeccionId,Resultado,Observaciones,EsNecesariaInspeccionAdicional,AccionesCorrectivas,AccionesCorrectivasLista,RecomendacionesFuturas,RecomendacionesFuturasList")] RespuestaInspeccion respuestaInspeccion, IList<IFormFile> files, IList<IFormFile> images)
         {
             // Buscar la respuesta asociada a la inspección
             var respuestaInspeccionOriginal = await _context.RespuestaInspeccion
@@ -283,7 +283,6 @@ namespace Buildoc.Controllers
                     respuestaInspeccionOriginal.EsNecesariaInspeccionAdicional = respuestaInspeccion.EsNecesariaInspeccionAdicional;
                     respuestaInspeccionOriginal.AccionesCorrectivas = respuestaInspeccion.AccionesCorrectivas;
                     respuestaInspeccionOriginal.AccionesCorrectivasLista = respuestaInspeccion.AccionesCorrectivasLista;
-                    respuestaInspeccionOriginal.DocumentacionCompleta = respuestaInspeccion.DocumentacionCompleta;
                     respuestaInspeccionOriginal.RecomendacionesFuturas = respuestaInspeccion.RecomendacionesFuturas;
                     respuestaInspeccionOriginal.RecomendacionesFuturasList = respuestaInspeccion.RecomendacionesFuturasList;
                     respuestaInspeccionOriginal.FechaEdicion = DateTime.Now;
