@@ -135,6 +135,11 @@ namespace Buildoc.Data
            .HasForeignKey(f => f.TipoInspeccionId)
            .OnDelete(DeleteBehavior.Cascade);
 
+            builder.Entity<FileModel>()
+           .HasOne(f => f.NovedadInspeccion)
+           .WithMany(n => n.FileModels)
+           .HasForeignKey(f => f.NovedadInspeccionId)
+           .OnDelete(DeleteBehavior.Restrict); // Esto desactiva la eliminación en cascada
 
 
         }

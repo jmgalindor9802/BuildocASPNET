@@ -433,6 +433,8 @@ namespace Buildoc.Controllers
                         .ThenInclude(n => n.Archivos)
                     .Include(i => i.Novedades)
                      .ThenInclude(n => n.Usuario)
+                        .Include(i => i.Novedades)
+                .ThenInclude(n => n.FileModels) // Archivos asociados a las novedades
                     .Include(i => i.Respuesta)
                        .ThenInclude(n => n.FileModels)
                     .Include(i => i.FileModels)

@@ -172,6 +172,24 @@
                                          <p><strong>Autor:</strong> @novedad.Usuario.NombreCompleto</p>  
                                         <p>@novedad.Comentario</p>
 
+                                        <!-- Mostrar archivos adjuntos a la novedad -->
+                                        @if (novedad.FileModels != null && novedad.FileModels.Any())
+                                        {
+                                            <h6>Archivos adjuntos:</h6>
+                                            <ul>
+                                                @foreach (var file in novedad.FileModels)
+                                                {
+                                                    <li>
+                                                        <a href="@file.FilePath" target="_blank">@file.FileName</a>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        }
+                                        else
+                                        {
+                                            <p>No hay archivos adjuntos para esta novedad.</p>
+                                        }
+
                                         <span class="badge @(novedad.Estado == EstadoInspeccion.Aprobada ? "badge-aprobada" :
                                   novedad.Estado == EstadoInspeccion.Desaprobada ? "badge-desaprobada" :
                                   novedad.Estado == EstadoInspeccion.Programada ? "badge-programada" :
