@@ -2,14 +2,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
     console.log("DOM completamente cargado y parseado");
 
     var container = d3.select("#map");
-    var width = container.node().offsetWidth;
-    var height = container.node().offsetHeight;
+    var width = container.node().offsetWidth; // El ancho sigue siendo el ancho del contenedor
+    var height = container.node().offsetHeight; // El alto dinámico del contenedor
 
+    // Crear el elemento SVG
     var svg = container.append("svg")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("viewBox", `0 0 ${width} ${height}`)
-        .style("display", "block");
+        .attr("width", "100%") // Ancho flexible al 100% del contenedor
+        .attr("height", "100%") // Alto flexible al 100% del contenedor
+        .attr("viewBox", `0 0 ${width} ${height}`) // Mantener el viewBox basado en el tamaño inicial
+        .style("display", "block"); // Asegurar que el SVG se comporte como un bloque
+
 
     svg.append("defs").append("filter")
         .attr("id", "shadow")
