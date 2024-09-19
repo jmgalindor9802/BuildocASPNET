@@ -160,6 +160,10 @@ h6,
 }
 
 @media (max-width: 991.98px) {
+    #header-carousel {
+        margin-top: 70px;
+    }
+
     .sticky-top.navbar-dark {
         position: relative;
         background: #FFFFFF;
@@ -834,3 +838,29 @@ h6,
     }
 }
 
+/* Logo transparente visible por defecto */
+.logo-transparent {
+    display: block;
+}
+
+/* Logo blanco oculto por defecto */
+.logo-white {
+    display: none;
+}
+
+/* Estilos específicos para pantallas de celular */
+@media only screen and (max-width: 767px) {
+    .white-background {
+        background-color: #FFFFFF; /* Fondo blanco */
+        opacity: 1 !important; /* Asegura que el fondo no sea transparente */
+    }
+
+        .white-background .nav-link {
+            color: var(--dark); /* Color del texto si es necesario */
+        }
+
+            .white-background .nav-link:hover,
+            .white-background .nav-link.active {
+                color: var(--primary); /* Color del texto en hover y activo */
+            }
+}

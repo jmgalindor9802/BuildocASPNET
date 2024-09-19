@@ -20,8 +20,12 @@
     $(window).scroll(function () {
         if ($(this).scrollTop() > 45) {
             $('.navbar').addClass('sticky-top shadow-sm');
+            $('.logo-transparent').hide();
+            $('.logo-white').show();
         } else {
             $('.navbar').removeClass('sticky-top shadow-sm');
+            $('.logo-transparent').show();
+            $('.logo-white').hide();
         }
     });
 

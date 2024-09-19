@@ -29,7 +29,7 @@
     <link href="~/lib/animate/animate.min.css" rel="stylesheet" />
 
     <!-- Customized Bootstrap Stylesheet -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
@@ -38,6 +38,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Buildoc.styles.css" asp-append-version="true" />
     <style>
+
         .team-item {
             height: 100%;
             display: flex;
@@ -102,12 +103,13 @@
     <div class="container-fluid position-relative p-0">
         <nav class="navbar navbar-expand-lg navbar-dark px-5 py-3 py-lg-0 fixed-top">
             <a href="@Url.Action("Index", "Home")" class="navbar-brand p-0">
-                <img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image" style=" width: 120px; height: auto;">
+                <img src="/logo_buildoc_blanco.png" alt="Buildoc Logo" class="brand-image logo-transparent" style=" width: 120px; height: auto;" />
+                <img src="/logo_buildoc_color.png" alt="Buildoc Logo" class="brand-image logo-white" style=" width: 120px; height: auto; display: none;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
                 <span class="fa fa-bars"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
+            <div class="collapse navbar-collapse white-background" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0">
                     <a href="@Url.Action("Index", "Home")" class="nav-item nav-link active">Inicio</a>
                     <a href="#aboaut" class="nav-item nav-link">Nosotros</a>
@@ -115,7 +117,9 @@
                     <a href="#nuestrosServicios" class="nav-item nav-link">Servicios</a>
                     <a href="#Team" class="nav-item nav-link">Equipo de trabajo</a>
                 </div>
-                <butaton type="button" class="btn text-primary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fa fa-search"></i></butaton>
+                <button type="button" class="btn text-primary ms-3" data-bs-toggle="modal" data-bs-target="#searchModal">
+                    <i class="fa fa-search"></i>
+                </button>
                 <partial name="_LoginPartial" />
             </div>
         </nav>
@@ -505,7 +509,7 @@
         <!-- Footer End -->
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     <!-- JavaScript Libraries -->
