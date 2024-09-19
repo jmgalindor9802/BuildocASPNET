@@ -206,6 +206,9 @@ window.addEventListener('DOMContentLoaded', (event) => {
                         var centroid = d3.geoCentroid(d);
                         var lat = centroid[1];
                         var lng = centroid[0];
+                        d3.select(this)
+                            .style("fill", "#6b0000")
+                            .raise(); // Eleva el municipio en el orden de renderizado
 
                         console.log('Municipio:', incidente.municipio);
                         console.log('Coordenadas:', [lat, lng]);
