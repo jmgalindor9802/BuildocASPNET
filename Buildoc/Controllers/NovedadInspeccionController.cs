@@ -9,6 +9,7 @@ using Buildoc.Data;
 using Buildoc.Models.Inspecciones;
 using Buildoc.Models;
 using Microsoft.AspNetCore.Identity;
+using Buildoc.Services;
 
 namespace Buildoc.Controllers
 {
@@ -16,11 +17,12 @@ namespace Buildoc.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<Usuario> _userManager;
-
-        public NovedadInspeccionController(ApplicationDbContext context, UserManager<Usuario> userManager)
+        private readonly IFileService _fileService;
+        public NovedadInspeccionController(IFileService fileService, ApplicationDbContext context, UserManager<Usuario> userManager)
         {
             _context = context;
             _userManager = userManager;
+            _fileService = fileService;
         }
 
         // GET: NovedadInspeccion
@@ -131,7 +133,36 @@ namespace Buildoc.Controllers
                     novedadInspeccion.Estado = inspeccion.Estado;
                 }
 
+                // Manejar la subida de archivos
+                if (archivos != null && archivos.Count > 0)
+                {
+                    foreach (var archivo in archivos)
+                    {
+                        if (archivo.Length > 0)
+                        {
+                            // Aquí puedes manejar el archivo, por ejemplo, subiéndolo a Azure Blob Storage, o guardarlo en el sistema de archivos.
+                            var filePath = await _fileService.Upload(archivo, "documents");
 
+                            if (string.IsNullOrEmpty(filePath))
+                            {
+                                throw new Exception("El archivo no pudo ser subido.");
+                            }
+
+                            // Guardar los metadatos del archivo
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                FileName = archivo.FileName,
+                                FilePath = filePath,
+                                ContentType = archivo.ContentType,
+                                FileSize = archivo.Length,
+                                NovedadInspeccionId = novedadInspeccion.Id
+                            };
+
+                            _context.FileModels.Add(fileModel);
+                        }
+                    }
+                }
                 _context.Add(novedadInspeccion);
                 await _context.SaveChangesAsync();
 				

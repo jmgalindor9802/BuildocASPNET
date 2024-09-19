@@ -41,8 +41,11 @@
 
             <!-- Sección para agregar nuevos archivos -->
             <div class="form-group">
-                <label for="fileInput">Subir nuevos archivos</label>
-                <input type="file" id="fileInput" name="UploadedFiles" multiple class="form-control" />
+                <label for="UploadedFiles">Subir Archivos</label>
+                <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
+                </br>
+                <span id="fileSizeError" class="text-danger"></span> <!-- Este elemento mostrará el mensaje de error -->
+
             </div>
         </form>
     </div>

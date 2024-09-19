@@ -4,6 +4,7 @@ using Buildoc.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Buildoc.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240918152658_DropDocumentacionCompletaRespuestaInspecion")]
+    partial class DropDocumentacionCompletaRespuestaInspecion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,6 @@ namespace Buildoc.Data.Migrations
                     b.Property<Guid?>("InspeccionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("NovedadInspeccionId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("NovedadesIncidenteId")
                         .HasColumnType("uniqueidentifier");
 
@@ -63,8 +63,6 @@ namespace Buildoc.Data.Migrations
                     b.HasIndex("IncidenteId");
 
                     b.HasIndex("InspeccionId");
-
-                    b.HasIndex("NovedadInspeccionId");
 
                     b.HasIndex("NovedadesIncidenteId");
 
@@ -763,12 +761,6 @@ namespace Buildoc.Data.Migrations
                         .HasForeignKey("InspeccionId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Buildoc.Models.Inspecciones.NovedadInspeccion", "NovedadInspeccion")
-                        .WithMany("FileModels")
-                        .HasForeignKey("NovedadInspeccionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Buildoc.Models.NovedadesIncidente", "NovedadesIncidente")
                         .WithMany("FileModels")
                         .HasForeignKey("NovedadesIncidenteId");
@@ -785,8 +777,6 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Incidente");
 
                     b.Navigation("Inspeccion");
-
-                    b.Navigation("NovedadInspeccion");
 
                     b.Navigation("NovedadesIncidente");
 
@@ -1010,11 +1000,6 @@ namespace Buildoc.Data.Migrations
                     b.Navigation("Novedades");
 
                     b.Navigation("Respuesta");
-                });
-
-            modelBuilder.Entity("Buildoc.Models.Inspecciones.NovedadInspeccion", b =>
-                {
-                    b.Navigation("FileModels");
                 });
 
             modelBuilder.Entity("Buildoc.Models.Lesionado", b =>

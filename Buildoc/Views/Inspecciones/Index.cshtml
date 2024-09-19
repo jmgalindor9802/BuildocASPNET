@@ -17,6 +17,18 @@
         opacity: 0.5;
     }
 
+        .map-container {
+            position: relative;
+            height: 100%;
+            min-height: 400px;
+        }
+
+        .charts-container {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
 
 
     </style>
@@ -136,46 +148,80 @@
 
 
 
-        <div class="row">
-            @if (!esAdmin)
-            {
-                <!-- Columna con el mapa de Colombia -->
-                <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
-                    <div class="map-container">
-                        <!-- Contenedor para los controles del mapa -->
-                        <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
-                            <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
-                                <i class="fas fa-search-plus"></i>
-                            </button>
-                            <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
-                                <i class="fas fa-search-minus"></i>
-                            </button>
-                            <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-
-                        <!-- Filtro para inspecciones dentro del mapa -->
-                        <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
-                            <label for="filterEstado" class="form-label">Filtrar por estado:</label>
-                            <select id="filterEstado" class="form-control">
-                                <option value="all">Todos</option>
-                                <option value="0">Por aprobar</option>              
-                                <option value="2">Finalizada</option>
-                                <option value="3">Programada</option>
-                                <option value="4">Sin responder</option>
-                                <option value="5">Aprobada</option>
-                                <option value="6">Desaprobada</option>
-                            </select>
-                        </div>
-
-                        <!-- Mapa -->
-                        <div id="map"></div>
-                    </div>
+    <!-- Sección para gráficos y mapa -->
+    <div class="row">
+        <!-- Columna izquierda: Gráficas -->
+        <div class="col-lg-6 col-md-12 col-12">
+            <div class="row">
+            <!-- Primera gráfica -->
+            <div class="col-md-6 col-sm-12">
+                <div class="charts-container">
+                    <h5>Inspecciones programadas</h5>
+                    <canvas id="inspectionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
                 </div>
-            }
+            </div>
+
+            <!-- Segunda gráfica -->
+            <div class="col-md-6 col-sm-12">
+                <div class="charts-container">
+                        <h5>Próx. 7 Días</h5>
+                    <canvas id="inspectionPieChart2" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                </div>
+            </div>
+            </div>
+            <div class="row">
+            <!-- Tercera gráfica -->
+            <div class="col-md-6 col-sm-12">
+                <div class="charts-container">
+                        <h5>Tipos de Inspección</h5>
+                        <canvas id="tipoInspeccionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                </div>
+            </div>
+
+            <!-- Cuarta gráfica -->
+            <div class=" col-md-6 col-sm-12">
+                <div class="charts-container">
+                        <h5>Urgencia de Inspecciones</h5>
+                        <canvas id="tiempoRestanteBarChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                </div>
+            </div>
+        </div>
         </div>
 
+        <!-- Columna derecha: Mapa -->
+        <div class="col-lg-6 col-md-12 col-12 d-flex flex-column">
+            <div class="map-container">
+                <!-- Contenedor para los controles del mapa -->
+                <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
+                    <button id="zoom-in" class="btn btn-light" title="Acercar" style="margin-bottom: 5px;">
+                        <i class="fas fa-search-plus"></i>
+                    </button>
+                    <button id="zoom-out" class="btn btn-light" title="Alejar" style="margin-bottom: 5px;">
+                        <i class="fas fa-search-minus"></i>
+                    </button>
+                    <button id="zoom-reset" class="btn btn-light" title="Restablecer zoom">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+
+                <!-- Filtro para inspecciones dentro del mapa -->
+                <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
+                    <label for="filterEstado" class="form-label">Filtrar por estado:</label>
+                    <select id="filterEstado" class="form-control">
+                        <option value="all">Todos</option>
+                        <option value="0">Por aprobar</option>
+                        <option value="3">Programada</option>
+                        <option value="4">Sin responder</option>
+                        <option value="5">Aprobada</option>
+                        <option value="6">Desaprobada</option>
+                    </select>
+                </div>
+
+                <!-- Mapa -->
+                <div id="map" ></div>
+            </div>
+        </div>
+    </div>
 
         
                 <tr>
@@ -240,7 +286,8 @@
                             @Html.DisplayFor(modelItem => item.Estado)
                         </span>
                     </td>
-                    <td data-endtime="@(item.DuracionHoras.HasValue ? item.FechaInspeccion.AddHours(item.DuracionHoras.Value).ToString("yyyy-MM-ddTHH:mm:ss") : "No aplica")">
+<td data-endtime="@(item.FechaInspeccion.ToString("yyyy-MM-ddTHH:mm:ss"))">
+
 
 
 
@@ -280,6 +327,13 @@
                                 </a>
                                 }
                         }
+                            @if (item.Estado == EstadoInspeccion.PendientesDeRevision && !esAdmin)
+                            {
+                            <a href="#" class="respond-item" data-url="@Url.Action("Create", "NovedadInspeccion", new { id = item.Id })" data-title="Agregar Novedad" data-action="respond">
+                                <i class="fas fa-plus-circle"></i>
+                            </a>
+                            }
+
 
                     </td>
                     </tr>
@@ -440,28 +494,34 @@
             var respondButton = row.querySelector('.respond-item'); // Selecciona el botón de responder
             var estadoCell = row.querySelector("td:nth-child(6)"); // Ajusta el índice si es necesario para el estado
 
+            // Asegúrate de que el atributo data-endtime tenga un valor
             if (tiempoRestanteCell && tiempoRestanteCell.dataset.endtime) {
                 var endTime = new Date(tiempoRestanteCell.dataset.endtime);
                 var now = new Date();
                 var timeDiff = endTime - now;  // Diferencia de tiempo en milisegundos
                 var estado = estadoCell ? estadoCell.textContent.trim() : "";
 
-                console.log('Tiempo restante en milisegundos:', timeDiff);
-                console.log('Estado actual:', estado);
-
                 if (estado === "Programada") { // Solo modificar si está en estado Programada
                     if (timeDiff > 0) {
                         // Si aún no ha llegado la fecha/hora, calcular el tiempo restante
-                        var hours = Math.floor(timeDiff / (1000 * 60 * 60));
+                        var days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                        var hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         var minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
-                        tiempoRestanteCell.innerText = `${hours}h ${minutes}m restantes`;
+
+                        if (days > 0) {
+                            tiempoRestanteCell.innerText = `${days}d ${hours}h restantes`;
+                        } else if (hours > 0) {
+                            tiempoRestanteCell.innerText = `${hours}h ${minutes}m restantes`;
+                        } else {
+                            tiempoRestanteCell.innerText = `${minutes}m restantes`;
+                        }
 
                         // Deshabilitar el botón ya que aún no ha llegado la hora de la inspección
                         if (respondButton) {
                             respondButton.classList.add('disabled');
                         }
                     } else {
-                        // Si ya ha pasado la fecha/hora, mostrar "Por responder" con la clase de badge personalizada
+                        // Si ya ha pasado la fecha/hora, mostrar "Por responder"
                         tiempoRestanteCell.innerHTML = `<span class="badge badge-sin-responder">Por responder</span>`;
 
                         // Habilitar el botón si la inspección ya pasó
@@ -471,9 +531,9 @@
                     }
                 } else {
                     // Si el estado no es Programada, no mostrar ningún texto en esta celda
-                    tiempoRestanteCell.innerText = "";
+                    tiempoRestanteCell.innerText = "No aplica";
 
-                    // Si no aplica el tiempo, deshabilitar el botón
+                    // Deshabilitar el botón si no aplica
                     if (respondButton) {
                         respondButton.classList.add('disabled');
                     }
@@ -494,6 +554,7 @@
 
     // Llamar a la función una vez al cargar la página
     updateTimeRemaining();
+
 
 </script>
 
@@ -518,4 +579,339 @@
             }
         });
     });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Asegurarse de que inspeccionesPorProyecto no esté indefinido o sea nulo
+    var inspeccionesPorProyecto = @Html.Raw(Json.Serialize(ViewBag.InspeccionesPorProyecto)) || [];
+
+    // Verificar si el array tiene datos
+    if (inspeccionesPorProyecto.length === 0) {
+        console.warn("No hay datos para generar la gráfica, se mostrará un gráfico vacío.");
+
+        // Crear el gráfico de torta vacío
+        var ctx = document.getElementById('inspectionPieChart').getContext('2d');
+        var inspectionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Número de Inspecciones Programadas',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'left',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica con los proyectos y cantidades reales
+        var proyectos = inspeccionesPorProyecto.map(function (item) { return item.proyecto; });
+        var cantidades = inspeccionesPorProyecto.map(function (item) { return item.cantidad; });
+
+        var ctx = document.getElementById('inspectionPieChart').getContext('2d');
+        var inspectionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: proyectos, // Los nombres de los proyectos
+                datasets: [{
+                    label: 'Número de Inspecciones Programadas',
+                    data: cantidades, // Cantidades de inspecciones por proyecto
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',  // Azul
+                        'rgba(30, 144, 255, 0.7)',  // Azul Dodger
+                        'rgba(70, 130, 180, 0.7)',  // Azul Acero
+                        'rgba(100, 149, 237, 0.7)', // Azul Maíz
+                        'rgba(0, 123, 255, 0.7)',   // Azul Bootstrap
+                        'rgba(0, 105, 217, 0.7)'    // Azul oscuro
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',  // Azul
+                        'rgba(30, 144, 255, 1)',  // Azul Dodger
+                        'rgba(70, 130, 180, 1)',  // Azul Acero
+                        'rgba(100, 149, 237, 1)', // Azul Maíz
+                        'rgba(0, 123, 255, 1)',   // Azul Bootstrap
+                        'rgba(0, 105, 217, 1)'    // Azul oscuro
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                 
+                        align: 'start',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Asegurarse de que inspeccionesPorInspector no esté indefinido o sea nulo
+    var inspeccionesPorInspector = @Html.Raw(Json.Serialize(ViewBag.InspeccionesPorInspector)) || [];
+
+    // Verificar si el array tiene datos
+    if (inspeccionesPorInspector.length === 0) {
+        console.warn("No hay datos para generar la gráfica de inspectores, se mostrará un gráfico vacío.");
+
+        // Crear el gráfico de torta vacío para inspectores
+        var ctx2 = document.getElementById('inspectionPieChart2').getContext('2d');
+        var inspectionPieChart2 = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Número de Inspecciones por Inspectores',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'start',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica con los inspectores y cantidades reales
+        var inspectores = inspeccionesPorInspector.map(function (item) { return item.inspector; });
+        var cantidades = inspeccionesPorInspector.map(function (item) { return item.cantidad; });
+
+        var ctx2 = document.getElementById('inspectionPieChart2').getContext('2d');
+        var inspectionPieChart2 = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: inspectores, // Los nombres de los inspectores
+                datasets: [{
+                    label: 'Número de Inspecciones por Inspectores',
+                    data: cantidades, // Cantidades de inspecciones por inspector
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',  // Azul
+                        'rgba(30, 144, 255, 0.7)',  // Azul Dodger
+                        'rgba(70, 130, 180, 0.7)',  // Azul Acero
+                        'rgba(100, 149, 237, 0.7)', // Azul Maíz
+                        'rgba(0, 123, 255, 0.7)',   // Azul Bootstrap
+                        'rgba(0, 105, 217, 0.7)'    // Azul oscuro
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',  // Azul
+                        'rgba(30, 144, 255, 1)',  // Azul Dodger
+                        'rgba(70, 130, 180, 1)',  // Azul Acero
+                        'rgba(100, 149, 237, 1)', // Azul Maíz
+                        'rgba(0, 123, 255, 1)',   // Azul Bootstrap
+                        'rgba(0, 105, 217, 1)'    // Azul oscuro
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'start',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    }
+
+</script>
+<script>
+    // Asegurarse de que inspeccionesPorTipo no esté indefinido o sea nulo
+    var inspeccionesPorTipo = @Html.Raw(Json.Serialize(ViewBag.InspeccionesPorTipo)) || [];
+
+    // Verificar si el array tiene datos
+    if (inspeccionesPorTipo.length === 0) {
+        console.warn("No hay datos para generar la gráfica de tipos de inspecciones.");
+
+        // Crear el gráfico de torta vacío
+        var ctx = document.getElementById('tipoInspeccionPieChart').getContext('2d');
+        var tipoInspeccionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Distribución de tipos de inspecciones',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica
+        var tipos = inspeccionesPorTipo.map(function (item) { return item.tipo; });
+        var cantidades = inspeccionesPorTipo.map(function (item) { return item.cantidad; });
+
+        var ctx = document.getElementById('tipoInspeccionPieChart').getContext('2d');
+        var tipoInspeccionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: tipos,
+                datasets: [{
+                    label: 'Distribución de tipos de inspecciones',
+                    data: cantidades,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',  // Azul
+                        'rgba(30, 144, 255, 0.7)',  // Azul Dodger
+                        'rgba(70, 130, 180, 0.7)',  // Azul Acero
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',  // Azul
+                        'rgba(30, 144, 255, 1)',  // Azul Dodger
+                        'rgba(70, 130, 180, 1)',  // Azul Acero
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    }
+
+
+
+</script>
+<script>
+    // Asegurarse de que inspeccionesPorTiempoRestante no esté indefinido o sea nulo
+    var inspeccionesPorTiempoRestante = @Html.Raw(Json.Serialize(ViewBag.InspeccionesPorTiempoRestante)) || [];
+
+    // Verificar si el array tiene datos
+    if (inspeccionesPorTiempoRestante.length === 0) {
+        console.warn("No hay datos para generar la gráfica de tiempo restante para las inspecciones.");
+
+        // Crear el gráfico de barras vacío
+        var ctx = document.getElementById('tiempoRestanteBarChart').getContext('2d');
+        var tiempoRestanteBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Tiempo restante',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica
+        var categorias = ["Próximas 24 horas", "Próximos 3 días", "Próximos 10 días", "Próximos 30 días", "Más de 30 días"];
+        var cantidades = categorias.map(function (cat) {
+            var entry = inspeccionesPorTiempoRestante.find(function (item) { return item.categoria === cat; });
+            return entry ? entry.cantidad : 0;
+        });
+
+        var ctx = document.getElementById('tiempoRestanteBarChart').getContext('2d');
+        var tiempoRestanteBarChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: categorias, // Las categorías ahora son visibles en el eje x
+                datasets: [{
+                    label: 'Tiempo Restante', // Este label ya no se mostrará en la leyenda
+                    data: cantidades, // Cantidades correspondientes a cada categoría
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.7)',  // Rojo para "Próximas 24 horas"
+                        'rgba(255, 206, 86, 0.7)',  // Amarillo para "Próximos 3 días"
+                        'rgba(54, 162, 235, 0.7)',  // Azul para "Próximos 10 días"
+                        'rgba(75, 192, 192, 0.7)',  // Azul claro para "Próximos 30 días"
+                        'rgba(153, 102, 255, 0.7)'  // Púrpura para "Más de 30 días"
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',  // Rojo
+                        'rgba(255, 206, 86, 1)',  // Amarillo
+                        'rgba(54, 162, 235, 1)',  // Azul
+                        'rgba(75, 192, 192, 1)',  // Azul claro
+                        'rgba(153, 102, 255, 1)'  // Púrpura
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false  // Esto deshabilita la leyenda por completo
+                    },
+                    tooltip: {
+                        enabled: true // Habilitar los tooltips
+                    }
+                }
+            }
+        });
+
+    }
 </script>

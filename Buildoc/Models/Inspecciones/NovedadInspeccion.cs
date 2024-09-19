@@ -13,5 +13,6 @@ namespace Buildoc.Models.Inspecciones
         public DateTime FechaCreacion { get; set; }
         public string UsuarioId { get; set; } 
         public Usuario Usuario { get; set; }
+        public ICollection<FileModel> FileModels { get; set; }
     }
 }

@@ -68,8 +68,6 @@ namespace Buildoc.Controllers
         // GET: Inspecciones
         public async Task<IActionResult> Index()
         {
-
-
             // Obtén el ID del usuario logueado
             var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -138,6 +136,63 @@ namespace Buildoc.Controllers
                 })
                 .ToList();
 
+            var fechaLimite = DateTime.Now.AddDays(7);
+
+            ViewBag.InspeccionesPorInspector = inspecciones
+                .Where(i => i.Estado == EstadoInspeccion.Programada && i.FechaInspeccion >= DateTime.Now && i.FechaInspeccion <= fechaLimite)
+                .GroupBy(i => i.Inspector.NombreCompleto)
+                .Select(g => new { inspector = g.Key, cantidad = g.Count() })
+                .ToList();
+
+
+            var inspeccionesPorTipo = inspecciones
+        .GroupBy(i => i.TipoInspeccion.Nombre)  // Agrupa por el nombre del tipo de inspección
+        .Select(g => new
+        {
+            tipo = g.Key,  // El nombre del tipo de inspección
+            cantidad = g.Count()  // Número de inspecciones por tipo
+        })
+        .ToList();
+
+            // Pasar los datos al ViewBag para la vista
+            ViewBag.InspeccionesPorTipo = inspeccionesPorTipo;
+
+            var now = DateTime.Now;
+
+            // Filtrar y agrupar las inspecciones por el tiempo restante hasta su fecha de vencimiento
+            var inspeccionesPorTiempoRestante = inspecciones
+            .Where(i => i.FechaInspeccion > now)  // Solo inspecciones futuras
+            .Select(i => new
+            {
+                categoria = i.FechaInspeccion <= now.AddHours(24) ? "Próximas 24 horas" :
+                            i.FechaInspeccion <= now.AddDays(3) ? "Próximos 3 días" :
+                            i.FechaInspeccion <= now.AddDays(10) ? "Próximos 10 días" :
+                            i.FechaInspeccion <= now.AddDays(30) ? "Próximos 30 días" : "Más de 30 días",
+                cantidad = 1
+            })
+            .GroupBy(i => i.categoria)
+            .Select(g => new
+            {
+                categoria = g.Key,
+                cantidad = g.Count()
+            })
+            .ToList();
+
+            ViewBag.InspeccionesPorTiempoRestante = inspeccionesPorTiempoRestante;
+
+
+
+            // Calcular inspecciones programadas por proyecto
+            var inspeccionesPorProyecto = inspecciones
+                .Where(i => i.Estado == EstadoInspeccion.Programada)
+                .GroupBy(i => i.Proyecto.Nombre)
+                .Select(group => new
+                {
+                    Proyecto = group.Key,
+                    Cantidad = group.Count()
+                })
+                .ToList();
+
             // Cálculo del tiempo restante o indicar si la inspección no ha comenzado
             var inspeccionesConTiempo = inspecciones.Select(i => new
             {
@@ -160,6 +215,8 @@ namespace Buildoc.Controllers
             ViewBag.DetallesInspecciones = detallesInspecciones;
             ViewBag.CountDesaprobadas = countDesaprobadas;
             ViewBag.InspeccionesConTiempo = inspeccionesConTiempo;
+            ViewBag.InspeccionesPorProyecto = inspeccionesPorProyecto; // Agrega este ViewBag
+
             return View(inspecciones);
         }
 
@@ -433,6 +490,8 @@ namespace Buildoc.Controllers
                         .ThenInclude(n => n.Archivos)
                     .Include(i => i.Novedades)
                      .ThenInclude(n => n.Usuario)
+                        .Include(i => i.Novedades)
+                .ThenInclude(n => n.FileModels) // Archivos asociados a las novedades
                     .Include(i => i.Respuesta)
                        .ThenInclude(n => n.FileModels)
                     .Include(i => i.FileModels)
@@ -578,6 +637,15 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                 return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
             }
 
+            // Obtener el proyecto relacionado con la inspección
+
+            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
+{
+    return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
+}
+
+
             // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
             var inspeccionesExistentes = await _context.Inspeccion
                 .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada)
@@ -656,7 +724,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             }
             // Obtener el inspector y proyecto asignados
             var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            
 
             // Preparar el mensaje de correo electrónico en formato HTML para el inspector
             var subject = "Nueva Inspección Asignada";
@@ -743,7 +811,17 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                               .GetCustomAttributes(typeof(DisplayAttribute), false)
                               .SingleOrDefault() is DisplayAttribute displayAttribute ? displayAttribute.Name : e.ToString()
                 }).ToList();
-
+            // Obtener las categorías que tienen al menos un tipo de inspección
+            var categoriasConTipos = await _context.TipoInspeccion
+                .GroupBy(t => t.Categoria)
+                .Where(g => g.Any())  // Filtra solo las categorías que tienen tipos de inspección
+                .Select(g => new SelectListItem
+                {
+                    Value = g.Key.ToString(),
+                    Text = GetEnumDisplayName(g.Key)
+                })
+                .ToListAsync();
+            ViewData["CategoriasInspeccion"] = categoriasConTipos;
             ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
@@ -777,6 +855,12 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             {
                 // Enviar mensaje de error como JSON
                 return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
+            }
+            // Obtener el proyecto relacionado con la inspección
+            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
+            if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
+            {
+                return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
             }
 
             var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
@@ -877,7 +961,6 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                     // Obtener el inspector original y el nuevo inspector
                     var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
                     var inspectorNuevo = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-                    var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
 
                     // Preparar y enviar el correo si hay cambios
                     if (inspeccionOriginal.FechaInspeccion != inspeccion.FechaInspeccion ||
@@ -1097,7 +1180,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             return Json(residentes);
         }
 
-
+      
 
 
     }

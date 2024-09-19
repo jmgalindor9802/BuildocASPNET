@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using Buildoc.Models.Inspecciones;
 
 namespace Buildoc.Models
 {
@@ -39,6 +40,12 @@ namespace Buildoc.Models
         // Relación con NovedadIncidente
         public Guid? NovedadesIncidenteId { get; set; }  // Clave foránea
         public NovedadesIncidente NovedadesIncidente { get; set; }  // Navegación hacia la inspección relacionada
+
+        // Relación con la entidad NovedadInspeccion
+        public Guid NovedadInspeccionId { get; set; }
+        public NovedadInspeccion NovedadInspeccion { get; set; }
+
+
     }
 
 }
