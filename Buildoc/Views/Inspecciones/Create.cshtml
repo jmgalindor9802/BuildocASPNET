@@ -91,9 +91,10 @@
 
         
         </div>
-        <div class="form-group">
-            <label for="archivos">Subir Archivos:</label>
-            <input type="file" id="UploadedFiles" name="archivos" multiple class="form-control-file" />
+        <div>
+        <label for="UploadedFiles">Subir nuevos archivos</label>
+        <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
+        <small class="form-text text-muted">Solo sube nuevos archivos si es necesario.</small>
         </div>
     </form>
 </div>
@@ -273,4 +274,3 @@
     });
 
 </script>
-<script src="/js/tamanoArchivos.js"></script>

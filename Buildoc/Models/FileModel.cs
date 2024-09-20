@@ -42,7 +42,7 @@ namespace Buildoc.Models
         public NovedadesIncidente NovedadesIncidente { get; set; }  // Navegación hacia la inspección relacionada
 
         // Relación con la entidad NovedadInspeccion
-        public Guid NovedadInspeccionId { get; set; }
+        public Guid? NovedadInspeccionId { get; set; }
         public NovedadInspeccion NovedadInspeccion { get; set; }
 
 

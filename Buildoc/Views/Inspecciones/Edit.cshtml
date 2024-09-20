@@ -75,24 +75,23 @@
                     <!-- Archivos de la inspección -->
                     <h6 class="text-primary"><i class="fas fa-file-alt"></i> Archivos adicionales</h6>
                     <ul id="archivosInspeccion" class="list-unstyled">
-                        @if (Model.Inspeccion.TipoInspeccion != null && Model.Inspeccion.TipoInspeccion.Archivos != null)
-                        {
-                            @foreach (var file in Model.Inspeccion.TipoInspeccion.Archivos)
+                        <ul id="archivosInspeccion" class="list-unstyled">
+                            @if (Model.ArchivosInspeccion != null && Model.ArchivosInspeccion.Count > 0)
                             {
-                                <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                                @foreach (var file in Model.ArchivosInspeccion)
+                                {
+                                    <li><a href="@Url.Action("DownloadFile", "Inspecciones", new { fileName = file.FileName })" target="_blank">@file.FileName</a></li>
+                                }
                             }
-                        }
-                        else
-                        {
-                            <p>No hay archivos disponibles.</p>
-                        }
+                            else
+                            {
+                                <p>No hay archivos disponibles.</p>
+                            }
+                        </ul>
 
-                    </ul>
-
-                    <div class="form-group">
-                        <label for="UploadedFiles">Subir Archivos</label>
-                        <input type="file" name="archivos" id="UploadedFiles" multiple />                      
-                    </div>
+                    <label for="UploadedFiles">Subir nuevos archivos</label>
+                    <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
+                    <small class="form-text text-muted">Solo sube nuevos archivos si es necesario.</small>
                 </div>
             </div>
 
@@ -140,7 +139,7 @@
 </div>
 
 
-<script src="/js/tamanoArchivos.js"></script>
+
     <script src="/js/detalleTipoInspeccion.js"></script>
     <script src="/js/toggleDuracionHoras.js"></script>
     <script>

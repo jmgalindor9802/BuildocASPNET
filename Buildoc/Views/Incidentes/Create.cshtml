@@ -88,10 +88,11 @@
                                     <textarea asp-for="Incidente.Sugerencia" class="form-control"></textarea>
                                     <span asp-validation-for="Incidente.Sugerencia" class="text-danger"></span>
                                 </div>
-                            
-                                <div class="mb-3">
-                                    <label for="UploadedFiles" class="form-label">Subir Archivos</label>
-                                    <input class="form-control" type="file" name="archivos" id="UploadedFiles" multiple>
+
+                                <div>
+                                    <label for="UploadedFiles">Subir nuevos archivos</label>
+                                    <input type="file" name="UploadedFiles" id="UploadedFiles" multiple />
+                                    <small class="form-text text-muted">Solo sube nuevos archivos si es necesario.</small>
                                 </div>
                                 @* switch para mostrar los campos de afectados *@
                                 <div class="form-check form-switch">

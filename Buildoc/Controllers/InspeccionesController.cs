@@ -841,212 +841,192 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, InspeccionEditViewModel model)
         {
-              var inspeccion = model.Inspeccion;
             if (!ModelState.IsValid)
             {
-              
-                // Obtener errores de validación
                 var errors = ModelState.Values.SelectMany(v => v.Errors)
                                               .Select(e => e.ErrorMessage)
                                               .ToList();
                 return Json(new { success = false, message = "Los datos están incompletos o inválidos. Inténtelo nuevamente", errors });
             }
-            if (inspeccion.FechaInspeccion < DateTime.Now.Date)
-            {
-                // Enviar mensaje de error como JSON
-                return Json(new { success = false, message = "La fecha de la inspección no puede ser anterior a la fecha actual." });
-            }
-            // Obtener el proyecto relacionado con la inspección
-            var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
-            if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
-            {
-                return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
-            }
 
-            var inspeccionOriginal = await _context.Inspeccion.AsNoTracking().FirstOrDefaultAsync(i => i.Id == id);
-			if (inspeccionOriginal == null)
-			{
-				return NotFound();
-			}
+            // Cargar la inspección original desde la base de datos
+            var inspeccionOriginal = await _context.Inspeccion.FirstOrDefaultAsync(i => i.Id == id);
 
-			if (inspeccionOriginal.Estado == EstadoInspeccion.PendientesDeRevision || inspeccionOriginal.Estado == EstadoInspeccion.Aprobada)
-			{
-				return Json(new { success = false, message = "No se puede editar una inspección que está pendiente de revisión o finalizada." });
-			}
-
-			if (id != inspeccion.Id)
+            if (inspeccionOriginal == null)
             {
                 return NotFound();
             }
-            // No modificar el estado, solo actualizar los campos permitidos
-            inspeccion.Estado = inspeccionOriginal.Estado;
 
+            // Validar que el estado no permita la edición si está en estados no editables
+            if (inspeccionOriginal.Estado == EstadoInspeccion.PendientesDeRevision || inspeccionOriginal.Estado == EstadoInspeccion.Aprobada)
+            {
+                return Json(new { success = false, message = "No se puede editar una inspección que está pendiente de revisión o finalizada." });
+            }
 
-            // Verificar si el inspector tiene una inspección programada en la misma fecha y hora, excluyendo la inspección que se está editando
+            // Verificar que el ID enviado en el formulario coincide con el ID de la inspección
+            if (id != model.Inspeccion.Id)
+            {
+                return NotFound();
+            }
+
+            // Actualizar solo los campos permitidos sin modificar la `FechaCreacion`
+            inspeccionOriginal.FechaInspeccion = model.Inspeccion.FechaInspeccion;
+            inspeccionOriginal.DuracionHoras = model.Inspeccion.DuracionHoras;
+            inspeccionOriginal.EsTodoElDia = model.Inspeccion.EsTodoElDia;
+            inspeccionOriginal.Objetivo = model.Inspeccion.Objetivo;
+            inspeccionOriginal.Descripcion = model.Inspeccion.Descripcion;
+            inspeccionOriginal.InspectorId = model.Inspeccion.InspectorId;
+            inspeccionOriginal.TipoInspeccionId = model.Inspeccion.TipoInspeccionId;
+            inspeccionOriginal.ProyectoId = model.Inspeccion.ProyectoId;
+
+            // Mantener el estado original sin cambios
+            inspeccionOriginal.Estado = inspeccionOriginal.Estado;
+
+            // Validar que no se superpongan las fechas de inspección del inspector
             var inspeccionesExistentes = await _context.Inspeccion
-                .Where(i => i.InspectorId == inspeccion.InspectorId && i.Estado == EstadoInspeccion.Programada && i.Id != id)
+                .Where(i => i.InspectorId == inspeccionOriginal.InspectorId && i.Estado == EstadoInspeccion.Programada && i.Id != id)
                 .ToListAsync();
 
             foreach (var i in inspeccionesExistentes)
             {
-                // Verificar si las fechas se superponen
-                if (inspeccion.FechaInspeccion.Date == i.FechaInspeccion.Date)
+                if (model.Inspeccion.FechaInspeccion.Date == i.FechaInspeccion.Date)
                 {
-                    if (inspeccion.EsTodoElDia || i.EsTodoElDia)
+                    if (model.Inspeccion.EsTodoElDia || i.EsTodoElDia)
                     {
-                        // Si la nueva inspección o la existente es todo el día, hay conflicto
                         return Json(new { success = false, message = "El inspector ya tiene una inspección programada para todo el día en esta fecha." });
                     }
-                    else
+
+                    var inspeccionFin = model.Inspeccion.FechaInspeccion.AddHours(model.Inspeccion.DuracionHoras ?? 0);
+                    var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
+
+                    if (model.Inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
                     {
-                        // Verificar si las duraciones se superponen
-                        var inspeccionFin = inspeccion.FechaInspeccion.AddHours(inspeccion.DuracionHoras ?? 0);
-                        var inspeccionExistenteFin = i.FechaInspeccion.AddHours(i.DuracionHoras ?? 0);
-
-
-                        if (inspeccion.FechaInspeccion < inspeccionExistenteFin && inspeccionFin > i.FechaInspeccion)
-                        {
-                            return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
-                        }
+                        return Json(new { success = false, message = "El inspector ya tiene una inspección programada que se superpone con la nueva." });
                     }
                 }
             }
 
-            if (ModelState.IsValid)
+            // Guardar cambios en la base de datos
+            try
             {
-                try
+                _context.Update(inspeccionOriginal);
+                await _context.SaveChangesAsync();
+
+                // Manejo de archivos subidos (solo si se suben nuevos archivos)
+                if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
                 {
-                    _context.Update(inspeccion);
+                    foreach (var file in model.UploadedFiles)
+                    {
+                        if (file.Length > 0)
+                        {
+                            var fileUrl = await _fileService.Upload(file, "documents");
+                            var fileModel = new FileModel
+                            {
+                                Id = Guid.NewGuid(),
+                                InspeccionId = inspeccionOriginal.Id,
+                                FileName = Path.GetFileName(file.FileName),
+                                FilePath = fileUrl,
+                                ContentType = file.ContentType,
+                                FileSize = file.Length
+                            };
+
+                            _context.FileModels.Add(fileModel);
+                        }
+                    }
+
                     await _context.SaveChangesAsync();
-
-                    // Manejo de archivos subidos (solo si se suben nuevos archivos)
-                    if (model.UploadedFiles != null && model.UploadedFiles.Count > 0)
-                    {
-                        foreach (var file in model.UploadedFiles)
-                        {
-                            try
-                            {
-                                if (file.Length > 0)
-                                {
-                                    // Subir archivo y manejar la excepción si excede el límite de tamaño
-                                    var fileUrl = await _fileService.Upload(file, "documents");
-                                    _logger.LogInformation($"Archivo: {file.FileName}, URL: {fileUrl}");
-                                    var fileModel = new FileModel
-                                    {
-                                        Id = Guid.NewGuid(),
-                                        InspeccionId = inspeccion.Id,
-                                        FileName = Path.GetFileName(file.FileName),
-                                        FilePath = fileUrl,
-                                        ContentType = file.ContentType,
-                                        FileSize = file.Length
-                                    };
-
-                                    _context.FileModels.Add(fileModel);
-                                }
-                                else
-                                {
-                                    _logger.LogWarning($"Archivo {file.FileName} tiene longitud cero.");
-                                }
-                            }
-                            catch (InvalidOperationException ex)
-                            {
-                                // Manejar la excepción cuando el archivo excede el tamaño permitido
-                                return Json(new { success = false, message = ex.Message });
-                            }
-                        }
-
-                        await _context.SaveChangesAsync();
-                    }
-
-                    // Obtener el inspector original y el nuevo inspector
-                    var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
-                    var inspectorNuevo = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-
-                    // Preparar y enviar el correo si hay cambios
-                    if (inspeccionOriginal.FechaInspeccion != inspeccion.FechaInspeccion ||
-                        inspeccionOriginal.Objetivo != inspeccion.Objetivo ||
-                        inspeccionOriginal.Descripcion != inspeccion.Descripcion ||
-                        inspeccionOriginal.TipoInspeccionId != inspeccion.TipoInspeccionId ||
-                        inspeccionOriginal.ProyectoId != inspeccion.ProyectoId ||
-                        inspeccionOriginal.InspectorId != inspeccion.InspectorId ||
-                        inspeccionOriginal.DuracionHoras != inspeccion.DuracionHoras ||
-                        inspeccionOriginal.EsTodoElDia != inspeccion.EsTodoElDia)
-                    {
-                        if (inspeccionOriginal.InspectorId != inspeccion.InspectorId)
-                        {
-                            var subjectOriginal = "Inspección Reasignada";
-                            var htmlMessageOriginal = $@"
-<p>Hola {inspectorOriginal.Nombres},</p>
-<p>La inspección para el proyecto '<strong>{proyecto.Nombre}</strong>' programada para el {inspeccion.FechaInspeccion} ha sido reasignada a otro inspector.</p>
-<p>Saludos,</p>
-<p>El equipo de <strong>Buildoc</strong></p>";
-                            await _emailSender.SendEmailAsync(inspectorOriginal.Email, subjectOriginal, htmlMessageOriginal);
-
-                            var subjectNuevo = "Nueva Inspección Asignada";
-                            var htmlMessageNuevo = $@"
-<p>Hola {inspectorNuevo.Nombres},</p>
-<p>Se le ha asignado una nueva inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
-<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
-<p>Objetivo: {inspeccion.Objetivo}</p>
-<p>Descripción: {inspeccion.Descripcion}</p>";
-                            if (inspeccion.EsTodoElDia)
-                            {
-                                htmlMessageNuevo += "<p>Duración: Todo el día</p>";
-                            }
-                            else if (inspeccion.DuracionHoras.HasValue)
-                            {
-                                htmlMessageNuevo += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
-                            }
-                            htmlMessageNuevo += @"
-<p>Saludos,</p>
-<p>El equipo de <strong>Buildoc</strong></p>";
-                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subjectNuevo, htmlMessageNuevo);
-                        }
-                        else
-                        {
-                            // Notificar al inspector nuevo si no ha cambiado
-                            var subject = "Inspección Actualizada";
-                            var htmlMessage = $@"
-<p>Hola {inspectorNuevo.Nombres},</p>
-<p>Se han actualizado los detalles de la inspección para el proyecto '<strong>{proyecto.Nombre}</strong>'.</p>
-<p>Fecha de Inspección: {inspeccion.FechaInspeccion}</p>
-<p>Objetivo: {inspeccion.Objetivo}</p>
-<p>Descripción: {inspeccion.Descripcion}</p>";
-                            if (inspeccion.EsTodoElDia)
-                            {
-                                htmlMessage += "<p>Duración: Todo el día</p>";
-                            }
-                            else if (inspeccion.DuracionHoras.HasValue)
-                            {
-                                htmlMessage += $"<p>Duración: {inspeccion.DuracionHoras.Value} horas</p>";
-                            }
-                            htmlMessage += @"
-<p>Saludos,</p>
-<p>El equipo de <strong>Buildoc</strong></p>";
-                            await _emailSender.SendEmailAsync(inspectorNuevo.Email, subject, htmlMessage);
-                        }
-                    }
                 }
-                catch (DbUpdateConcurrencyException)
+
+                // Notificaciones por correo si hay cambios significativos
+                if (inspeccionOriginal.FechaInspeccion != model.Inspeccion.FechaInspeccion ||
+                    inspeccionOriginal.Objetivo != model.Inspeccion.Objetivo ||
+                    inspeccionOriginal.Descripcion != model.Inspeccion.Descripcion ||
+                    inspeccionOriginal.TipoInspeccionId != model.Inspeccion.TipoInspeccionId ||
+                    inspeccionOriginal.ProyectoId != model.Inspeccion.ProyectoId ||
+                    inspeccionOriginal.InspectorId != model.Inspeccion.InspectorId ||
+                    inspeccionOriginal.DuracionHoras != model.Inspeccion.DuracionHoras ||
+                    inspeccionOriginal.EsTodoElDia != model.Inspeccion.EsTodoElDia)
                 {
-                    if (!InspeccionExists(inspeccion.Id))
+                    var inspectorOriginal = await _userManager.FindByIdAsync(inspeccionOriginal.InspectorId);
+                    var inspectorNuevo = await _userManager.FindByIdAsync(model.Inspeccion.InspectorId);
+
+                    if (inspeccionOriginal.InspectorId != model.Inspeccion.InspectorId)
                     {
-                        return NotFound();
+                        // Notificación al inspector original si fue reasignado
+                        var subjectOriginal = "Inspección Reasignada";
+                        var htmlMessageOriginal = $@"
+<p>Hola {inspectorOriginal.Nombres},</p>
+<p>La inspección para el proyecto '<strong>{inspeccionOriginal.Proyecto.Nombre}</strong>' programada para el {model.Inspeccion.FechaInspeccion} ha sido reasignada a otro inspector.</p>
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                        await _emailSender.SendEmailAsync(inspectorOriginal.Email, subjectOriginal, htmlMessageOriginal);
+
+                        // Notificación al nuevo inspector
+                        var subjectNuevo = "Nueva Inspección Asignada";
+                        var htmlMessageNuevo = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se le ha asignado una nueva inspección para el proyecto '<strong>{inspeccionOriginal.Proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {model.Inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {model.Inspeccion.Objetivo}</p>
+<p>Descripción: {model.Inspeccion.Descripcion}</p>";
+                        if (model.Inspeccion.EsTodoElDia)
+                        {
+                            htmlMessageNuevo += "<p>Duración: Todo el día</p>";
+                        }
+                        else if (model.Inspeccion.DuracionHoras.HasValue)
+                        {
+                            htmlMessageNuevo += $"<p>Duración: {model.Inspeccion.DuracionHoras.Value} horas</p>";
+                        }
+                        htmlMessageNuevo += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                        await _emailSender.SendEmailAsync(inspectorNuevo.Email, subjectNuevo, htmlMessageNuevo);
                     }
                     else
                     {
-                        throw;
+                        // Notificación si solo se actualizaron detalles
+                        var subject = "Inspección Actualizada";
+                        var htmlMessage = $@"
+<p>Hola {inspectorNuevo.Nombres},</p>
+<p>Se han actualizado los detalles de la inspección para el proyecto '<strong>{inspeccionOriginal.Proyecto.Nombre}</strong>'.</p>
+<p>Fecha de Inspección: {model.Inspeccion.FechaInspeccion}</p>
+<p>Objetivo: {model.Inspeccion.Objetivo}</p>
+<p>Descripción: {model.Inspeccion.Descripcion}</p>";
+                        if (model.Inspeccion.EsTodoElDia)
+                        {
+                            htmlMessage += "<p>Duración: Todo el día</p>";
+                        }
+                        else if (model.Inspeccion.DuracionHoras.HasValue)
+                        {
+                            htmlMessage += $"<p>Duración: {model.Inspeccion.DuracionHoras.Value} horas</p>";
+                        }
+                        htmlMessage += @"
+<p>Saludos,</p>
+<p>El equipo de <strong>Buildoc</strong></p>";
+                        await _emailSender.SendEmailAsync(inspectorNuevo.Email, subject, htmlMessage);
                     }
                 }
+
                 TempData["SuccessMessage"] = "¡La inspección se ha editado exitosamente!";
                 return Json(new { success = true });
             }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!InspeccionExists(inspeccionOriginal.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-         
-            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccion.InspectorId);
-            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
-            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
-            return PartialView("Edit",inspeccion);
+            // Si hay un error, recargar las listas de selección y devolver la vista
+            ViewData["InspectorId"] = new SelectList(_context.Users, "Id", "NombreCompleto", inspeccionOriginal.InspectorId);
+            ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccionOriginal.ProyectoId);
+            ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccionOriginal.TipoInspeccionId);
+            return PartialView("Edit", inspeccionOriginal);
         }
 
         // GET: Inspecciones/Delete/5
