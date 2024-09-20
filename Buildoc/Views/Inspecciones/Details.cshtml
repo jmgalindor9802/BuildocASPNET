@@ -136,7 +136,7 @@
                                     }
 
                                     <h6>Archivos adjuntos:</h6>
-                                    @if (Model.Respuesta.FileModels != null && Model.Respuesta.FileModels.Any())
+                                    @if ( Model.Respuesta.FileModels.Any())
                                     {
                                         <ul>
                                             @foreach (var file in Model.Respuesta.FileModels)
