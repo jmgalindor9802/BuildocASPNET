@@ -86,6 +86,38 @@ namespace Buildoc.Controllers
                 todosIncidentes = new List<Incidente>(); // O maneja esto de acuerdo a tus necesidades
             }
 
+            // Calcular incidentes reportado por proyecto
+            var incidentesPorProyecto = todosIncidentes
+                .Where(i => i.Estado == EstadoIncidenteEnum.Activo)
+                .GroupBy(i => i.Proyecto.Nombre)
+                .Select(group => new
+                {
+                    Proyecto = group.Key,
+                    Cantidad = group.Count()
+                })
+                .ToList();
+            // Calcular incidentes reportados por tipo de incidente
+            var incidentesPorTipo = todosIncidentes
+                .GroupBy(i => i.TipoIncidente.Titulo)  // Agrupa por el nombre del tipo de inspección
+                .Select(g => new
+                {
+                    tipo = g.Key,  // El nombre del tipo de inspección
+                    cantidad = g.Count()  // Número de inspecciones por tipo
+                })
+                .ToList();
+
+            // Agrupar los incidentes por proyecto y fecha
+            var incidentesPorFecha = todosIncidentes
+                .GroupBy(i => new { i.FechaIncidente, i.Proyecto.Nombre })
+                .Select(g => new
+                {
+                    Fecha = g.Key.FechaIncidente.ToString("yyyy-MM-dd"), // Formato de fecha
+                    Proyecto = g.Key.Nombre,
+                    Cantidad = g.Count()
+                })
+                .ToList();
+
+            
             // Obtener todos los tipos de incidentes para el select
             var tiposIncidentes = await _context.TipoIncidentes.ToListAsync();
 
@@ -144,6 +176,10 @@ namespace Buildoc.Controllers
             ViewBag.TotalLesionados = totalLesionados;
             ViewBag.MunicipiosConIncidentes = municipiosConIncidentes;
             ViewBag.DetallesIncidentes = detallesIncidentes;
+            //ViewBag graficos
+            ViewBag.IncidentesPorProyecto = incidentesPorProyecto;
+            ViewBag.IncidentesPorTipo = incidentesPorTipo;
+            ViewBag.IncidentesPorFecha = incidentesPorFecha;
 
             // Retornar solo los incidentes activos para la vista Index
             return View(todosIncidentes);

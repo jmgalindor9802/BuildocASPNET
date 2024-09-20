@@ -12,6 +12,24 @@
         text-decoration: none; /* Elimina el subrayado */
         cursor: pointer; /* Cambia el cursor al estilo de un botón */
     }
+
+    .disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    .map-container {
+        position: relative;
+        height: 100%;
+        min-height: 400px;
+    }
+
+    .charts-container {
+        padding: 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        margin-bottom: 20px;
+    }
 </style>
 
 <div class="container-page">
@@ -109,10 +127,37 @@
         </div>
     </div>
 
-    @*Mapa*@
+    @* Diagramas *@
     <div class="row">
+        <!-- Columna izquierda: Gráficas -->
+        <div class="col-lg-6 col-md-12 col-12">
+            <div class="row">
+                <!-- Primera gráfica torta de incidentes por proyecto -->
+                <div class="col-md-6 col-sm-12">
+                    <div class="charts-container">
+                        <h5>Incidentes activos</h5>
+                        <canvas id="inspectionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="charts-container">
+                        <h5>Incidentes activos por fecha</h5>
+                        <canvas id="incidenteLineChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                    </div>
+                </div>
+            </div>
+            <!-- Tercera gráfica torta de incidentes por tipo de incidente -->
+            <div class="col-md-6 col-sm-12">
+                <div class="charts-container">
+                    <h5>Por tipos de Incidentes</h5>
+                    <canvas id="tipoInspeccionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
+                </div>
+            </div>
+        </div>
+
+        @*Mapa columna derecha*@
         <!-- Columna con el mapa de Colombia -->
-        <div class="col-lg-12 col-md-8 col-12 d-flex flex-column">
+        <div class="col-lg-6 col-md-12 col-12 d-flex flex-column">
             <div class="map-container">
                 <!-- Contenedor para los controles del mapa -->
                 <div id="map-controls" class="position-absolute" style="top: 10px; left: 10px; z-index: 1000;">
@@ -128,15 +173,16 @@
                 </div>
                 <!-- Filtro para inspecciones dentro del mapa -->
                 <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
-                    <label for="filterIncidente" class="form-label">Filtrar por estado:</label>
-                    <select id="filterIncidente" class="form-control">
-                        <option value="all">Todos</option>
-                        <option value="0">Activos</option>
-                        <option value="1">Cerrados</option>
-                        <option value="2">Resueltos</option>
-                    </select>
+                    <div id="map-filter" class="position-absolute p-2 bg-white border rounded" style="top: 10px; right: 10px; z-index: 1000;">
+                        <label for="filterIncidente" class="form-label">Filtrar por estado:</label>
+                        <select id="filterIncidente" class="form-control">
+                            <option value="all">Todos</option>
+                            <option value="0">Activos</option>
+                            <option value="1">Cerrados</option>
+                            <option value="2">Resueltos</option>
+                        </select>
+                    </div>
                 </div>
-
                 <!-- Mapa -->
                 <div id="map"></div>
             </div>
@@ -214,7 +260,7 @@
                         </a>
                         @if (item.Estado == EstadoIncidenteEnum.Activo)
                         {
-                            if(esCoordinador || esResidente)
+                            if (esCoordinador || esResidente)
                             {
                                 <a href="#" type="button" class="respond-item"
                                    data-url="@Url.Action("Create", "NovedadesIncidentes", new { incidenteId = item.Id })"
@@ -240,6 +286,270 @@
     var municipiosConIncidentes = ViewBag.MunicipiosConIncidentes as List<string>;
 }
 <script src="\js\inicializacionyfiltrotableincidente.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Asegurarse de que inspeccionesPorProyecto no esté indefinido o sea nulo
+    var incidentesPorProyecto = @Html.Raw(Json.Serialize(ViewBag.IncidentesPorProyecto)) || [];
+
+    // Verificar si el array tiene datos
+    if (incidentesPorProyecto.length === 0) {
+        console.warn("No hay datos para generar la gráfica, se mostrará un gráfico vacío.");
+
+        // Crear el gráfico de torta vacío
+        var ctx = document.getElementById('inspectionPieChart').getContext('2d');
+        var inspectionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Número de Inspecciones Programadas',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'left',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica con los proyectos y cantidades reales
+        var proyectos = incidentesPorProyecto.map(function (item) { return item.proyecto; });
+        var cantidades = incidentesPorProyecto.map(function (item) { return item.cantidad; });
+
+        var ctx = document.getElementById('inspectionPieChart').getContext('2d');
+        var inspectionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: proyectos, // Los nombres de los proyectos
+                datasets: [{
+                    label: 'Número de Incidentes Activos',
+                    data: cantidades, // Cantidades de inspecciones por proyecto
+                    backgroundColor: [
+                        'rgba(255, 69, 58, 0.7)',    // Rojo fuerte
+                        'rgba(255, 99, 132, 0.7)',   // Rojo claro
+                        'rgba(255, 159, 64, 0.7)',   // Naranja fuerte
+                        'rgba(255, 205, 86, 0.7)',   // Amarillo
+                        'rgba(255, 140, 0, 0.7)',    // Naranja oscuro
+                        'rgba(220, 20, 60, 0.7)'     // Carmesí
+                    ],
+                    borderColor: [
+                        'rgba(255, 69, 58, 1)',      // Rojo fuerte
+                        'rgba(255, 99, 132, 1)',     // Rojo claro
+                        'rgba(255, 159, 64, 1)',     // Naranja fuerte
+                        'rgba(255, 205, 86, 1)',     // Amarillo
+                        'rgba(255, 140, 0, 1)',      // Naranja oscuro
+                        'rgba(220, 20, 60, 1)'       // Carmesí
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+
+                        align: 'start',  // Alinea la leyenda al inicio (izquierda)
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    }
+</script>
+<script>
+    var incidentesPorFecha = @Html.Raw(Json.Serialize(ViewBag.IncidentesPorFecha)) || [];
+    console.log("incidentesPorFecha", incidentesPorFecha);
+
+    if (incidentesPorFecha.length === 0) {
+        console.log("No hay datos para generar la gráfica, se mostrará un gráfico vacío.");
+
+        var ctx = document.getElementById('incidenteLineChart').getContext('2d');
+        var incidenteLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ["Sin datos"],
+                datasets: [{
+                    label: 'Número de Incidentes',
+                    data: [0],
+                    fill: false,
+                    borderColor: 'rgba(200, 200, 200, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Fecha' } },
+                    y: { title: { display: true, text: 'Cantidad de Incidentes' }, beginAtZero: true }
+                }
+            }
+        });
+    } else {
+        console.log("Ingreso a los datos del incidente");
+
+        // Agrupar por proyecto y fecha
+        var incidentesAgrupados = {};
+
+        incidentesPorFecha.forEach(item => {
+            const clave = item.proyecto + '-' + item.fecha; // Crear una clave única por proyecto y fecha
+            if (!incidentesAgrupados[clave]) {
+                incidentesAgrupados[clave] = {
+                    proyecto: item.proyecto,
+                    fecha: item.fecha,
+                    cantidad: item.cantidad
+                };
+            } else {
+                incidentesAgrupados[clave].cantidad += item.cantidad; // Sumar cantidades si ya existe
+            }
+        });
+
+        // Preparar datos para la gráfica
+        var datasets = [];
+        var proyectos = [...new Set(Object.values(incidentesAgrupados).map(item => item.proyecto))]; // Obtener proyectos únicos
+        var fechas = [...new Set(Object.values(incidentesAgrupados).map(item => item.fecha))]; // Obtener fechas únicas
+
+        proyectos.forEach(proyecto => {
+            var data = new Array(fechas.length).fill(0); // Inicializar con ceros
+            fechas.forEach((fecha, index) => {
+                var clave = proyecto + '-' + fecha;
+                if (incidentesAgrupados[clave]) {
+                    data[index] = incidentesAgrupados[clave].cantidad;
+                }
+            });
+
+            datasets.push({
+                label: proyecto,
+                data: data,
+                fill: false,
+                borderColor: getRandomColor(),
+                tension: 0.1
+            });
+        });
+
+        // Crear la gráfica
+        var ctx = document.getElementById('incidenteLineChart').getContext('2d');
+        var incidenteLineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: fechas,
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: { title: { display: true, text: 'Fecha' } },
+                    y: { title: { display: true, text: 'Cantidad de Incidentes' }, beginAtZero: true }
+                }
+            }
+        });
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+</script>
+
+
+<script>
+    // Asegurarse de que incidentePorTipo no esté indefinido o sea nulo
+    var incidentesPorTipo = @Html.Raw(Json.Serialize(ViewBag.IncidentesPorTipo)) || [];
+
+    // Verificar si el array tiene datos
+    if (incidentesPorTipo.length === 0) {
+        console.warn("No hay datos para generar la gráfica de tipos de inspecciones.");
+
+        // Crear el gráfico de torta vacío
+        var ctx = document.getElementById('tipoInspeccionPieChart').getContext('2d');
+        var tipoInspeccionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ["Sin datos"], // Etiqueta para gráfico vacío
+                datasets: [{
+                    label: 'Distribución de tipos de inspecciones',
+                    data: [1], // Valor ficticio para que la gráfica se muestre
+                    backgroundColor: ['rgba(200, 200, 200, 0.5)'], // Color gris claro
+                    borderColor: ['rgba(150, 150, 150, 1)'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: false // No tooltips para gráfico vacío
+                    }
+                }
+            }
+        });
+    } else {
+        // Si hay datos, generar la gráfica
+        var tipos = incidentesPorTipo.map(function (item) { return item.tipo; });
+        var cantidades = incidentesPorTipo.map(function (item) { return item.cantidad; });
+
+        var ctx = document.getElementById('tipoInspeccionPieChart').getContext('2d');
+        var tipoInspeccionPieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: tipos,
+                datasets: [{
+                    label: 'Distribución de tipos de inspecciones',
+                    data: cantidades,
+                    backgroundColor: [
+                        'rgba(255, 69, 58, 0.7)',    // Rojo fuerte
+                        'rgba(255, 99, 132, 0.7)',   // Rojo claro
+                        'rgba(255, 159, 64, 0.7)',   // Naranja fuerte
+                        'rgba(255, 205, 86, 0.7)',   // Amarillo
+                        'rgba(255, 140, 0, 0.7)',    // Naranja oscuro
+                        'rgba(220, 20, 60, 0.7)'     // Carmesí
+                    ],
+                    borderColor: [
+                        'rgba(255, 69, 58, 1)',      // Rojo fuerte
+                        'rgba(255, 99, 132, 1)',     // Rojo claro
+                        'rgba(255, 159, 64, 1)',     // Naranja fuerte
+                        'rgba(255, 205, 86, 1)',     // Amarillo
+                        'rgba(255, 140, 0, 1)',      // Naranja oscuro
+                        'rgba(220, 20, 60, 1)'       // Carmesí
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'start',
+                    },
+                    tooltip: {
+                        enabled: true
+                    }
+                }
+            }
+        });
+    }
+</script>
 <script>
     // Convertir el ViewBag en una variable JavaScript global
     var municipiosConIncidentes = @Html.Raw(Json.Serialize(ViewBag.MunicipiosConIncidentes));

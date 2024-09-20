@@ -214,7 +214,7 @@ namespace Buildoc.Controllers
             ViewBag.CountDesaprobadas = countDesaprobadas;
             ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
             ViewBag.DetallesInspecciones = detallesInspecciones;
-          
+
             ViewBag.InspeccionesConTiempo = inspeccionesConTiempo;
             ViewBag.InspeccionesPorProyecto = inspeccionesPorProyecto; // Agrega este ViewBag
 
@@ -565,7 +565,8 @@ namespace Buildoc.Controllers
             // Filtrar los tipos de inspección según la categoría
             var tiposInspeccion = _context.TipoInspeccion
                 .Where(t => t.Categoria == categoriaEnum)
-                .Select(t => new {
+                .Select(t => new
+                {
                     id = t.Id,
                     nombre = t.Nombre
                 })
@@ -574,8 +575,8 @@ namespace Buildoc.Controllers
             return Json(tiposInspeccion);
         }
         // GET: Inspecciones/GetArchivosByTipoInspeccion
-public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionId)
-{
+        public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionId)
+        {
             var archivos = await _context.FileModels
                    .Where(a => a.TipoInspeccionId == tipoInspeccionId)
                    .Select(a => new
@@ -586,7 +587,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                    .ToListAsync();
 
             return Json(archivos);
-}
+        }
         [HttpGet]
         public async Task<IActionResult> DownloadFile(string fileName)
         {
@@ -606,10 +607,10 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         // GET: Inspecciones/Create
         public async Task<IActionResult> Create()
         {
-           
+
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre");
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre");
-       
+
             return PartialView();
         }
 
@@ -622,7 +623,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
         {
             var inspeccion = model.Inspeccion;
 
-         
+
             if (!ModelState.IsValid)
             {
                 // Obtener errores de validación
@@ -642,9 +643,9 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
 
             var proyecto = await _context.Proyectos.FindAsync(inspeccion.ProyectoId);
             if (proyecto != null && inspeccion.FechaInspeccion > proyecto.FechaFinalizacion)
-{
-    return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
-}
+            {
+                return Json(new { success = false, message = "La fecha de la inspección no puede ser mayor que la fecha de finalización del proyecto." });
+            }
 
 
             // Verificar si el inspector tiene una inspección programada en la misma fecha y hora
@@ -725,7 +726,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             }
             // Obtener el inspector y proyecto asignados
             var inspector = await _userManager.FindByIdAsync(inspeccion.InspectorId);
-            
+
 
             // Preparar el mensaje de correo electrónico en formato HTML para el inspector
             var subject = "Nueva Inspección Asignada";
@@ -752,7 +753,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             // Enviar el correo electrónico al inspector
             await _emailSender.SendEmailAsync(inspector.Email, subject, htmlMessage);
 
-        
+
 
 
             // Si el modelo no es válido, retornar la vista parcial con los datos existentes
@@ -760,9 +761,9 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             ViewData["ProyectoId"] = new SelectList(await GetProyectosForCoordinadorAsync(), "Id", "Nombre", inspeccion.ProyectoId);
             ViewData["TipoInspeccionId"] = new SelectList(_context.TipoInspeccion, "Id", "Nombre", inspeccion.TipoInspeccionId);
 
-			TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
-			return Json(new { success = true });
-		}
+            TempData["SuccessMessage"] = "¡La inspección se ha creado exitosamente!";
+            return Json(new { success = true });
+        }
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid? id)
@@ -1049,7 +1050,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
                 return NotFound();
             }
 
-            return PartialView("Delete",inspeccion);
+            return PartialView("Delete", inspeccion);
         }
 
         // POST: Inspecciones/Delete/5
@@ -1161,7 +1162,7 @@ public async Task<IActionResult> GetArchivosByTipoInspeccion(int tipoInspeccionI
             return Json(residentes);
         }
 
-      
+
 
 
     }
