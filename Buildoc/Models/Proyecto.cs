@@ -7,25 +7,25 @@ namespace Buildoc.Models
     {
         [Key]
         public Guid Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [MaxLength(100)]
         public string Nombre { get; set; }
-        [Display(Name = "Descripción")]
-        [MaxLength(500)]
-        [Required]
+        [MaxLength(500, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres.")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+     
         public string Descripcion { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [MaxLength(50)]
         public string Departamento { get; set; }
-        [Required]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         [MaxLength(50)]
         public string Municipio { get; set; }
-        [Required]
-        [MaxLength(100)]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [MaxLength(100, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres.")]
         public string Cliente { get; set; }
         [Display(Name = "Dirección")]
-        [Required]
-        [MaxLength(200)]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
+        [MaxLength(200, ErrorMessage = "El campo {0} no puede tener más de {1} caracteres.")]
         public string Direccion { get; set; }
 
         public EstadoProyecto Estado { get; set; }
@@ -56,6 +56,7 @@ namespace Buildoc.Models
 		public DateTime FechaCreacion { get; set; }
 		[Display(Name = "Fecha de finalización")]
         [DisplayFormat(DataFormatString = "{0:dd MMM yyyy}")]
+        [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public DateTime FechaFinalizacion {  get; set; }
     }
 }

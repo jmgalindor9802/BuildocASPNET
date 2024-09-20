@@ -211,9 +211,10 @@ namespace Buildoc.Controllers
             ViewBag.CountPendienteRevision = countPendienteRevision;
             ViewBag.CountSinResponder = countSinResponder;
             ViewBag.CountAprobadas = countAprobadas;
+            ViewBag.CountDesaprobadas = countDesaprobadas;
             ViewBag.MunicipiosConInspecciones = municipiosConInspecciones;
             ViewBag.DetallesInspecciones = detallesInspecciones;
-            ViewBag.CountDesaprobadas = countDesaprobadas;
+          
             ViewBag.InspeccionesConTiempo = inspeccionesConTiempo;
             ViewBag.InspeccionesPorProyecto = inspeccionesPorProyecto; // Agrega este ViewBag
 

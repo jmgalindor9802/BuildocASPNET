@@ -9,6 +9,7 @@
         var esCoordinador = User.IsInRole("Coordinador");
         var esAdmin= User.IsInRole("Administrador");
         var usuarioId = ViewBag.UsuarioId as string;
+        var esResidente = User.IsInRole("Residente");
     }
     <header>
     <style>
@@ -160,7 +161,8 @@
                     <canvas id="inspectionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
                 </div>
             </div>
-
+               @if (!esResidente)
+                            {
             <!-- Segunda gráfica -->
             <div class="col-md-6 col-sm-12">
                 <div class="charts-container">
@@ -168,12 +170,23 @@
                     <canvas id="inspectionPieChart2" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
                 </div>
             </div>
+                            }
+                               @if (esResidente)
+                            {
+                <div class="col-md-6 col-sm-12">
+                    <div class="charts-container">
+                        <h5>Progreso de Inspecciones</h5>
+                        <canvas id="progressChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica -->
+                    </div>
+                    </div>
+                            }
+            
             </div>
             <div class="row">
             <!-- Tercera gráfica -->
             <div class="col-md-6 col-sm-12">
                 <div class="charts-container">
-                        <h5>Tipos de Inspección</h5>
+                        <h5>Por tipos de Inspección</h5>
                         <canvas id="tipoInspeccionPieChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
                 </div>
             </div>
@@ -181,7 +194,7 @@
             <!-- Cuarta gráfica -->
             <div class=" col-md-6 col-sm-12">
                 <div class="charts-container">
-                        <h5>Urgencia de Inspecciones</h5>
+                        <h5>Urgencia de programadas</h5>
                         <canvas id="tiempoRestanteBarChart" style="width: 200px; height: 200px;"></canvas> <!-- Gráfica más pequeña -->
                 </div>
             </div>
@@ -811,6 +824,7 @@
                 plugins: {
                     legend: {
                         position: 'top',
+                        align: 'start',
                     },
                     tooltip: {
                         enabled: true
@@ -905,6 +919,7 @@
                 plugins: {
                     legend: {
                         display: false  // Esto deshabilita la leyenda por completo
+
                     },
                     tooltip: {
                         enabled: true // Habilitar los tooltips
@@ -914,4 +929,56 @@
         });
 
     }
+</script>
+<script>
+    // Obtener los valores de ViewBag
+    var programadas = @Html.Raw(ViewBag.CountProgramadas);
+    var pendienteRevision = @Html.Raw(ViewBag.CountPendienteRevision);
+    var sinResponder = @Html.Raw(ViewBag.CountSinResponder);
+    var aprobadas = @Html.Raw(ViewBag.CountAprobadas);
+    var desaprobadas = @Html.Raw(ViewBag.CountDesaprobadas);
+
+    // Configuración del gráfico
+    var ctx = document.getElementById('progressChart').getContext('2d');
+    var progressChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Programadas', 'Pendiente de Revisión', 'Sin Responder', 'Aprobadas', 'Desaprobadas'],
+            datasets: [{
+                label: 'Inspecciones',
+                data: [programadas, pendienteRevision, sinResponder, aprobadas, desaprobadas],
+                backgroundColor: [
+                    'rgba(54, 162, 235, 0.7)',  // Color para Programadas (Azul)
+                    'rgba(255, 206, 86, 0.7)',  // Color para Pendiente de Revisión (Amarillo)
+                    'rgba(255, 99, 132, 0.7)',  // Color para Sin Responder (Rojo)
+                    'rgba(75, 192, 192, 0.7)',  // Color para Aprobadas (Verde)
+                    'rgba(153, 102, 255, 0.7)'  // Color para Desaprobadas (Púrpura)
+                ],
+                borderColor: [
+                    'rgba(54, 162, 235, 1)',  // Borde para Programadas
+                    'rgba(255, 206, 86, 1)',  // Borde para Pendiente de Revisión
+                    'rgba(255, 99, 132, 1)',  // Borde para Sin Responder
+                    'rgba(75, 192, 192, 1)',  // Borde para Aprobadas
+                    'rgba(153, 102, 255, 1)'  // Borde para Desaprobadas
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true // Comienza el eje Y desde 0
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false // Ocultar la leyenda
+                },
+                tooltip: {
+                    enabled: true // Mostrar los tooltips
+                }
+            }
+        }
+    });
 </script>

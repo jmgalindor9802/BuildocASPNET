@@ -8,12 +8,27 @@ using Buildoc.Services.Proyectos;
 using Buildoc.Services.Incidentes;
 using Azure.Storage.Blobs;
 using Buildoc.Services.Inspecciones;
+using Microsoft.AspNetCore.Localization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 var cultureInfo = new CultureInfo("es-CO");
 
 CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
 CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[]
+    {
+        new CultureInfo("es-CO"), // Cultura de Colombia
+    };
+
+    options.DefaultRequestCulture = new RequestCulture("es-CO");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -90,6 +105,7 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseRequestLocalization();
 
 app.UseRouting();
 
